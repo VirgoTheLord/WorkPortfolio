@@ -1,0 +1,51 @@
+/*
+ * Contact entrance, CSS only: transform and clip-path (ARCHITECTURE.md §6).
+ * Same state machine as About and Skills, driven by SectionReveal:
+ *   no attribute  fully visible (no JS, reduced motion, or already on screen)
+ *   pending       the hidden start state, applied only when motion will play
+ *   in            transitions to visible, once
+ * Deliberately a copy under its own prefix, as skills.css is: with three copies
+ * now, a shared stylesheet is the next cleanup.
+ */
+@reference '../../app/globals.css';
+
+[data-reveal='pending'] .contact-mask {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(0.3em);
+}
+
+[data-reveal='pending'] .contact-draw {
+  transform: scaleX(0);
+}
+
+/* --i is a per-element index set inline: delay = index × stagger. */
+[data-reveal='in'] .contact-mask {
+  /* Negative insets keep ascenders, descenders, the link's rule and its focus
+     ring unclipped. */
+  clip-path: inset(-0.2em -0.1em -0.4em -0.1em);
+  transform: translateY(0);
+  transition:
+    clip-path var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+[data-reveal='in'] .contact-draw {
+  transform: scaleX(1);
+  transition: transform var(--duration-slow) var(--ease-in-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+.contact-draw {
+  transform-origin: left;
+}
+
+/* Last, so it wins over both states: reduced motion shows the final state at once. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] .contact-mask,
+  [data-reveal] .contact-draw {
+    clip-path: none;
+    transform: none;
+    transition: none;
+  }
+}

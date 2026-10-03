@@ -10,7 +10,7 @@ export function Hero() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="mx-auto flex min-h-svh w-full max-w-content flex-col justify-between gap-8 px-margin pt-11 pb-8 md:gap-10 md:pb-10"
+      className="mx-auto flex section-screen w-full max-w-content flex-col justify-between gap-8 px-margin pb-8 md:gap-10 md:pb-10"
     >
       <div className="relative">
         <div

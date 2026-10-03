@@ -67,6 +67,9 @@
   /* Space & layout. --spacing (4px base) is Tailwind's default. */
   --spacing-gutter: clamp(1rem, 0.6667rem + 1.4815vw, 2rem);
   --spacing-margin: clamp(1.25rem, 0.3333rem + 4.0741vw, 4rem);
+  /* The fixed header's height: the single source for its own size, the clearance
+     above <main>, and scroll offsets. */
+  --spacing-header: 2.75rem;
   --spacing-section-y: clamp(6rem, 4rem + 8.8889vw, 12rem);
   --spacing-exhibit-y: clamp(12rem, 70svh, 48rem);
   --container-content: 90rem;
@@ -116,6 +119,14 @@
 }
 @utility duration-slow {
   transition-duration: var(--duration-slow);
+}
+
+/* A major homepage section is one screen: the small viewport (svh, so it fits with
+   mobile browser chrome showing) minus the fixed header, which <main> already
+   clears once. Composition inside the section is set by flex layout, not by
+   outer margins. */
+@utility section-screen {
+  min-height: calc(100svh - var(--spacing-header));
 }
 
 @layer base {

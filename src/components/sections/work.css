@@ -1,0 +1,10 @@
+/*
+ * Selected Work: the one rule utilities cannot express cleanly. The image is 6%
+ * taller than its frame so the 2% parallax drift can never expose an edge.
+ * Without JavaScript it is simply a slightly generous crop.
+ */
+@reference '../../app/globals.css';
+
+.work-parallax {
+  inset-block: -3%;
+}

@@ -165,7 +165,7 @@ export function SiteMenu({ brand, children }: { brand: ReactNode; children: Reac
         onPointerEnter={prefetch}
         onFocus={prefetch}
         onTouchStart={prefetch}
-        className="site-menu-trigger group flex h-11 min-w-11 items-center justify-end font-label text-label font-medium text-fg uppercase transition-colors duration-base ease-out hover:text-accent hover:duration-fast focus-visible:text-accent focus-visible:duration-fast active:translate-y-px active:duration-instant"
+        className="site-menu-trigger group flex h-header min-w-11 items-center justify-end font-label text-label font-medium text-fg uppercase transition-colors duration-base ease-out hover:text-accent hover:duration-fast focus-visible:text-accent focus-visible:duration-fast active:translate-y-px active:duration-instant"
       >
         <span className="relative">
           Menu
@@ -187,13 +187,13 @@ export function SiteMenu({ brand, children }: { brand: ReactNode; children: Reac
         className="site-menu fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-hidden border-0 bg-transparent p-0"
       >
         <div ref={panelRef} className="flex h-dvh flex-col bg-accent text-accent-fg">
-          <div className="mx-auto flex h-11 w-full max-w-content shrink-0 items-center justify-between px-margin">
+          <div className="mx-auto flex h-header w-full max-w-content shrink-0 items-center justify-between px-margin">
             {brand}
             <button
               type="button"
               autoFocus
               onClick={close}
-              className="group flex h-11 min-w-11 items-center justify-end font-label text-label font-medium uppercase underline decoration-transparent underline-offset-4 transition-colors duration-base ease-out hover:decoration-accent-fg hover:duration-fast focus-visible:decoration-accent-fg focus-visible:duration-fast active:translate-y-px active:duration-instant"
+              className="group flex h-header min-w-11 items-center justify-end font-label text-label font-medium uppercase underline decoration-transparent underline-offset-4 transition-colors duration-base ease-out hover:decoration-accent-fg hover:duration-fast focus-visible:decoration-accent-fg focus-visible:duration-fast active:translate-y-px active:duration-instant"
             >
               <span className="block overflow-hidden">
                 <span data-menu-bar className="block">

@@ -1,0 +1,51 @@
+/*
+ * Skills entrance, CSS only: transform and clip-path (ARCHITECTURE.md §6).
+ * Same state machine as About, driven per row by SectionReveal:
+ *   no attribute  fully visible (no JS, reduced motion, or already on screen)
+ *   pending       the hidden start state, applied only when motion will play
+ *   in            transitions to visible, once
+ * Deliberately a copy of about.css under its own prefix: extract a shared
+ * stylesheet when a third section needs it.
+ */
+@reference '../../app/globals.css';
+
+[data-reveal='pending'] .skills-mask {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(0.3em);
+}
+
+[data-reveal='pending'] .skills-draw {
+  transform: scaleX(0);
+}
+
+/* --i is a per-element index and --row the row's position, both set inline. Rows
+   that enter together cascade 100ms apart: delay = (row × 2 + index) × stagger. */
+[data-reveal='in'] .skills-mask {
+  /* Negative insets keep ascenders, descenders and tight tracking unclipped. */
+  clip-path: inset(-0.2em -0.1em -0.3em -0.1em);
+  transform: translateY(0);
+  transition:
+    clip-path var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  transition-delay: calc((var(--row, 0) * 2 + var(--i, 0)) * var(--stagger));
+}
+
+[data-reveal='in'] .skills-draw {
+  transform: scaleX(1);
+  transition: transform var(--duration-slow) var(--ease-in-out);
+  transition-delay: calc((var(--row, 0) * 2 + var(--i, 0)) * var(--stagger));
+}
+
+.skills-draw {
+  transform-origin: left;
+}
+
+/* Last, so it wins over both states: reduced motion shows the final state at once. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] .skills-mask,
+  [data-reveal] .skills-draw {
+    clip-path: none;
+    transform: none;
+    transition: none;
+  }
+}

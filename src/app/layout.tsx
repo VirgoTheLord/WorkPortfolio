@@ -22,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <SiteHeader />
         {/* tabIndex lets the skip link move focus into <main> in every browser; main is
             not interactive, so it gets no focus ring of its own. */}
-        <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+        <main id="main" tabIndex={-1} className="flex-1 pt-header focus:outline-none">
           {children}
         </main>
         <SiteFooter />

@@ -23,7 +23,7 @@ export function SiteBrand({
     <Link
       href="/"
       aria-label={`${site.name}, home`}
-      className={`inline-flex h-11 items-center font-label text-label font-medium uppercase underline decoration-transparent underline-offset-4 transition-colors duration-base ease-out hover:duration-fast focus-visible:duration-fast active:translate-y-px active:duration-instant ${tone[toneName]}`}
+      className={`inline-flex h-header items-center font-label text-label font-medium uppercase underline decoration-transparent underline-offset-4 transition-colors duration-base ease-out hover:duration-fast focus-visible:duration-fast active:translate-y-px active:duration-instant ${tone[toneName]}`}
     >
       {masked ? (
         <span className="block overflow-hidden">
