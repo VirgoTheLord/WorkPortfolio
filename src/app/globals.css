@@ -1,0 +1,175 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens — see DESIGN.md §4.
+ * Roles are fixed; values marked PROVISIONAL wait on DESIGN.md §9 decisions
+ * (1: typography, 2: color palette). Components use these via Tailwind
+ * utilities only — never raw values.
+ */
+
+@theme {
+  /* Drop Tailwind's default palette and shadows so only semantic tokens exist
+     and "no drop shadows" (DESIGN.md §4) is enforced by the toolchain. */
+  --color-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --radius-*: initial;
+  --ease-*: initial;
+
+  /* Color — PROVISIONAL achromatic values until decision 2. Light palette;
+     dark overrides live in the base layer below. */
+  --color-bg: oklch(0.985 0 0);
+  --color-surface: oklch(0.955 0 0);
+  --color-fg: oklch(0.2 0 0);
+  --color-fg-muted: oklch(0.4 0 0);
+  --color-fg-subtle: oklch(0.48 0 0);
+  --color-rule: oklch(0.89 0 0);
+  --color-rule-strong: oklch(0.75 0 0);
+  --color-accent: oklch(0.5 0.17 255);
+  --color-accent-fg: oklch(0.985 0 0);
+
+  /* Font roles — local faces (decision 1) set the --font-*-face variables via
+     next/font/local in src/lib/fonts.ts; until then system stacks apply. */
+  --font-display: var(--font-display-face, var(--font-text));
+  --font-text: var(--font-text-face, ui-sans-serif, system-ui, sans-serif);
+  --font-label: var(--font-label-face, ui-monospace, 'SF Mono', Menlo, monospace);
+
+  /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
+  --text-label: clamp(0.7812rem, 0.7604rem + 0.0926vw, 0.8438rem);
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.04em;
+  --text-xs: clamp(0.75rem, 0.7292rem + 0.0926vw, 0.8125rem);
+  --text-xs--line-height: 1.45;
+  --text-sm: clamp(0.85rem, 0.8364rem + 0.0605vw, 0.8908rem);
+  --text-sm--line-height: 1.5;
+  --text-base: clamp(1.0625rem, 1.0208rem + 0.1852vw, 1.1875rem);
+  --text-base--line-height: 1.55;
+  --text-lg: clamp(1.3281rem, 1.2432rem + 0.3775vw, 1.5829rem);
+  --text-lg--line-height: 1.4;
+  --text-xl: clamp(1.6602rem, 1.5102rem + 0.6665vw, 2.1101rem);
+  --text-xl--line-height: 1.25;
+  --text-2xl: clamp(2.0752rem, 1.8294rem + 1.0926vw, 2.8127rem);
+  --text-2xl--line-height: 1.15;
+  --text-2xl--letter-spacing: -0.01em;
+  --text-3xl: clamp(2.594rem, 2.2089rem + 1.7116vw, 3.7493rem);
+  --text-3xl--line-height: 1.1;
+  --text-3xl--letter-spacing: -0.015em;
+  --text-display: clamp(4.0531rem, 3.1834rem + 3.8652vw, 6.6622rem);
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.025em;
+  --text-display-xl: clamp(5.0664rem, 3.795rem + 5.6507vw, 8.8806rem);
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--letter-spacing: -0.035em;
+
+  /* Space & layout. --spacing (4px base) is Tailwind's default. */
+  --spacing-gutter: clamp(1rem, 0.6667rem + 1.4815vw, 2rem);
+  --spacing-margin: clamp(1.25rem, 0.3333rem + 4.0741vw, 4rem);
+  --spacing-section-y: clamp(6rem, 4rem + 8.8889vw, 12rem);
+  --spacing-exhibit-y: clamp(12rem, 70svh, 48rem);
+  --container-content: 90rem;
+  --container-measure: 68ch;
+  --breakpoint-xl: 90rem;
+  --breakpoint-2xl: 120rem;
+
+  /* Media */
+  --aspect-wide: 16 / 10;
+  --aspect-cinema: 21 / 9;
+  --aspect-tall: 4 / 5;
+
+  /* Shape */
+  --radius-sm: 0.1875rem;
+
+  /* Motion — starting values, tuned by feel in Phase 6. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-press: cubic-bezier(0.3, 0, 0.5, 1);
+}
+
+/* Durations have no Tailwind theme namespace, so they are plain variables
+   exposed through named utilities (duration-fast, etc.). */
+:root {
+  --duration-instant: 90ms;
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 600ms;
+  --duration-media: 900ms;
+  --duration-intro: 1200ms;
+  --stagger: 50ms;
+}
+
+@utility duration-instant {
+  transition-duration: var(--duration-instant);
+}
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+@utility duration-base {
+  transition-duration: var(--duration-base);
+}
+@utility duration-slow {
+  transition-duration: var(--duration-slow);
+}
+
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* PROVISIONAL — decision 2. */
+      --color-bg: oklch(0.17 0 0);
+      --color-surface: oklch(0.21 0 0);
+      --color-fg: oklch(0.95 0 0);
+      --color-fg-muted: oklch(0.78 0 0);
+      --color-fg-subtle: oklch(0.7 0 0);
+      --color-rule: oklch(0.3 0 0);
+      --color-rule-strong: oklch(0.45 0 0);
+      --color-accent: oklch(0.72 0.14 255);
+      --color-accent-fg: oklch(0.17 0 0);
+    }
+  }
+
+  html {
+    color-scheme: light dark;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-text);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
