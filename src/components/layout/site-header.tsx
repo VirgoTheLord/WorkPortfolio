@@ -5,13 +5,13 @@ import { SiteNav } from '@/components/layout/site-nav'
 import { site } from '@/content/site'
 
 /*
- * Fixed, 44px (h-11): the hero's hairline starts exactly at its lower edge.
- * Pages need h-11 of top clearance until they own their own header offset.
+ * Fixed, one header-height tall (--spacing-header). <main> clears it once, so
+ * sections never compensate for it themselves.
  */
 export function SiteHeader() {
   return (
     <header className="site-header fixed inset-x-0 top-0 z-40 bg-bg">
-      <div className="mx-auto flex h-11 w-full max-w-content items-center justify-between px-margin">
+      <div className="mx-auto flex h-header w-full max-w-content items-center justify-between px-margin">
         <SiteBrand />
         <SiteMenu brand={<SiteBrand tone="onGreen" masked />}>
           <SiteNav />

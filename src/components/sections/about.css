@@ -1,0 +1,49 @@
+/*
+ * About entrance, CSS only: transform and clip-path (ARCHITECTURE.md §6).
+ * States, set by SectionReveal:
+ *   no attribute  fully visible (no JS, reduced motion, or already on screen)
+ *   pending       the hidden start state, applied only when motion will play
+ *   in            transitions to visible, once
+ * Entering `pending` has no transition, so arming the section is instant.
+ */
+@reference '../../app/globals.css';
+
+[data-reveal='pending'] .about-mask {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(0.3em);
+}
+
+[data-reveal='pending'] .about-draw {
+  transform: scaleX(0);
+}
+
+/* --i is a per-element index set inline: delay = index × stagger. */
+[data-reveal='in'] .about-mask {
+  /* Negative insets keep ascenders, descenders and tight tracking unclipped. */
+  clip-path: inset(-0.2em -0.1em -0.3em -0.1em);
+  transform: translateY(0);
+  transition:
+    clip-path var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+[data-reveal='in'] .about-draw {
+  transform: scaleX(1);
+  transition: transform var(--duration-slow) var(--ease-in-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+.about-draw {
+  transform-origin: left;
+}
+
+/* Last, so it wins over both states: reduced motion shows the final state at once. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] .about-mask,
+  [data-reveal] .about-draw {
+    clip-path: none;
+    transform: none;
+    transition: none;
+  }
+}

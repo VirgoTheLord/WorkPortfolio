@@ -20,3 +20,22 @@ export function loadGsap() {
   gsapPromise ??= import('gsap').then((module) => module.gsap)
   return gsapPromise
 }
+
+let scrollTriggerPromise:
+  | Promise<{
+      gsap: typeof import('gsap').gsap
+      ScrollTrigger: typeof import('gsap/ScrollTrigger').ScrollTrigger
+    }>
+  | undefined
+
+/* GSAP plus the ScrollTrigger plugin, registered once. Only the Selected Work
+   island calls this, and only as the section nears the viewport. */
+export function loadScrollTrigger() {
+  scrollTriggerPromise ??= Promise.all([loadGsap(), import('gsap/ScrollTrigger')]).then(
+    ([gsap, { ScrollTrigger }]) => {
+      gsap.registerPlugin(ScrollTrigger)
+      return { gsap, ScrollTrigger }
+    },
+  )
+  return scrollTriggerPromise
+}
