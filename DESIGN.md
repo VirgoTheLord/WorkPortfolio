@@ -207,13 +207,24 @@ Motion should feel **tactile, restrained and physical**: things settle into plac
 - Text must stay readable at 200% zoom and 320px width without horizontal scroll.
 - Video loops are muted, captioned when they carry meaning, and pausable.
 
-## 9. Open decisions (resolve in this order before Phase 2)
+## 9. Open decisions
 
-**Settled:** visual direction (§1).
+**Settled:** visual direction (§1). Typography (§9.1).
+
+### 9.1 Typography
+
+Two families, both SIL Open Font License 1.1, self-hosted from `src/fonts/`.
+
+| Role | Face | Weight | Optical size |
+|---|---|---|---|
+| Display | Bricolage Grotesque | 500 | 96 for the hero and large figures (`display-xl`, `display`, `2xl`); 48 for project titles and case-study headings (`3xl`, `xl`) |
+| Text | Bricolage Grotesque | 400 | 16 |
+| Label | Azeret Mono | 500 for metadata and indexes; 400 for captions | none |
+
+The Bricolage file is width 100 with weight limited to 400–600. The Azeret file is weight 400–500. There is no italic cut.
 
 | # | Decision | Constraints | How to decide |
 |---|---|---|---|
-| 1 | **Exact typography** | Display/Text/Label roles; ≤ 2 families; variable; self-hostable license; excellent tabular figures in Label; not Inter, Geist or Space Grotesk | Set the hero, one wall label and one case-study paragraph in 2–3 shortlisted pairings |
 | 2 | **Exact color palette** | Near-neutral `bg`/`surface` (light + dark) that flatter real screenshots; one `accent`; AA minimum, AAA body text | Test against actual project media, not empty swatches |
 | 3 | **Hero concept** | Delivers the 5-second objective; LCP is text or one optimized media element; ≤ 1.2s intro; no §3 patterns | Sketch 2–3 concepts. Judge on first impression and the first interaction. |
 | 4 | **Project presentation pattern** | Exhibit rules in §5; small fixed composition set; works with 3–5 projects; strong on mobile | Prototype with real assets for at least 2 projects |

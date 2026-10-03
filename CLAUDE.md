@@ -11,7 +11,7 @@ The primary impression should be: taste, polished interactions, and obsessive at
 
 ## Current phase
 
-**Phase 1: Scaffold** complete. Next: Phase 2, after DESIGN.md §9 decisions 1–2. Update this line when a phase completes (see ARCHITECTURE.md §11).
+**Phase 2: Design system** in progress. Typography (DESIGN.md §9.1) is settled. Next: the color palette (§9.2). Update this line when a phase completes (see ARCHITECTURE.md §11).
 
 ## Stack (summary)
 
