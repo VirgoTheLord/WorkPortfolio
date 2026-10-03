@@ -1,20 +1,28 @@
+import localFont from 'next/font/local'
+
 /*
- * Local font registry (ARCHITECTURE.md §1, DESIGN.md §4 Typography).
- *
- * Once typography is decided (DESIGN.md §9.1), add one `next/font/local`
- * instance per role with its woff2 files in src/fonts/, e.g.
- *
- *   const text = localFont({
- *     src: '../fonts/text-variable.woff2',
- *     variable: '--font-text-face',
- *     display: 'swap',
- *   })
- *
- * Each instance sets a --font-<role>-face variable that globals.css maps to the
- * display / text / label roles. Preload only the primary face.
+ * Production faces (DESIGN.md §9.1). Display and text are one family;
+ * globals.css maps both roles to --font-text-face. Preload only that face.
+ * Licenses: src/fonts/licenses.
  */
-type FontVariable = { variable: string }
 
-const fonts: FontVariable[] = []
+const bricolageGrotesque = localFont({
+  src: '../fonts/bricolage-grotesque.woff2',
+  variable: '--font-text-face',
+  weight: '400 600',
+  display: 'swap',
+  adjustFontFallback: 'Arial',
+  fallback: ['Arial', 'sans-serif'],
+})
 
-export const fontVariables = fonts.map((font) => font.variable).join(' ')
+const azeretMono = localFont({
+  src: '../fonts/azeret-mono.woff2',
+  variable: '--font-label-face',
+  weight: '400 500',
+  display: 'swap',
+  adjustFontFallback: false,
+  preload: false,
+  fallback: ['ui-monospace', 'monospace'],
+})
+
+export const fontVariables = [bricolageGrotesque.variable, azeretMono.variable].join(' ')

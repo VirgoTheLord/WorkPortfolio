@@ -2,8 +2,8 @@
 
 /*
  * Design tokens — see DESIGN.md §4.
- * Roles are fixed; values marked PROVISIONAL wait on DESIGN.md §9 decisions
- * (1: typography, 2: color palette). Components use these via Tailwind
+ * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color values
+ * marked PROVISIONAL wait on decision 2. Components use these via Tailwind
  * utilities only — never raw values.
  */
 
@@ -29,9 +29,9 @@
   --color-accent: oklch(0.5 0.17 255);
   --color-accent-fg: oklch(0.985 0 0);
 
-  /* Font roles — local faces (decision 1) set the --font-*-face variables via
-     next/font/local in src/lib/fonts.ts; until then system stacks apply. */
-  --font-display: var(--font-display-face, var(--font-text));
+  /* Display and text share Bricolage Grotesque. Label is Azeret Mono.
+     next/font/local sets the *-face variables in src/lib/fonts.ts. */
+  --font-display: var(--font-text-face, ui-sans-serif, system-ui, sans-serif);
   --font-text: var(--font-text-face, ui-sans-serif, system-ui, sans-serif);
   --font-label: var(--font-label-face, ui-monospace, 'SF Mono', Menlo, monospace);
 
@@ -89,6 +89,11 @@
 /* Durations have no Tailwind theme namespace, so they are plain variables
    exposed through named utilities (duration-fast, etc.). */
 :root {
+  /* Bricolage opsz. The shipped file has no width axis. */
+  --opsz-display: 96;
+  --opsz-title: 48;
+  --opsz-text: 16;
+
   --duration-instant: 90ms;
   --duration-fast: 160ms;
   --duration-base: 240ms;
@@ -141,7 +146,32 @@
     color: var(--color-fg);
     font-family: var(--font-text);
     font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
     line-height: var(--text-base--line-height);
+    font-variation-settings: 'opsz' var(--opsz-text);
+    /* The locked cut has no italic, and weights stop at 600. */
+    font-synthesis: none;
+  }
+
+  /* Optical size follows the type step. Weight 500 is display, titles, and
+     large figures; weight 400 is prose. Utilities can still override weight. */
+  :is(.text-display-xl, .text-display, .text-2xl) {
+    font-weight: var(--font-weight-medium);
+    font-variation-settings: 'opsz' var(--opsz-display);
+  }
+
+  :is(.text-3xl, .text-xl) {
+    font-weight: var(--font-weight-medium);
+    font-variation-settings: 'opsz' var(--opsz-title);
+  }
+
+  :is(.text-lg, .text-base, .text-sm, .text-xs) {
+    font-weight: var(--font-weight-normal);
+    font-variation-settings: 'opsz' var(--opsz-text);
+  }
+
+  .font-label {
+    font-variation-settings: normal;
   }
 
   h1,
