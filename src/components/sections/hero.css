@@ -1,0 +1,88 @@
+/*
+ * Hero entrance, CSS only: transform, opacity and clip-path (ARCHITECTURE.md §6).
+ * One sequence, about 1.2s end to end:
+ *   1 metadata rule and labels  →  2 statement masks  →  3 supporting info  →  4 green and brass
+ * Content is in the server HTML, so nothing waits on JavaScript and the
+ * statement can paint as the LCP element.
+ */
+@reference '../../app/globals.css';
+
+@keyframes hero-mask {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(0.3em);
+  }
+  to {
+    /* Negative insets keep ascenders, descenders and tight tracking unclipped. */
+    clip-path: inset(-0.2em -0.1em -0.3em -0.1em);
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes hero-set {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* --i is a per-element index set inline: delay = stage start + index × stagger. */
+
+/* 1. Metadata establishes itself: the hairline draws, then the labels mask in. */
+.hero-rule {
+  transform-origin: left;
+  animation: hero-draw var(--duration-slow) var(--ease-in-out) both;
+}
+
+.hero-meta {
+  animation: hero-mask var(--duration-base) var(--ease-out) both;
+  animation-delay: calc(80ms + var(--i, 0) * var(--stagger));
+}
+
+/* 2. The statement: one mask per phrase. */
+.hero-line {
+  animation: hero-mask var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(160ms + var(--i, 0) * var(--stagger));
+}
+
+/* 3. Supporting information. */
+.hero-support {
+  animation: hero-mask var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(500ms + var(--i, 0) * var(--stagger));
+}
+
+/* 4. Racing green and antique brass arrive last. */
+.hero-brass {
+  transform-origin: left;
+  animation: hero-draw var(--duration-slow) var(--ease-in-out) both;
+  animation-delay: 600ms;
+}
+
+.hero-green {
+  animation: hero-set var(--duration-base) var(--ease-out) both;
+  animation-delay: 760ms;
+}
+
+/* The global reduced-motion reset keeps animation delays, which would leave
+   content hidden. Remove the animations so the final state is immediate. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-rule,
+  .hero-meta,
+  .hero-line,
+  .hero-support,
+  .hero-brass,
+  .hero-green {
+    animation: none;
+  }
+}

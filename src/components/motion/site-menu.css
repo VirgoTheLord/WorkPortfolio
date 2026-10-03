@@ -1,0 +1,45 @@
+/*
+ * Menu-only styles. Everything with a design value lives in globals.css
+ * tokens; this file holds what utilities cannot express (:has, ::backdrop).
+ */
+@reference '../../app/globals.css';
+
+/* Reserve the scrollbar's space so locking the page never shifts the layout. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Scroll lock follows the dialog itself, so it is restored on close and on unmount. */
+html:has(dialog.site-menu[open]) {
+  overflow: hidden;
+}
+
+.site-menu {
+  overscroll-behavior: contain;
+}
+
+/* The green surface is the panel; the dialog's own backdrop stays invisible. */
+.site-menu::backdrop {
+  background: transparent;
+}
+
+/* The global focus ring is racing green, which disappears on the green surface. */
+.site-menu :focus-visible {
+  outline-color: var(--color-accent-fg);
+}
+
+/* Hover and keyboard focus dim the other destinations' labels; both behave the
+   same. Only the large label dims (still 4.7:1), so the small index stays legible. */
+.menu-label {
+  transition-property: transform, opacity;
+}
+
+.menu-link:hover .menu-label,
+.menu-link:focus-visible .menu-label {
+  transition-duration: var(--duration-fast);
+}
+
+.menu-list:has(.menu-link:hover) .menu-link:not(:hover) .menu-label,
+.menu-list:has(.menu-link:focus-visible) .menu-link:not(:focus-visible) .menu-label {
+  opacity: 0.6;
+}
