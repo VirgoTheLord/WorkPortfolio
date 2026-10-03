@@ -107,7 +107,7 @@ Rules:
 - Pass minimal serializable props across the boundary. Never pass whole content objects to a client component.
 - Mark content loaders `import 'server-only'`.
 - Every route must show as static (○ / ●) in `next build` output. A dynamic route is a bug.
-- Theme follows `prefers-color-scheme` through CSS only. No toggle in v1, so no JS and no flash script.
+- The color palette is the locked heritage system (DESIGN.md §9.2). It does not follow `prefers-color-scheme`, and there is no theme toggle.
 
 ---
 
@@ -223,7 +223,7 @@ Adding anything else requires a one-line justification in this section first.
 | clsx, classnames, tailwind-merge, cva | `lib/cn.ts` + explicit variant maps |
 | shadcn/ui, Radix, Headless UI, MUI, Chakra | Hand-built primitives (we have almost no complex widgets) |
 | lucide-react, react-icons, any icon set | Inline SVG components (a handful) |
-| next-themes | CSS `prefers-color-scheme` |
+| next-themes | The locked heritage palette. No theme switching |
 | contentlayer, velite, gray-matter, Sanity/Contentful | Local MDX + exported `meta` |
 | zod (for content) | TypeScript types |
 | Redux, Zustand, Jotai, React Query, SWR | No client state needed |
@@ -255,7 +255,7 @@ Adding anything else requires a one-line justification in this section first.
 |---|---|---|
 | **0. Foundation** | This doc set + resolved open design decisions (DESIGN.md §9) | Approved |
 | **1. Scaffold** | pnpm + Next + TS strict + Tailwind v4 + ESLint/Prettier, git init, empty token layer, one static page | `pnpm build` passes, all routes static, Lighthouse 100s on a blank page |
-| **2. Design system** | Tokens, fonts, type scale, grid, primitives, header/footer, `/colophon` stub as live style reference | Light/dark verified, contrast checked, no arbitrary values |
+| **2. Design system** | Tokens, fonts, type scale, grid, primitives, header/footer, `/colophon` stub as live style reference | Heritage palette locked, contrast checked, no arbitrary values |
 | **3. Content model** | Types, `lib/content.ts`, MDX pipeline, one real case study, `site.ts` | `/work/[slug]` statically generated from MDX |
 | **4. Pages** | Home sections, case study template, about, 404 | Real content everywhere, no lorem ipsum |
 | **5. Quality gates** | Metadata, OG, JSON-LD, sitemap; Playwright + axe; Lighthouse CI budgets | All budgets in §5 met in CI |

@@ -11,7 +11,9 @@ The primary impression should be: taste, polished interactions, and obsessive at
 
 ## Current phase
 
-**Phase 2: Design system** in progress. Typography (DESIGN.md §9.1) is settled. Next: the color palette (§9.2). Update this line when a phase completes (see ARCHITECTURE.md §11).
+**Phase 2: Design system** in progress. Typography (DESIGN.md §9.1) and color (DESIGN.md §9.2) are settled. Next: the hero concept (§9.3, decision 3). Update this line when a phase completes (see ARCHITECTURE.md §11).
+
+Color communicates heritage through restraint: racing green establishes identity; antique brass rewards attention. Avoid decorative luxury effects.
 
 ## Stack (summary)
 

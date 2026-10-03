@@ -64,23 +64,32 @@ These are the tells of a template or AI-generated portfolio:
 
 All tokens live in `src/app/globals.css` under Tailwind v4 `@theme`. Components use Tailwind classes that map to tokens. **Never use raw hex, px font sizes or arbitrary values (`[...]`) in components.** If you need one, add a token or justify it in a comment. Exact values are set in §9 decisions; the roles below are fixed.
 
-### Color: gallery neutrals, color from the work
+### Color: warm ivory, racing green, antique brass
 
-| Token | Role |
-|---|---|
-| `bg` | the gallery wall. A near-neutral (OKLCH chroma ≤ 0.015), never pure #fff/#000 |
-| `surface` | the plate/mat behind project media. One quiet step off `bg` |
-| `fg` | primary text |
-| `fg-muted` | secondary text (≥ 4.5:1) |
-| `fg-subtle` | wall labels, metadata, indices (≥ 4.5:1 at its size) |
-| `rule` | grid lines and hairlines (1px). Low contrast, structural |
-| `rule-strong` | emphasized rules: active row, section boundaries |
-| `accent` | one signal color for focus, active state, selection and live indicators. Nearly invisible at rest |
-| `accent-fg` | text on accent |
+Warm ivory gallery surfaces with deep racing green as the primary identity color and restrained antique brass as a secondary craftsmanship signal.
 
-- Light and dark palettes use the same token names under `@media (prefers-color-scheme: dark)`. Both must flatter screenshots of the work.
-- The UI is nearly achromatic. **Color in a viewport comes from the projects**, not the chrome.
-- `accent` appears in ≤ 2% of any viewport at rest. It mostly shows up in response to interaction.
+Ivory is space. Ink is information. Racing green is identity. Antique brass is craftsmanship.
+
+Racing green may be visually bold: a number, a current mark, a filled control, or one exhibition field. It does not become the page. Antique brass stays secondary to racing green. It is a rule, a marker, a border, or a large graphic detail. It must not become a generic luxury-gold treatment: no gradients, foil, metallic fills, or brass headlines and body text.
+
+| Token | Role | Value |
+|---|---|---|
+| `bg` | the gallery wall | `oklch(0.964 0.02 92)` |
+| `surface` | the plate/mat behind project media. One quiet step off `bg` | `oklch(0.942 0.014 90)` |
+| `surface-2` | a second quiet step, still a surface, never a dark theme | `oklch(0.912 0.012 85)` |
+| `fg` | primary text, warm ink | `oklch(0.235 0.016 48)` |
+| `fg-muted` | secondary text (≥ 4.5:1) | `oklch(0.4 0.016 50)` |
+| `fg-subtle` | wall labels, metadata, indices (≥ 4.5:1 at its size) | `oklch(0.425 0.014 52)` |
+| `rule` | grid lines and hairlines (1px). Low contrast, structural | `oklch(0.875 0.016 88)` |
+| `rule-strong` | emphasized rules: active row, section boundaries | `oklch(0.58 0.024 62)` |
+| `accent` | racing green. Identity, focus, active state, selection, and text or fills that must be readable | `oklch(0.34 0.07 155)` |
+| `accent-secondary` | antique brass. Rules, markers, borders, and large graphic details. Not small text | `oklch(0.55 0.09 80)` |
+| `accent-fg` | ivory text on racing green | `oklch(0.98 0.012 92)` |
+
+- The palette is light. It does not switch with `prefers-color-scheme`.
+- Project imagery stays the color of the work. The interface does not tint it.
+- `accent-secondary` on ivory is below 4.5:1, so it is not used for small text. Racing green carries links, focus, and other small interactive text.
+- Brass never sits on racing green (2.3:1). Keep them apart.
 - Define colors in OKLCH. No gradients except functional image-loading placeholders.
 
 ### Typography: three roles, two families max
@@ -138,7 +147,7 @@ GSAP uses the same values, exported from `lib/motion/gsap.ts`.
 
 ## 5. Components (visual rules)
 
-The final pattern for presenting projects is decided in §9.4. The rules below hold whatever pattern is chosen.
+The final pattern for presenting projects is decided in §9.3 (decision 4). The rules below hold whatever pattern is chosen.
 
 ### Interaction states (applies to everything interactive)
 
@@ -183,7 +192,7 @@ The final pattern for presenting projects is decided in §9.4. The rules below h
 
 Motion should feel **tactile, restrained and physical**: things settle into place, respond to touch, and never perform.
 
-- **Signature moment:** a single hero intro, under 1.2s total, playing once per session. The concept is decided in §9.3.
+- **Signature moment:** a single hero intro, under 1.2s total, playing once per session. The concept is decided in §9.3 (decision 3).
 - **Media reveals:** clip-path inset opening plus a slight scale settle (≈1.04 → 1) at `duration-media`, plays once. This is the main "exhibition" gesture.
 - **Text reveals:** subtle 8–16px translate plus opacity on headings and labels, with short stagger. Never on body paragraphs.
 - **Micro-interactions:** link underlines, exhibit hover, index-row previews, copy confirmation, focus transitions. This is where most of the craft budget goes.
@@ -201,7 +210,7 @@ Motion should feel **tactile, restrained and physical**: things settle into plac
 
 ## 8. Accessibility (visual)
 
-- Focus ring: 2px `accent` outline with offset, visible in both themes and on top of media.
+- Focus ring: 2px `accent` outline with offset, visible on the ivory wall and on top of media.
 - Never convey meaning with color alone.
 - Respect user font-size settings: type uses `rem`, not px.
 - Text must stay readable at 200% zoom and 320px width without horizontal scroll.
@@ -209,7 +218,7 @@ Motion should feel **tactile, restrained and physical**: things settle into plac
 
 ## 9. Open decisions
 
-**Settled:** visual direction (§1). Typography (§9.1).
+**Settled:** visual direction (§1). Typography (§9.1). Color (§9.2).
 
 ### 9.1 Typography
 
@@ -223,9 +232,14 @@ Two families, both SIL Open Font License 1.1, self-hosted from `src/fonts/`.
 
 The Bricolage file is width 100 with weight limited to 400–600. The Azeret file is weight 400–500. There is no italic cut.
 
+### 9.2 Color
+
+The heritage palette in §4. Warm ivory is the wall, warm ink is the type, racing green is the identity, and antique brass is the craftsmanship detail. Brass stays secondary to green. Canonical reference specimen: `/color-test`, built from the production tokens and faces. Do not add another color exploration page.
+
+### 9.3 Remaining decisions
+
 | # | Decision | Constraints | How to decide |
 |---|---|---|---|
-| 2 | **Exact color palette** | Near-neutral `bg`/`surface` (light + dark) that flatter real screenshots; one `accent`; AA minimum, AAA body text | Test against actual project media, not empty swatches |
 | 3 | **Hero concept** | Delivers the 5-second objective; LCP is text or one optimized media element; ≤ 1.2s intro; no §3 patterns | Sketch 2–3 concepts. Judge on first impression and the first interaction. |
 | 4 | **Project presentation pattern** | Exhibit rules in §5; small fixed composition set; works with 3–5 projects; strong on mobile | Prototype with real assets for at least 2 projects |
 

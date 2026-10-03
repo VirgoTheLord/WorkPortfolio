@@ -2,8 +2,8 @@
 
 /*
  * Design tokens — see DESIGN.md §4.
- * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color values
- * marked PROVISIONAL wait on decision 2. Components use these via Tailwind
+ * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color is the
+ * locked heritage palette (DESIGN.md §9.2). Components use these via Tailwind
  * utilities only — never raw values.
  */
 
@@ -17,17 +17,19 @@
   --radius-*: initial;
   --ease-*: initial;
 
-  /* Color — PROVISIONAL achromatic values until decision 2. Light palette;
-     dark overrides live in the base layer below. */
-  --color-bg: oklch(0.985 0 0);
-  --color-surface: oklch(0.955 0 0);
-  --color-fg: oklch(0.2 0 0);
-  --color-fg-muted: oklch(0.4 0 0);
-  --color-fg-subtle: oklch(0.48 0 0);
-  --color-rule: oklch(0.89 0 0);
-  --color-rule-strong: oklch(0.75 0 0);
-  --color-accent: oklch(0.5 0.17 255);
-  --color-accent-fg: oklch(0.985 0 0);
+  /* Color — heritage palette, DESIGN.md §9.2. Ivory wall, warm ink,
+     racing green as identity, antique brass as the secondary signal. */
+  --color-bg: oklch(0.964 0.02 92);
+  --color-surface: oklch(0.942 0.014 90);
+  --color-surface-2: oklch(0.912 0.012 85);
+  --color-fg: oklch(0.235 0.016 48);
+  --color-fg-muted: oklch(0.4 0.016 50);
+  --color-fg-subtle: oklch(0.425 0.014 52);
+  --color-rule: oklch(0.875 0.016 88);
+  --color-rule-strong: oklch(0.58 0.024 62);
+  --color-accent: oklch(0.34 0.07 155);
+  --color-accent-secondary: oklch(0.55 0.09 80);
+  --color-accent-fg: oklch(0.98 0.012 92);
 
   /* Display and text share Bricolage Grotesque. Label is Azeret Mono.
      next/font/local sets the *-face variables in src/lib/fonts.ts. */
@@ -117,23 +119,8 @@
 }
 
 @layer base {
-  @media (prefers-color-scheme: dark) {
-    :root {
-      /* PROVISIONAL — decision 2. */
-      --color-bg: oklch(0.17 0 0);
-      --color-surface: oklch(0.21 0 0);
-      --color-fg: oklch(0.95 0 0);
-      --color-fg-muted: oklch(0.78 0 0);
-      --color-fg-subtle: oklch(0.7 0 0);
-      --color-rule: oklch(0.3 0 0);
-      --color-rule-strong: oklch(0.45 0 0);
-      --color-accent: oklch(0.72 0.14 255);
-      --color-accent-fg: oklch(0.17 0 0);
-    }
-  }
-
   html {
-    color-scheme: light dark;
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     font-kerning: normal;
