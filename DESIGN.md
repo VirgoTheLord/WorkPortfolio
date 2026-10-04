@@ -64,33 +64,45 @@ These are the tells of a template or AI-generated portfolio:
 
 All tokens live in `src/app/globals.css` under Tailwind v4 `@theme`. Components use Tailwind classes that map to tokens. **Never use raw hex, px font sizes or arbitrary values (`[...]`) in components.** If you need one, add a token or justify it in a comment. Exact values are set in §9 decisions; the roles below are fixed.
 
-### Color: warm ivory, racing green, antique brass
+### Color: pure white, bold green, a layered tonal system
 
-Warm ivory gallery surfaces with deep racing green as the primary identity color and restrained antique brass as a secondary craftsmanship signal.
+A pure white foundation with a bold green identity, built from four exact greens that form a tonal system, in light and dark modes. Strong visual personality comes from color fields, type and composition, never from gradients or decoration.
 
-Ivory is space. Ink is information. Racing green is identity. Antique brass is craftsmanship.
+White is space. Green is identity. The deepest green reads; the lighter greens are volume.
 
-Racing green may be visually bold: a number, a current mark, a filled control, or one exhibition field. It does not become the page. Antique brass stays secondary to racing green. It is a rule, a marker, a border, or a large graphic detail. It must not become a generic luxury-gold treatment: no gradients, foil, metallic fills, or brass headlines and body text.
+The four brand greens are exact and are never altered, tinted or "fixed" for contrast. When a green cannot do a job, its role changes instead of its value.
 
-| Token | Role | Value |
+| Brand green | Value | Role |
 |---|---|---|
-| `bg` | the gallery wall | `oklch(0.964 0.02 92)` |
-| `surface` | the plate/mat behind project media. One quiet step off `bg` | `oklch(0.942 0.014 90)` |
-| `surface-2` | a second quiet step, still a surface, never a dark theme | `oklch(0.912 0.012 85)` |
-| `fg` | primary text, warm ink | `oklch(0.235 0.016 48)` |
-| `fg-muted` | secondary text (≥ 4.5:1) | `oklch(0.4 0.016 50)` |
-| `fg-subtle` | wall labels, metadata, indices (≥ 4.5:1 at its size) | `oklch(0.425 0.014 52)` |
-| `rule` | grid lines and hairlines (1px). Low contrast, structural | `oklch(0.875 0.016 88)` |
-| `rule-strong` | emphasized rules: active row, section boundaries | `oklch(0.58 0.024 62)` |
-| `accent` | racing green. Identity, focus, active state, selection, and text or fills that must be readable | `oklch(0.34 0.07 155)` |
-| `accent-secondary` | antique brass. Rules, markers, borders, and large graphic details. Not small text | `oklch(0.55 0.09 80)` |
-| `accent-fg` | ivory text on racing green | `oklch(0.98 0.012 92)` |
+| `green-deep` (primary) | `#5C7057` | Identity. The only green that reads as text on white (5.4:1). Strong fields. |
+| `green-mid` (secondary) | `#89A482` | Marks, rules and graphics in light; the strong field and small text in dark. |
+| `green-soft` | `#ACC5A6` | Hairlines and a second surface in light; secondary text in dark. |
+| `green-light` | `#D1EDD3` | Surfaces and mats in light; primary text in dark. |
 
-- The palette is light. It does not switch with `prefers-color-scheme`.
+Components use the semantic tokens, not the brand greens directly.
+
+| Token | Role | Light | Dark |
+|---|---|---|---|
+| `bg` | the page | `#FFFFFF` | mode surface `#0D130E` |
+| `surface` | the plate/mat behind project media | `green-light` | raised mode surface `#161E17` |
+| `surface-2` | a second surface | `green-soft` | raised mode surface |
+| `fg` | primary text | `green-deep` | `green-light` |
+| `fg-muted` | secondary text | `green-deep` | `green-soft` |
+| `fg-subtle` | wall labels, metadata, indices | `green-deep` | `green-mid` |
+| `rule` | hairlines (1px). Low contrast, structural | `green-soft` | `green-deep` |
+| `rule-strong` | emphasized rules: active row, section boundaries | `green-mid` | `green-mid` |
+| `accent` | identity, active state, strong fields, links, text that must be readable | `green-deep` | `green-mid` |
+| `accent-secondary` | marks, bars, borders, oversized numerals. Never small text | `green-mid` | `green-soft` |
+| `accent-fg` | text on `accent` | `#FFFFFF` | mode surface |
+| `focus` | the focus ring | `green-deep` | `green-light` |
+
+- **Modes.** Light is the default. Dark follows `prefers-color-scheme`, and `data-theme="light"` or `"dark"` forces a mode on any subtree. There is no toggle yet. Dark is its own composition, not an inversion: the lightest greens carry text, the mid green is the field, the deepest green drops to hairlines and panels.
+- **Mode surfaces** (`#0D130E`, `#161E17`) are neutral rooms for dark mode, not brand colors. Do not add more neutrals.
+- **One text color in light.** `fg`, `fg-muted` and `fg-subtle` are the same green, so hierarchy comes from size, weight and the label face, and link state from underline weight rather than color.
+- **Limits that follow from the values:** `green-mid` and `green-soft` are graphics, fields and borders on white, never text. Light text on `green-deep` is 4.3:1 (`green-light`, large text only) or 5.4:1 (white). `green-deep` is 3.5:1 on the dark surface, so it is hairlines and panels there, never small text.
 - Project imagery stays the color of the work. The interface does not tint it.
-- `accent-secondary` on ivory is below 4.5:1, so it is not used for small text. Racing green carries links, focus, and other small interactive text.
-- Brass never sits on racing green (2.3:1). Keep them apart.
-- Define colors in OKLCH. No gradients except functional image-loading placeholders.
+- Flat color only: no gradients except functional image-loading placeholders, and no glows, blur, texture or shadows.
+- Colors are defined once, in `src/app/globals.css`. `/color-test` renders the real tokens in both modes and is the permanent reference.
 
 ### Typography: three roles, two families max
 
@@ -210,7 +222,7 @@ Motion should feel **tactile, restrained and physical**: things settle into plac
 
 ## 8. Accessibility (visual)
 
-- Focus ring: 2px `accent` outline with offset, visible on the ivory wall and on top of media.
+- Focus ring: 2px `focus` outline with offset, visible on the page in both modes and on top of media.
 - Never convey meaning with color alone.
 - Respect user font-size settings: type uses `rem`, not px.
 - Text must stay readable at 200% zoom and 320px width without horizontal scroll.
@@ -234,7 +246,7 @@ The Bricolage file is width 100 with weight limited to 400–600. The Azeret fil
 
 ### 9.2 Color
 
-The heritage palette in §4. Warm ivory is the wall, warm ink is the type, racing green is the identity, and antique brass is the craftsmanship detail. Brass stays secondary to green. Canonical reference specimen: `/color-test`, built from the production tokens and faces. Do not add another color exploration page.
+The green system in §4: pure white foundation, four exact greens, light and dark modes. Canonical reference: `/color-test`, which renders the production tokens in both modes and keeps the contrast numbers. Do not add another color exploration page.
 
 ### 9.3 Remaining decisions
 
