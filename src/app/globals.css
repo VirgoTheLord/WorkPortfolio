@@ -3,8 +3,9 @@
 /*
  * Design tokens — see DESIGN.md §4.
  * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color is the
- * locked heritage palette (DESIGN.md §9.2). Components use these via Tailwind
- * utilities only — never raw values.
+ * finalized green system (DESIGN.md §9.2): four exact greens on pure white,
+ * with a dark mode. Components use the semantic tokens via Tailwind utilities
+ * only — never raw values.
  */
 
 @theme {
@@ -17,19 +18,31 @@
   --radius-*: initial;
   --ease-*: initial;
 
-  /* Color — heritage palette, DESIGN.md §9.2. Ivory wall, warm ink,
-     racing green as identity, antique brass as the secondary signal. */
-  --color-bg: oklch(0.964 0.02 92);
-  --color-surface: oklch(0.942 0.014 90);
-  --color-surface-2: oklch(0.912 0.012 85);
-  --color-fg: oklch(0.235 0.016 48);
-  --color-fg-muted: oklch(0.4 0.016 50);
-  --color-fg-subtle: oklch(0.425 0.014 52);
-  --color-rule: oklch(0.875 0.016 88);
-  --color-rule-strong: oklch(0.58 0.024 62);
-  --color-accent: oklch(0.34 0.07 155);
-  --color-accent-secondary: oklch(0.55 0.09 80);
-  --color-accent-fg: oklch(0.98 0.012 92);
+  /* Color — the green system, DESIGN.md §9.2. The four brand greens are exact
+     and never altered; modes reassign their roles instead. Prefer the semantic
+     tokens below to these raw ones. */
+  --color-green-deep: #5c7057; /* primary green: identity, text on white */
+  --color-green-mid: #89a482; /* secondary green: marks, graphics, dark-mode fields */
+  --color-green-soft: #acc5a6; /* soft green: hairlines, second surface */
+  --color-green-light: #d1edd3; /* light green: surfaces and mats */
+
+  /* Mode surfaces: neutral rooms for dark mode, not brand colors. */
+  --color-mode-surface: #0d130e;
+  --color-mode-surface-raised: #161e17;
+
+  /* Semantic roles, light mode (the default). Dark values are set below. */
+  --color-bg: #ffffff;
+  --color-surface: var(--color-green-light);
+  --color-surface-2: var(--color-green-soft);
+  --color-fg: var(--color-green-deep);
+  --color-fg-muted: var(--color-green-deep);
+  --color-fg-subtle: var(--color-green-deep);
+  --color-rule: var(--color-green-soft);
+  --color-rule-strong: var(--color-green-mid);
+  --color-accent: var(--color-green-deep);
+  --color-accent-secondary: var(--color-green-mid);
+  --color-accent-fg: #ffffff;
+  --color-focus: var(--color-green-deep);
 
   /* Display and text share Bricolage Grotesque. Label is Azeret Mono.
      next/font/local sets the *-face variables in src/lib/fonts.ts. */
@@ -108,6 +121,61 @@
   --stagger: 50ms;
 }
 
+/* Modes. Light is the default above. Dark follows the system setting, and
+   data-theme="light" or "dark" forces a mode on the root or on any subtree
+   (/color-test uses this). Dark is its own composition, not an inversion: the
+   lightest greens carry text, the mid green is the field, the deepest green
+   drops to hairlines. Keep the three dark blocks identical. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-bg: var(--color-mode-surface);
+    --color-surface: var(--color-mode-surface-raised);
+    --color-surface-2: var(--color-mode-surface-raised);
+    --color-fg: var(--color-green-light);
+    --color-fg-muted: var(--color-green-soft);
+    --color-fg-subtle: var(--color-green-mid);
+    --color-rule: var(--color-green-deep);
+    --color-rule-strong: var(--color-green-mid);
+    --color-accent: var(--color-green-mid);
+    --color-accent-secondary: var(--color-green-soft);
+    --color-accent-fg: var(--color-mode-surface);
+    --color-focus: var(--color-green-light);
+  }
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: var(--color-mode-surface);
+  --color-surface: var(--color-mode-surface-raised);
+  --color-surface-2: var(--color-mode-surface-raised);
+  --color-fg: var(--color-green-light);
+  --color-fg-muted: var(--color-green-soft);
+  --color-fg-subtle: var(--color-green-mid);
+  --color-rule: var(--color-green-deep);
+  --color-rule-strong: var(--color-green-mid);
+  --color-accent: var(--color-green-mid);
+  --color-accent-secondary: var(--color-green-soft);
+  --color-accent-fg: var(--color-mode-surface);
+  --color-focus: var(--color-green-light);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: var(--color-green-light);
+  --color-surface-2: var(--color-green-soft);
+  --color-fg: var(--color-green-deep);
+  --color-fg-muted: var(--color-green-deep);
+  --color-fg-subtle: var(--color-green-deep);
+  --color-rule: var(--color-green-soft);
+  --color-rule-strong: var(--color-green-mid);
+  --color-accent: var(--color-green-deep);
+  --color-accent-secondary: var(--color-green-mid);
+  --color-accent-fg: #ffffff;
+  --color-focus: var(--color-green-deep);
+}
+
 @utility duration-instant {
   transition-duration: var(--duration-instant);
 }
@@ -131,7 +199,7 @@
 
 @layer base {
   html {
-    color-scheme: light;
+    color-scheme: light dark;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     font-kerning: normal;
@@ -186,7 +254,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
   }
 
