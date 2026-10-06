@@ -11,7 +11,7 @@ Technical decisions for the portfolio. If code and this file disagree, either fi
 | Framework | **Next.js, latest stable, App Router** | RSC lets us ship near-zero component JS; first-class metadata, image, font and OG tooling. |
 | Language | **TypeScript, `strict: true`** + `noUncheckedIndexedAccess` | Content schemas are types. A type error fails the build. |
 | Styling | **Tailwind CSS v4** (CSS-first `@theme`, no JS config) | Tokens live in CSS. No runtime cost. |
-| Motion | **CSS first. GSAP core** (+ ScrollTrigger only if needed) for orchestrated sequences | GSAP is lazy-loaded inside client islands and never sits on the critical path. |
+| Motion | **CSS first. GSAP core** (+ ScrollTrigger only if needed; CustomEase, from the same package, for the menu's arrival curve) for orchestrated sequences. Scroll-linked motion uses CSS scroll-driven animations where they can express it (the hero's push), so no script runs on scroll | GSAP is lazy-loaded inside client islands and never sits on the critical path. |
 | Content | **Local MDX** via `@next/mdx` + typed TS modules | No CMS, no frontmatter parser. Metadata is exported from MDX as typed JS. |
 | Fonts | `next/font/local` with self-hosted variable woff2 | No layout shift, no third-party requests. |
 | Images | `next/image` (AVIF/WebP) | Explicit dimensions, responsive `sizes`. |
@@ -39,6 +39,8 @@ TypeScript and ESLint follow the majors that `create-next-app` targets for our N
 /resume.pdf           Static file in /public
 /sitemap.xml, /robots.txt, OG images   Generated
 ```
+
+**Status of the checkpoint:** the site ships as one static page (`/`) plus `/color-test`, the noindex color reference. `/about`, `/work/[slug]`, `/colophon`, the designed 404 and the other routes above are planned and not built; there are no case studies yet, so project cards link nowhere until a project gets an `href`. The home sections are as listed below, in the order Hero, About, Skills, Selected Work, Contact, then the footer.
 
 **Home section order:** Hero (name + one-sentence positioning) → Selected Work (3–4) → About (short) → Experience (compact timeline) → Contact (email + links).
 
@@ -107,7 +109,7 @@ Rules:
 - Pass minimal serializable props across the boundary. Never pass whole content objects to a client component.
 - Mark content loaders `import 'server-only'`.
 - Every route must show as static (○ / ●) in `next build` output. A dynamic route is a bug.
-- The color palette is the locked green system (DESIGN.md §9.2). Light and dark are CSS tokens: dark follows `prefers-color-scheme` and `data-theme` can force a mode. There is no theme library and no toggle yet.
+- The color palette is the good-fella.com orange system (DESIGN.md §9.2). Light and dark are CSS tokens: dark follows `prefers-color-scheme` and `data-theme` can force a mode. There is no theme library.
 
 ---
 
@@ -223,7 +225,7 @@ Adding anything else requires a one-line justification in this section first.
 | clsx, classnames, tailwind-merge, cva | `lib/cn.ts` + explicit variant maps |
 | shadcn/ui, Radix, Headless UI, MUI, Chakra | Hand-built primitives (we have almost no complex widgets) |
 | lucide-react, react-icons, any icon set | Inline SVG components (a handful) |
-| next-themes | The green system is plain CSS tokens; modes need no library |
+| next-themes | The color system is plain CSS tokens; modes need no library |
 | contentlayer, velite, gray-matter, Sanity/Contentful | Local MDX + exported `meta` |
 | zod (for content) | TypeScript types |
 | Redux, Zustand, Jotai, React Query, SWR | No client state needed |

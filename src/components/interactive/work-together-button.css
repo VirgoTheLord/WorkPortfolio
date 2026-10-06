@@ -1,0 +1,130 @@
+/*
+ * Two squares and a label. At rest the label sits left of a square that holds a
+ * plus. On hover the right square shrinks away toward its right edge while a
+ * second square grows from the label's left edge and the label slides across by
+ * exactly one square plus the gap, so the plus changes sides and the whole
+ * object keeps its width. Both directions run at the same length on the same
+ * curve.
+ *
+ * The movement is for a pointer that can hover. On touch the button stays at
+ * rest, and under reduced motion the state still changes but without travel.
+ */
+.wtb {
+  --wtb-size: calc(var(--spacing) * 8);
+  --wtb-gap: calc(var(--spacing) * 1.5);
+}
+
+@media (min-width: 64rem) {
+  .wtb {
+    --wtb-size: calc(var(--spacing) * 10);
+  }
+}
+
+.wtb-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--wtb-gap);
+}
+
+.wtb-square,
+.wtb-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--wtb-size);
+  transition-property: transform;
+  transition-duration: var(--duration-deliberate);
+  transition-timing-function: var(--ease-emphasis);
+}
+
+.wtb-square {
+  width: var(--wtb-size);
+}
+
+/* The square that arrives. It occupies its slot at rest, scaled to nothing. */
+.wtb-square-in {
+  transform-origin: left center;
+  transform: rotate(-45deg) scale(0);
+}
+
+/* The label rests one square and one gap to the left, over the arriving
+   square's slot. */
+.wtb-label {
+  flex: 1;
+  padding-inline: calc(var(--spacing) * 3);
+  white-space: nowrap;
+  transform: translateX(calc((var(--wtb-size) + var(--wtb-gap)) * -1));
+}
+
+/* The square that leaves. */
+.wtb-square-out {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  transform-origin: right center;
+}
+
+@media (min-width: 64rem) {
+  .wtb-label {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+}
+
+/* Hover for a fine pointer; focus-visible shows the same state to the keyboard. */
+@media (hover: hover) and (pointer: fine) {
+  .wtb:hover .wtb-square-in {
+    transform: rotate(0) scale(1);
+  }
+
+  .wtb:hover .wtb-label {
+    transform: translateX(0);
+  }
+
+  .wtb:hover .wtb-square-out {
+    transform: rotate(-45deg) scale(0);
+  }
+}
+
+.wtb:focus-visible .wtb-square-in {
+  transform: rotate(0) scale(1);
+}
+
+.wtb:focus-visible .wtb-label {
+  transform: translateX(0);
+}
+
+.wtb:focus-visible .wtb-square-out {
+  transform: rotate(-45deg) scale(0);
+}
+
+/* A touch screen gets the 44px target without a bigger button: the link's hit
+   area extends above and below it. */
+@media (pointer: coarse) {
+  .wtb {
+    position: relative;
+  }
+
+  .wtb::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block: -0.375rem;
+  }
+}
+
+/* Pressed: the whole object settles by a pixel. */
+.wtb:active {
+  translate: 0 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wtb-square,
+  .wtb-label {
+    transition: none;
+  }
+
+  .wtb:active {
+    translate: none;
+  }
+}

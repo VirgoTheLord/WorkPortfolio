@@ -1,88 +1,159 @@
 /*
- * Hero entrance, CSS only: transform, opacity and clip-path (ARCHITECTURE.md §6).
- * One sequence, about 1.2s end to end:
- *   1 metadata rule and labels  →  2 statement masks  →  3 supporting info  →  4 green and brass
- * Content is in the server HTML, so nothing waits on JavaScript and the
- * statement can paint as the LCP element.
+ * Hero composition (spacing, type and entrance after the good-fella.com hero, on
+ * one centre line), plus the starting states the intro needs. Every intro rule is scoped to html.is-intro, which the
+ * inline script in layout.tsx sets before first paint (home page, no hash, motion
+ * allowed). Without it (reduced motion, no JavaScript, deep links, or after the
+ * intro) the hero is its final state.
  */
-@reference '../../app/globals.css';
 
-@keyframes hero-mask {
-  from {
-    clip-path: inset(0 0 100% 0);
-    transform: translateY(0.3em);
+/*
+ * One screen tall, starting under the floating navbar. The frame sits on the
+ * navbar's own edge (16px, 32px from lg) and 52px down, as the reference does.
+ */
+.hero {
+  --hero-edge: calc(var(--spacing) * 4);
+  --hero-top: calc(var(--spacing) * 13);
+  --hero-bottom: calc(var(--spacing) * 8);
+  min-height: 100svh;
+  view-timeline: --hero block;
+}
+
+/* The navbar is fixed and transparent over the hero, so the hero starts at the
+   top of the screen rather than under the header's reserved space. Without
+   JavaScript the header is in the flow and the hero simply follows it. */
+.js .hero {
+  margin-top: calc(var(--spacing-header) * -1);
+}
+
+.hero-frame {
+  position: relative;
+  min-height: 100svh;
+  padding-top: var(--hero-top);
+  padding-inline: var(--hero-edge);
+}
+
+/* The copy: the main block centred in the screen, then the stack row along the
+   bottom edge, all on one centre line. */
+.hero-copy {
+  position: relative;
+  display: grid;
+  min-height: calc(100svh - var(--hero-top));
+  grid-template-rows: 1fr auto;
+  padding-bottom: var(--hero-bottom);
+  text-align: center;
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  gap: calc(var(--spacing) * 6);
+}
+
+.hero-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+  margin-top: calc(var(--spacing) * 8);
+}
+
+@media (min-width: 64rem) {
+  .hero {
+    --hero-edge: calc(var(--spacing) * 8);
   }
-  to {
-    /* Negative insets keep ascenders, descenders and tight tracking unclipped. */
-    clip-path: inset(-0.2em -0.1em -0.3em -0.1em);
-    transform: translateY(0);
+
+  .hero-main {
+    gap: calc(var(--spacing) * 8);
+  }
+
+  .hero-stack {
+    margin-top: 0;
   }
 }
 
-@keyframes hero-draw {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
+/* ---- Headline ----------------------------------------------------------- */
 
-@keyframes hero-set {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-/* --i is a per-element index set inline: delay = stage start + index × stagger. */
-
-/* 1. Metadata establishes itself: the hairline draws, then the labels mask in. */
-.hero-rule {
-  transform-origin: left;
-  animation: hero-draw var(--duration-slow) var(--ease-in-out) both;
-}
-
-.hero-meta {
-  animation: hero-mask var(--duration-base) var(--ease-out) both;
-  animation-delay: calc(80ms + var(--i, 0) * var(--stagger));
-}
-
-/* 2. The statement: one mask per phrase. */
+/* Each line is its own box, so the wipe blocks cover exactly one line. */
 .hero-line {
-  animation: hero-mask var(--duration-slow) var(--ease-out) both;
-  animation-delay: calc(160ms + var(--i, 0) * var(--stagger));
+  position: relative;
+  display: inline-block;
 }
 
-/* 3. Supporting information. */
-.hero-support {
-  animation: hero-mask var(--duration-slow) var(--ease-out) both;
-  animation-delay: calc(500ms + var(--i, 0) * var(--stagger));
+.hero-line-text {
+  display: block;
+  white-space: nowrap;
 }
 
-/* 4. Racing green and antique brass arrive last. */
-.hero-brass {
-  transform-origin: left;
-  animation: hero-draw var(--duration-slow) var(--ease-in-out) both;
-  animation-delay: 600ms;
+/* The wipe blocks overhang the line a little on every side. They are only seen
+   while the intro runs. */
+.hero-block {
+  position: absolute;
+  inset: -0.1em;
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
 }
 
-.hero-green {
-  animation: hero-set var(--duration-base) var(--ease-out) both;
-  animation-delay: 760ms;
+/* The line under the headline rises from a mask. */
+.hero-mask {
+  overflow: hidden;
 }
 
-/* The global reduced-motion reset keeps animation delays, which would leave
-   content hidden. Remove the animations so the final state is immediate. */
-@media (prefers-reduced-motion: reduce) {
-  .hero-rule,
-  .hero-meta,
-  .hero-line,
-  .hero-support,
-  .hero-brass,
-  .hero-green {
-    animation: none;
+/* ---- Scroll ------------------------------------------------------------- */
+
+/*
+ * As the hero scrolls away its contents drift down by 35% of its height, so they
+ * leave at about two thirds of the scroll speed (the reference's push). A scroll
+ * timeline, so no script runs on scroll; where unsupported the hero simply
+ * scrolls.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-push {
+      animation: hero-push linear both;
+      animation-timeline: --hero;
+      animation-range: exit 0% exit 100%;
+    }
   }
+}
+
+@keyframes hero-push {
+  to {
+    translate: 0 35%;
+  }
+}
+
+/* ---- Intro starting states --------------------------------------------- */
+/* Each matches the `from` values in hero-intro.tsx, so no tween's first frame
+   jumps. */
+
+/* The page holds still. The gutter stays reserved so releasing the lock cannot
+   shift the layout. */
+html.is-intro {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+/* The navbar waits above the screen until the page enters; the bar slides down
+   and fades in as one piece (logo, menu and action together). */
+html.is-intro [data-hero-nav] {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+html.is-intro [data-hero-text] {
+  opacity: 0;
+}
+
+html.is-intro [data-hero-intro] {
+  transform: translateY(100%);
+}
+
+html.is-intro [data-hero-actions],
+html.is-intro [data-hero-stack] {
+  opacity: 0;
+  transform: translateY(calc(var(--spacing) * 5));
 }

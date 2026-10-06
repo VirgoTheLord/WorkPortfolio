@@ -3,22 +3,24 @@ import type {
   ContactContent,
   FooterContent,
   HeroContent,
+  MenuContent,
   SiteConfig,
   SkillsContent,
   WorkContent,
 } from '@/types/content'
 
 /*
- * Hero copy. The statement and the index total are replaceable placeholders:
- * the total becomes the real project count once projects exist (ARCHITECTURE.md §7).
+ * Hero copy. The title is the name, on two lines. The line under it names the
+ * three areas the Skills section is organised around (engineering, interaction,
+ * craft), so it claims nothing the page does not already say. The stack row
+ * lists tools this site is built with (see `skills`).
  */
 export const hero = {
-  eyebrow: 'Selected work',
-  year: '2026',
-  statement: ['I build', 'digital work', 'with an eye', 'for detail.'],
-  index: { current: '01', total: '05' },
-  name: 'Alwin Aby Mathew',
-  role: 'Software engineer',
+  title: ['Alwin Aby', 'Mathew'],
+  intro: 'Code · Motion · Craft',
+  action: { label: 'See the work', href: '#work' },
+  secondary: { label: 'Write to me', href: '#contact' },
+  stack: { label: 'Built with', items: ['Next.js', 'React', 'TypeScript', 'GSAP'] },
 } satisfies HeroContent
 
 /*
@@ -28,13 +30,8 @@ export const hero = {
  * Replace with final wording.
  */
 export const about = {
-  index: '01',
   label: 'About',
-  statement: [
-    'I make interfaces where engineering and visual craft meet.',
-    'Fast, accessible, and considered down to the last state.',
-  ],
-  body: 'Most of my attention goes to the front end: typography, interaction and performance, built with as few moving parts as the work allows.',
+  statement: 'I make interfaces where engineering and visual craft meet.',
   details: [
     { term: 'Focus', detail: 'Frontend engineering' },
     { term: 'Interests', detail: 'Interaction, visual craft' },
@@ -49,8 +46,8 @@ export const about = {
  * experience before launch.
  */
 export const skills = {
-  index: '02',
   label: 'Skills',
+  headline: 'How I build.',
   groups: [
     {
       index: '01',
@@ -76,7 +73,14 @@ export const skills = {
   ],
 } satisfies SkillsContent
 
-export const work = { index: '03', label: 'Selected Work' } satisfies WorkContent
+export const work = {
+  label: 'Selected Work',
+  headline: ['Selected', 'work.'],
+  text: 'Three pieces of this site, shown as they run.',
+  action: { label: 'Write to me', href: '/#contact' },
+  thumbsLabel: 'Projects',
+  goTo: 'Go to',
+} satisfies WorkContent
 
 /*
  * Contact. PLACEHOLDER: no contact details exist in the project yet, so the
@@ -84,8 +88,8 @@ export const work = { index: '03', label: 'Selected Work' } satisfies WorkConten
  * be replaced before launch. The statement makes no claim about availability.
  */
 export const contact = {
-  index: '04',
   label: 'Contact',
+  headline: 'Get in touch.',
   statement: ['If something here caught your eye,', 'write to me.'],
   emailLabel: 'Email',
   email: 'your-email@example.com',
@@ -117,3 +121,23 @@ export const site = {
     { label: 'Contact', href: '/#contact' },
   ],
 } satisfies SiteConfig
+
+/*
+ * The expanded navbar. Only facts the project already holds: the destinations
+ * above, the contact address and focus stated elsewhere on the page, the role
+ * and the year. It makes no claim about availability, clients or location.
+ */
+export const menu = {
+  label: 'Menu',
+  closeLabel: 'Close',
+  home: { label: 'Home', href: '/' },
+  action: { label: 'Write to me', href: '/#contact' },
+  contactLabel: 'Contact',
+  themeLabel: 'Theme',
+  themeLight: 'Light',
+  themeDark: 'Dark',
+  focusLabel: 'Focus',
+  focus: about.details.find((item) => item.term === 'Focus')?.detail ?? '',
+  status: [site.role, `Portfolio ${site.year}`],
+  projectsLabel: 'Selected work',
+} satisfies MenuContent

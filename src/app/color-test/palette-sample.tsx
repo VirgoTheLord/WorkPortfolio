@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { projects } from '@/content/projects'
-import { brand, specimen, type Mode } from '@/content/color-test'
+import { palette, specimen, type Mode, type TokenGroup } from '@/content/color-test'
 import { contrast, verdict } from './contrast'
 
 const label = 'font-label text-label uppercase'
@@ -21,14 +21,25 @@ const swatchClass: Record<string, string> = {
   'accent-secondary': 'bg-accent-secondary',
   'accent-fg': 'bg-accent-fg',
   focus: 'bg-focus',
+  selection: 'bg-selection',
 }
 
-const brandClass: Record<string, string> = {
-  'green-deep': 'bg-green-deep',
-  'green-mid': 'bg-green-mid',
-  'green-soft': 'bg-green-soft',
-  'green-light': 'bg-green-light',
+const paletteClass: Record<string, string> = {
+  orange: 'bg-orange',
+  'orange-bright': 'bg-orange-bright',
+  'orange-soft': 'bg-orange-soft',
+  'orange-muted': 'bg-orange-muted',
+  black: 'bg-black',
+  white: 'bg-white',
+  paper: 'bg-paper',
+  stone: 'bg-stone',
+  grey: 'bg-grey',
+  'grey-light': 'bg-grey-light',
+  charcoal: 'bg-charcoal',
+  graphite: 'bg-graphite',
 }
+
+const groups: readonly TokenGroup[] = ['Text', 'Surface', 'Graphic', 'Interactive']
 
 const typeScale = [
   ['display-xl', 'text-display-xl', 'Detail'],
@@ -93,52 +104,57 @@ export function PaletteSample({ mode }: Props) {
           {mode.title}
         </h2>
         <p className="mt-4 max-w-measure font-text text-base text-fg-muted">{mode.note}</p>
-        <ul className="mt-8 grid grid-cols-2 border border-rule md:grid-cols-4">
-          {brand.map((b) => (
+        <p className={`${label} mt-8 text-fg-subtle`}>The reference palette, exact values</p>
+        <ul className="mt-3 grid grid-cols-2 border border-rule-strong md:grid-cols-4 lg:grid-cols-6">
+          {palette.map((b) => (
             <li key={b.hex}>
-              <div className={`h-24 md:h-32 ${brandClass[b.token]}`} />
+              <div className={`h-24 md:h-32 ${paletteClass[b.token]}`} />
               <div className="px-3 py-3">
                 <p className={`${label} font-medium`}>{b.name}</p>
-                <p className={`${label} text-fg-subtle tabular-nums`}>{b.hex}</p>
+                <p className={`${label} text-fg-subtle tabular-nums`}>
+                  {b.token} · {b.hex}
+                </p>
+                <p className="mt-1 font-text text-sm text-fg-muted">{b.role}</p>
               </div>
             </li>
           ))}
         </ul>
-        <p className={`${label} mt-6 text-fg-subtle`}>
-          {mode.theme === 'dark' ? 'Mode colors, not brand colors' : 'Canvas'}
-        </p>
-        <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-3">
-          {mode.modeColors.map((m) => (
-            <li key={m.name} className="flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="size-6 border border-rule"
-                style={{ backgroundColor: m.hex }}
-              />
-              <span className={`${label} tabular-nums`}>
-                {m.name} <span className="text-fg-subtle">{m.hex}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
 
-        {/* Token map */}
+        {/* Token map, by job */}
         <h3 className="mt-12 font-display text-xl">Semantic tokens</h3>
-        <ul className="mt-4 grid gap-gutter sm:grid-cols-2 lg:grid-cols-4">
-          {mode.tokens.map((t) => (
-            <li key={t.token} className="flex items-center gap-3 border-t border-rule pt-3">
-              <span
-                aria-hidden="true"
-                className={`size-10 shrink-0 border border-rule ${swatchClass[t.token]}`}
-              />
-              <span>
-                <span className={`${label} block font-medium`}>{t.token}</span>
-                <span className={`${label} block text-fg-subtle tabular-nums`}>{t.hex}</span>
-                <span className="block font-text text-sm text-fg-muted">{t.role}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        {groups.map((group) => (
+          <div key={group}>
+            <p className={`${label} mt-8 text-fg-subtle`}>{group} colors</p>
+            <ul className="mt-3 grid gap-gutter sm:grid-cols-2 lg:grid-cols-4">
+              {mode.tokens
+                .filter((t) => t.group === group)
+                .map((t) => {
+                  const ratio = contrast(t.hex, get(t.on))
+                  return (
+                    <li
+                      key={t.token}
+                      className="flex items-start gap-3 border-t border-rule-strong pt-3"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`size-10 shrink-0 border border-rule-strong ${swatchClass[t.token]}`}
+                      />
+                      <span>
+                        <span className={`${label} block font-medium`}>{t.token}</span>
+                        <span className={`${label} block text-fg-subtle tabular-nums`}>
+                          {t.hex}
+                        </span>
+                        <span className="block font-text text-sm text-fg-muted">{t.role}</span>
+                        <span className={`${label} mt-1 block text-fg-subtle tabular-nums`}>
+                          {ratio.toFixed(2)}:1 on {t.on} · {verdict(ratio)}
+                        </span>
+                      </span>
+                    </li>
+                  )
+                })}
+            </ul>
+          </div>
+        ))}
 
         {/* Hero specimen */}
         <div className="mt-12 border border-rule">
@@ -331,7 +347,7 @@ export function PaletteSample({ mode }: Props) {
               01 02 03
             </p>
             <p className={`${label} mt-4 text-fg-subtle`}>
-              Oversized numerals, secondary green, decorative
+              Oversized numerals, accent-secondary, decorative
             </p>
           </div>
         </div>

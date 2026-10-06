@@ -11,7 +11,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={fontVariables || undefined}>
+    <html lang="en" className={fontVariables || undefined} suppressHydrationWarning>
+      <head>
+        {/* Adds .js (scripting is on; ARCHITECTURE.md §6). On the home page it also
+            marks the intro as playing before first paint, so the overlay
+            covers the hero from the start. Skipped for reduced motion, for deep
+            links (a hash), and for every route but the home page. If the intro
+            island has not picked it up within 4s (scripts failed or are very
+            slow), the page is released in its final state. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')d.dataset.theme=t}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-intro');history.scrollRestoration='manual';setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro')},4000)}}catch(e){}",
+          }}
+        />
+      </head>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"

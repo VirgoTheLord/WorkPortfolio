@@ -1,0 +1,74 @@
+/*
+ * The headline wipe, recreated from the reference's headline reveal (the same one
+ * the hero uses, there as a GSAP timeline). As the headline enters the screen an
+ * accent block runs across each line and a text-coloured block follows 0.1s
+ * behind; the line switches on under them and they leave to the right (0.45s
+ * legs, power3.inOut). Lines start 0.15s apart (--line). The island sets
+ * data-wipe on the root; without it the headline is simply there.
+ */
+.headline-wipe-line {
+  position: relative;
+  display: block;
+  width: fit-content;
+}
+
+.headline-wipe-text {
+  display: block;
+  white-space: nowrap;
+}
+
+.headline-wipe-block {
+  position: absolute;
+  inset: -0.1em;
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+}
+
+[data-wipe='pending'] .headline-wipe-text {
+  opacity: 0;
+}
+
+[data-wipe='in'] .headline-wipe-text {
+  transition: opacity 0s calc(var(--wipe-delay, 0s) + 0.5s + var(--line, 0) * 0.15s);
+}
+
+[data-wipe='in'] .headline-wipe-block {
+  animation: headline-wipe-lead 1.05s calc(var(--wipe-delay, 0s) + var(--line, 0) * 0.15s) both;
+}
+
+[data-wipe='in'] .headline-wipe-block + .headline-wipe-block {
+  animation: headline-wipe-trail 0.85s calc(var(--wipe-delay, 0s) + 0.1s + var(--line, 0) * 0.15s)
+    both;
+}
+
+/* power3.inOut on every leg: grow across, hold, leave to the right. */
+@keyframes headline-wipe-lead {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  42.857% {
+    clip-path: inset(0);
+  }
+  57.143% {
+    clip-path: inset(0);
+    animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes headline-wipe-trail {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  52.941% {
+    clip-path: inset(0);
+    animation-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}

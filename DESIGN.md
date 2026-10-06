@@ -60,49 +60,54 @@ These are the tells of a template or AI-generated portfolio:
 - Terminal cosplay (fake prompts, blinking cursors, glitch text) and spec-sheet cosplay (dimension lines and crosshairs on everything)
 - Uniform masonry or thumbnail grids of projects
 
+> **Reference-replication phase.** While the site is rebuilt stage by stage from good-fella.com, the §3 anti-patterns and the §6 motion limits are suspended where the reference genuinely needs them (marquees, parallax, scroll pinning, durations of 1–3s for major transitions). Every exception is flagged in that stage's report, and the originality pass that follows decides which survive. Native scrolling stays the default, and typography stays locked. Color is the reference's own palette (§4).
+
 ## 4. Tokens
 
 All tokens live in `src/app/globals.css` under Tailwind v4 `@theme`. Components use Tailwind classes that map to tokens. **Never use raw hex, px font sizes or arbitrary values (`[...]`) in components.** If you need one, add a token or justify it in a comment. Exact values are set in §9 decisions; the roles below are fixed.
 
-### Color: pure white, bold green, a layered tonal system
+### Color: black, white and signature orange
 
-A pure white foundation with a bold green identity, built from four exact greens that form a tonal system, in light and dark modes. Strong visual personality comes from color fields, type and composition, never from gradients or decoration.
+The exact palette of the good-fella.com reference, taken from its production CSS. Off-white and off-black are the structure: `#EEEEEE` canvas with `#141314` text in light, and the reverse in dark. Grey carries secondary text, translucent black or white carries rules, and orange is the signature accent: active states, marks, strong fields, selection and the brand field. Orange is never the default text color and never a page-wide canvas.
 
-White is space. Green is identity. The deepest green reads; the lighter greens are volume.
+Values are exact and never altered for contrast. When a value cannot do a job in a mode, its role changes instead.
 
-The four brand greens are exact and are never altered, tinted or "fixed" for contrast. When a green cannot do a job, its role changes instead of its value.
-
-| Brand green | Value | Role |
+| Raw token | Value | What it can do |
 |---|---|---|
-| `green-deep` (primary) | `#5C7057` | Identity. The only green that reads as text on white (5.4:1). Strong fields. |
-| `green-mid` (secondary) | `#89A482` | Marks, rules and graphics in light; the strong field and small text in dark. |
-| `green-soft` | `#ACC5A6` | Hairlines and a second surface in light; secondary text in dark. |
-| `green-light` | `#D1EDD3` | Surfaces and mats in light; primary text in dark. |
+| `orange` | `#FB460D` | The signature: the light accent and the brand field. 3.0:1 on `white`, so large text, fields and marks only there. Carries `black` text (5.3:1). |
+| `orange-bright` | `#FD551D` | The accent on dark. 5.7:1 on `black`, so text-capable there. |
+| `orange-soft` | `#FD8D68` | Marks and bars; the surface on a brand field. 2.0:1 on `white`: decorative only. |
+| `orange-muted` | `#FD7142` | Muted background on a brand field. |
+| `black` | `#141314` | Dark structure: the dark canvas and light-mode text. |
+| `white` | `#EEEEEE` | Light structure: the light canvas and dark-mode text. |
+| `paper` / `stone` | `#F7F7F7` / `#D5D5D5` | Muted background / surface in light. |
+| `charcoal` / `graphite` | `#1A1A1A` / `#333333` | Muted background / surface in dark. `charcoal` is also muted text on orange (5.0:1). |
+| `grey` / `grey-light` | `#696869` / `#818081` | Secondary text in light / dark (4.8:1 / 4.7:1). |
 
-Components use the semantic tokens, not the brand greens directly.
+Components use the semantic tokens, not the raw ones.
 
-| Token | Role | Light | Dark |
-|---|---|---|---|
-| `bg` | the page | `#FFFFFF` | mode surface `#0D130E` |
-| `surface` | the plate/mat behind project media | `green-light` | raised mode surface `#161E17` |
-| `surface-2` | a second surface | `green-soft` | raised mode surface |
-| `fg` | primary text | `green-deep` | `green-light` |
-| `fg-muted` | secondary text | `green-deep` | `green-soft` |
-| `fg-subtle` | wall labels, metadata, indices | `green-deep` | `green-mid` |
-| `rule` | hairlines (1px). Low contrast, structural | `green-soft` | `green-deep` |
-| `rule-strong` | emphasized rules: active row, section boundaries | `green-mid` | `green-mid` |
-| `accent` | identity, active state, strong fields, links, text that must be readable | `green-deep` | `green-mid` |
-| `accent-secondary` | marks, bars, borders, oversized numerals. Never small text | `green-mid` | `green-soft` |
-| `accent-fg` | text on `accent` | `#FFFFFF` | mode surface |
-| `focus` | the focus ring | `green-deep` | `green-light` |
+| Token | Role | Light | Dark | Brand field |
+|---|---|---|---|---|
+| `bg` | the page | `white` | `black` | `orange` |
+| `surface` | surfaces, plates | `stone` | `graphite` | `orange-soft` |
+| `surface-2` | muted background | `paper` | `charcoal` | `orange-muted` |
+| `fg` | primary text | `black` | `white` | `black` |
+| `fg-muted`, `fg-subtle` | secondary text, labels, metadata | `grey` | `grey-light` | `charcoal` |
+| `rule` | hairlines | black 10% | white 5% | black 20% |
+| `rule-strong` | borders, section rules | black 20% | white 10% | black 30% |
+| `accent` | signature: active states, fields, accent text | `orange` | `orange-bright` | `orange-bright` |
+| `accent-secondary` | marks, bars. Never text | `orange-soft` | `orange-soft` | `orange-soft` |
+| `accent-fg` | text on `accent` | `black` | `black` | `black` |
+| `focus` | the focus ring | `black` | `white` | `black` |
+| `selection`, `selection-fg` | `::selection` | `orange` / `white` | `orange-bright` / `black` | `white` / `black` |
+| `ink`, `canvas` | aliases of `fg` and `bg` for the hero and the menu | | | |
 
-- **Modes.** Light is the default. Dark follows `prefers-color-scheme`, and `data-theme="light"` or `"dark"` forces a mode on any subtree. There is no toggle yet. Dark is its own composition, not an inversion: the lightest greens carry text, the mid green is the field, the deepest green drops to hairlines and panels.
-- **Mode surfaces** (`#0D130E`, `#161E17`) are neutral rooms for dark mode, not brand colors. Do not add more neutrals.
-- **One text color in light.** `fg`, `fg-muted` and `fg-subtle` are the same green, so hierarchy comes from size, weight and the label face, and link state from underline weight rather than color.
-- **Limits that follow from the values:** `green-mid` and `green-soft` are graphics, fields and borders on white, never text. Light text on `green-deep` is 4.3:1 (`green-light`, large text only) or 5.4:1 (white). `green-deep` is 3.5:1 on the dark surface, so it is hairlines and panels there, never small text.
+- **Modes.** Light is the default. Dark follows `prefers-color-scheme`, and `data-theme="light"` or `"dark"` forces a mode on any subtree. `data-theme="brand"` is the reference's orange field (its preloader). It is applied to one surface or moment, never to the whole site.
+- **Hierarchy:** primary text is `fg`, and secondary text and labels are grey. Orange marks what is active or important; most of the page stays black and white.
+- **Limits that follow from the values:** in light, `orange` (3.0:1) is not small text, so small accent text belongs in dark mode or at large sizes. `orange-soft` is never text. On a brand field, emphasis comes from black, because the accent is orange on orange.
 - Project imagery stays the color of the work. The interface does not tint it.
 - Flat color only: no gradients except functional image-loading placeholders, and no glows, blur, texture or shadows.
-- Colors are defined once, in `src/app/globals.css`. `/color-test` renders the real tokens in both modes and is the permanent reference.
+- Colors are defined once, in `src/app/globals.css`. `/color-test` renders the real tokens in all three themes with roles and contrast ratios, and is the permanent reference.
 
 ### Typography: three roles, two families max
 
@@ -113,7 +118,7 @@ Components use the semantic tokens, not the brand greens directly.
 | **Label** | Wall labels, indices, metadata, figures, code | Mono or a grotesk with excellent tabular figures. Small and precise. |
 
 - **Two families max** (e.g. one variable family for display + text, plus one label/mono family).
-- **Fluid type scale** with `clamp()`, about a 1.25 ratio on mobile and 1.333 on desktop. Steps: `label, xs, sm, base, lg, xl, 2xl, 3xl, display, display-xl`. `display-xl` is reserved for the hero and exhibit titles.
+- **Fluid type scale** with `clamp()`, about a 1.25 ratio on mobile and 1.333 on desktop. Steps: `label, xs, sm, base, lg, xl, 2xl, 3xl, display, display-xl`. `display-xl` is reserved for exhibit titles. One extra step, `hero`, sits outside the ratio for the reference-replication phase: the hero headline on the reference's own fluid curve (32px at 375px to 96px at 1600px), in our face and tracking.
 - Body: line-height 1.5–1.6, measure **60–72ch**.
 - Display: leading 0.95–1.1, negative tracking scaled to size, `text-wrap: balance`. Prose uses `text-wrap: pretty`.
 - Labels: `tabular-nums`, lining figures, slight positive tracking (+0.02–0.06em). Uppercase only if the face supports it well at small sizes.
@@ -148,12 +153,12 @@ Components use the semantic tokens, not the brand greens directly.
 | `duration-fast` | 160ms | hover in, color, focus |
 | `duration-base` | 240ms | hover out, small state changes |
 | `duration-slow` | 600ms | text/section reveals |
-| `duration-media` | 900ms | media reveals |
-| `duration-intro` | ≤ 1200ms total | hero sequence |
+| `duration-intro` | 1200ms | the theme switch's roll; the page entrance runs on its own timeline (§6) |
+| `duration-deliberate` | 700ms | one object changing form: the work-together button, both directions |
 | `stagger` | 50ms | sequential elements |
 | `ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | entrances, hover in (default) |
 | `ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | movement between states |
-| `ease-press` | `cubic-bezier(0.3, 0, 0.5, 1)` | press/release |
+| `ease-emphasis` | `cubic-bezier(0.83, 0, 0.17, 1)` | a long, symmetric move that rests at both ends (power4.inOut) |
 
 GSAP uses the same values, exported from `lib/motion/gsap.ts`.
 
@@ -191,21 +196,23 @@ The final pattern for presenting projects is decided in §9.3 (decision 4). The 
 
 ### Links, labels, buttons
 
-- **Links:** underline with offset. On hover, thickness and color shift. External links get a `↗` that nudges 1–2px diagonally on hover.
+- **Links:** inline links use one motif, `TextLink` (the reference's own): a line under the text runs out to the right on hover and focus while a new one runs in from the left behind it, and the reverse on leaving (0.7s, `cubic-bezier(0.625, 0.05, 0, 1)`). Navigation rows keep their quieter hover and buttons keep theirs. External links get a `↗` that nudges 1–2px diagonally on hover.
 - **Tags/stack:** Label style, separated by `·`. No pills or backgrounds.
 - **Buttons:** rare. Most actions are links. If needed, use a hairline border, no fill and no shadow, with a pressed state.
 
 ### Chrome
 
-- **Header:** minimal (name + 2–3 links), recedes visually. It may hide on scroll down and show on scroll up with zero layout shift. It may show the current exhibit index (`03 / 05`).
-- **Footer:** copyable email (with a designed "copied" state), links, colophon, and a build stamp (date · short commit hash).
+- **Header (navbar):** one fixed bar, recreated from good-fella.com with its own values as a deliberate study pass: the initials left, `MENU ≡` centred, the orange call to action right (hidden below lg). Closed, the bar has three states, as in the reference: transparent with its contents on the frame edge at the top of the page; past 50px of scroll a `surface` card with its contents 16px in; open, the same card with the panel's inset (24px, 64px from lg). Opening also brings in a scrim (black 30%, blurred) and unfolds a `surface` panel below the bar (destinations, details, two project cards on the reference's 4/2/5 column spans; stacked destinations and details below lg). Open runs about 2s to the last settle: the panel unfolds (1s, `expo.inOut`), the destinations rise from 0.5s (1.4s, `expo.out`, 0.1s apart), the details from 0.95s (0.5s, `power2.out`, 0.04s apart), then status text scrambles, dots and cards fade in, and last the marker slides in (0.6s). Close is its own 0.6s sequence: the panel is wiped away upward (`expo.inOut`) while its content holds still, the small text and the marker vanish within a frame, and the bar's transitions start at the same moment. A single square marker follows the current row (the page you are on, then hover or keyboard focus), rolling a quarter turn on each move. Reduced motion flips straight to either state. It is deliberately close to the reference and will be made original in a later pass; one deliberate difference is the panel's small labels, in `fg` rather than the reference's muted grey, which fails AA on `surface`.
+- **Selected Work (reference-replication stage 6):** recreated from good-fella.com on a dark band (`data-theme="dark"`, even on a light page). From lg a left column is pinned under the header for the height of the screen (headline wiped in line by line, one line of copy, one 128×72 thumbnail per project, the action); the others dim to 40%, and one orange square sits beside the current project's thumbnail, turning a quarter on each move (0.8s, `cubic-bezier(0.68, -0.3, 0.32, 1.1)`). The current project is the one crossing the middle of the screen (half visible inside a 20% inset); a thumbnail scrolls its project there. The projects fill columns 5-12: a 16:10 image, 64px apart, whose picture is 30% larger and drifts ±15% as the frame crosses the screen (a CSS scroll timeline), zooms to 1.075 on a fine pointer (0.6s, `power3.out`), and a caption row under it (title in the label face from lg, tags as `[CATEGORY] — [YEAR]`). A title scrambles with accent noise as it enters and when the pointer reaches its image. Below lg it is one column with a sans title and the tags beneath. A project links out only when it has an `href`; then a "View project" label follows the pointer above it (trailing 0.7s, tilting with speed, popping in 0.35s). Deliberate departures from §3, flagged for the originality pass: parallax, a pointer-following label, and a pinned column. Our differences from the reference: no "View all" (there is no index page), so the action is "Write to me"; the header stays light over the dark band.
+- **Contact (reference-replication stage 7):** recreated from good-fella.com's final section, a light band straight after the dark work band (the hard edge is the reference's), 128px above and below. Two columns from lg on the hero's frame: on the left the headline (wiped in) over a 16:9 panel 80px below it; on the right five columns (the reference spans four; our face sets the lead wider) a two-line lead (wiped in 0.3s after the headline), the role and year, the action and the name, spread over the left column's height. The reference's photograph is a brand-field panel (`data-theme="brand"`) carrying the address, whose rule runs out on hover and focus; it fades in (0.7s) as the lines rise from masks (0.8s, `power3.out`, 0.1s apart, after the wipes have started). The action is the shared `WorkTogetherButton` in its `ink` tone, now with a 44px touch area on coarse pointers. Everything stacks below lg. Flagged for the originality pass: the orange panel (a large flat brand field), and that the contact address is still the placeholder in `site.ts`.
+- **Footer (reference-replication stage 8):** recreated from good-fella.com's footer on a dark band (`data-theme="dark"`) a screen tall, on the hero's frame edge, 48px of space above. Three columns across the top: the colophon (the typefaces and what the site is built with, each line led by an orange dot pulsing 1 to 0.5 every 2s), the destinations centred in mono capitals (each scrambles into place on hover or keyboard focus, 0.5s), and the address and "Back to top" as text links. The small print (year, name, role) sits centred 12.5% of the width below; the name is set huge and faint (10%) across the bottom edge. As the footer scrolls in its contents rise from 20% below into place, tied to the scroll (a CSS scroll timeline); once a fifth of it is on screen the small lines rise (0.8s) and the watermark's letters slide up one by one (1.4s, 0.05s apart). The navbar slides away (0.4s) once the footer reaches the top of the screen, as the reference's does, and returns on keyboard focus. Everything stacks below lg. Left out: the reference's newsletter form, availability claims, legal links and ASCII painting (nothing real to put there). Flagged for the originality pass: the scroll uncover (parallax, §3) and the perpetual dot pulse (§3 forbids looping decoration).
 
 ## 6. Motion language
 
 Motion should feel **tactile, restrained and physical**: things settle into place, respond to touch, and never perform.
 
-- **Signature moment:** a single hero intro, under 1.2s total, playing once per session. The concept is decided in §9.3 (decision 3).
-- **Media reveals:** clip-path inset opening plus a slight scale settle (≈1.04 → 1) at `duration-media`, plays once. This is the main "exhibition" gesture.
+- **Signature moment:** a single preloader and hero entrance, one timeline. The preloader is recreated from good-fella.com with its own values: on the brand field, four squares roll out one by one (0.5s each, `expo.inOut`, 25% overlap) while the label scrambles in; at 1.625s a line pivoting on the bottom-left corner sweeps the field away (clip-path, 1.05s, `expo.inOut`), and at 90% of the sweep the page is cued to enter. The hero entrance that follows is in §9.3 (decision 3). It plays on every full load of the home page (as the reference does), runs about 4.6s to the last settle, over the 1.2s budget by explicit request, and any wheel, touch or key input fast-forwards it.
+- **Media:** project images are not revealed; they drift inside their frame as the frame crosses the screen and zoom to 1.075 on a fine pointer (Selected Work, §5 Chrome).
 - **Text reveals:** subtle 8–16px translate plus opacity on headings and labels, with short stagger. Never on body paragraphs.
 - **Micro-interactions:** link underlines, exhibit hover, index-row previews, copy confirmation, focus transitions. This is where most of the craft budget goes.
 - **One thing moves at a time.** Don't run competing animations in the same viewport.
@@ -230,7 +237,7 @@ Motion should feel **tactile, restrained and physical**: things settle into plac
 
 ## 9. Open decisions
 
-**Settled:** visual direction (§1). Typography (§9.1). Color (§9.2).
+**Settled:** visual direction (§1). Typography (§9.1). Color (§9.2), the exact good-fella.com palette for the reference-replication phase.
 
 ### 9.1 Typography
 
@@ -246,13 +253,15 @@ The Bricolage file is width 100 with weight limited to 400–600. The Azeret fil
 
 ### 9.2 Color
 
-The green system in §4: pure white foundation, four exact greens, light and dark modes. Canonical reference: `/color-test`, which renders the production tokens in both modes and keeps the contrast numbers. Do not add another color exploration page.
+The good-fella.com orange system in §4: light, dark and the brand field. Canonical reference: `/color-test`, which renders the production tokens in all three with roles and contrast numbers. Do not add another color exploration page.
 
 ### 9.3 Remaining decisions
 
 | # | Decision | Constraints | How to decide |
 |---|---|---|---|
 | 3 | **Hero concept** | Delivers the 5-second objective; LCP is text or one optimized media element; ≤ 1.2s intro; no §3 patterns | Sketch 2–3 concepts. Judge on first impression and the first interaction. |
+
+**Decision 3, in review.** The hero follows the good-fella.com hero's spacing, type and entrance (reference-replication Stage 3) on one centre line: on the navbar's edge (16px, 32px from lg) and 52px down, the name on two hand-broken lines (`text-hero`), the line under it and the actions (the orange primary action and an underlined text link) centred in the screen, and the stack row centred along the bottom edge. Entrance (one timeline with the preloader, `hero-intro.tsx`): as the page enters, from 768px the navbar slides down and fades in as one piece 0.35s later (0.9s, at once below) and the copy 0.3s after that, each headline line wiped by an accent block and a text-coloured block (0.45s each, `power3.inOut`, lines 0.15s apart), then the line rising from its mask (0.8s), the actions and the stack row lifting 20px into place. Scrolling away, the hero's contents drift down by 35% of its height (a CSS scroll-driven animation). The reference's ASCII-art image was left out by choice. Deliberate departures from this file, flagged for the originality pass: the intro length, the centred composition (§3) and parallax on scroll (§3).
 | 4 | **Project presentation pattern** | Exhibit rules in §5; small fixed composition set; works with 3–5 projects; strong on mobile | Prototype with real assets for at least 2 projects |
 
 ## 10. Details that reward exploration
@@ -267,3 +276,5 @@ Candidates. Ship **3–5**, chosen after decisions 1–4. Each must be CSS-only 
 - A print stylesheet for case studies (clean, paginated, URLs printed)
 - Numbered figures and sidenotes in case studies that cross-reference on hover/focus
 - Fine-tuned `text-underline-offset` and optical kerning on the name/wordmark
+
+Shipped beyond this list: a light/dark switch in the navbar panel, a pill whose sun knob rolls across and is eclipsed into a moon while the new mode grows over the page as a circle from the knob. The choice is stored and applied before first paint. Hero text is black in light mode and white in dark.

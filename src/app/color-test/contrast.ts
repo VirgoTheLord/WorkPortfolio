@@ -15,8 +15,27 @@ function luminance(hex: string) {
   )
 }
 
+/* Flattens an #rrggbbaa color onto an opaque ground, so translucent rules are
+   measured as they render. */
+function flatten(hex: string, ground: string) {
+  if (hex.length !== 9) return hex
+  const alpha = Number.parseInt(hex.slice(7), 16) / 255
+  const mix = (i: number) => {
+    const fg = Number.parseInt(hex.slice(i, i + 2), 16)
+    const bg = Number.parseInt(ground.slice(i, i + 2), 16)
+    return Math.round(fg * alpha + bg * (1 - alpha))
+      .toString(16)
+      .padStart(2, '0')
+  }
+  return `#${mix(1)}${mix(3)}${mix(5)}`
+}
+
 export function contrast(a: string, b: string) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number]
+  const ground = flatten(b, '#ffffff')
+  const [hi, lo] = [luminance(flatten(a, ground)), luminance(ground)].sort((x, y) => y - x) as [
+    number,
+    number,
+  ]
   return (hi + 0.05) / (lo + 0.05)
 }
 

@@ -1,0 +1,60 @@
+/*
+ * The text link's two underlines, one long symmetric curve for both (the
+ * reference's value). At rest the first line sits under the text; on hover or
+ * focus it leaves to the right (0s delay) and the second arrives from the left
+ * 0.3s later; leaving reverses the pair.
+ */
+.text-link {
+  position: relative;
+  display: inline-block;
+  padding-block: calc(var(--spacing) * 0.5);
+}
+
+/* A touch screen gets a 44px target without a bigger link. */
+@media (pointer: coarse) {
+  .text-link::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block: -0.625rem;
+  }
+}
+
+.text-link-rule {
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(var(--spacing) * -1);
+  pointer-events: none;
+}
+
+.text-link-rule > span {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: transform var(--duration-deliberate) cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+.text-link-rule > span:first-child {
+  transform: scaleX(1);
+  transform-origin: left;
+  transition-delay: 300ms;
+}
+
+.text-link-rule > span:last-child {
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+.text-link:is(:hover, :focus-visible) .text-link-rule > span:first-child {
+  transform: scaleX(0);
+  transform-origin: right;
+  transition-delay: 0ms;
+}
+
+.text-link:is(:hover, :focus-visible) .text-link-rule > span:last-child {
+  transform: scaleX(1);
+  transform-origin: left;
+  transition-delay: 300ms;
+}

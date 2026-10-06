@@ -1,51 +1,186 @@
 /*
- * Skills entrance, CSS only: transform and clip-path (ARCHITECTURE.md §6).
- * Same state machine as About, driven per row by SectionReveal:
- *   no attribute  fully visible (no JS, reduced motion, or already on screen)
- *   pending       the hidden start state, applied only when motion will play
- *   in            transitions to visible, once
- * Deliberately a copy of about.css under its own prefix: extract a shared
- * stylesheet when a third section needs it.
+ * Skills: the reference's process section. Two layouts.
+ *
+ * Stacked (below lg, reduced motion, or without JavaScript): headline, label,
+ * then each step (square, number, name, description) followed by its panel.
+ *
+ * Pinned (from lg, motion allowed, scripting on): the section is 320vh tall and
+ * its content sticks to the screen, centred, on columns 3-10 of the 12-column
+ * frame. Steps on the left, the panel strip on the right; the island marks one
+ * step current and sets --active, --marker-y and --marker-turn.
  */
 @reference '../../app/globals.css';
 
-[data-reveal='pending'] .skills-mask {
-  clip-path: inset(0 0 100% 0);
-  transform: translateY(0.3em);
+.skills-sticky {
+  padding: calc(var(--spacing) * 16) calc(var(--spacing) * 4);
 }
 
-[data-reveal='pending'] .skills-draw {
-  transform: scaleX(0);
+.skills-head {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 4);
+  margin-bottom: calc(var(--spacing) * 8);
 }
 
-/* --i is a per-element index and --row the row's position, both set inline. Rows
-   that enter together cascade 100ms apart: delay = (row × 2 + index) × stagger. */
-[data-reveal='in'] .skills-mask {
-  /* Negative insets keep ascenders, descenders and tight tracking unclipped. */
-  clip-path: inset(-0.2em -0.1em -0.3em -0.1em);
-  transform: translateY(0);
-  transition:
-    clip-path var(--duration-slow) var(--ease-out),
-    transform var(--duration-slow) var(--ease-out);
-  transition-delay: calc((var(--row, 0) * 2 + var(--i, 0)) * var(--stagger));
+.skills-steps {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 12);
 }
 
-[data-reveal='in'] .skills-draw {
-  transform: scaleX(1);
-  transition: transform var(--duration-slow) var(--ease-in-out);
-  transition-delay: calc((var(--row, 0) * 2 + var(--i, 0)) * var(--stagger));
+.skills-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: calc(var(--spacing) * 4);
 }
 
-.skills-draw {
-  transform-origin: left;
+.skills-step-mark {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--spacing) * 3);
+  padding-top: calc(var(--spacing) * 1);
 }
 
-/* Last, so it wins over both states: reduced motion shows the final state at once. */
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] .skills-mask,
-  [data-reveal] .skills-draw {
-    clip-path: none;
-    transform: none;
-    transition: none;
+.skills-step-square {
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
+  margin-top: calc(var(--spacing) * 1);
+}
+
+.skills-step .skills-panel {
+  grid-column: 1 / -1;
+  aspect-ratio: 4 / 5;
+}
+
+.skills-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--spacing) * 6);
+}
+
+.skills-marker,
+.skills-window {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .skills-step .skills-panel {
+    max-width: 24rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .skills-sticky {
+    padding: calc(var(--spacing) * 32) calc(var(--spacing) * 8);
+  }
+
+  /* Columns 3-10 of the 12-column, 16px-gap frame, pinned or not. */
+  .skills-frame {
+    width: calc((100% - var(--spacing) * 44) / 12 * 8 + var(--spacing) * 28);
+    margin-inline: auto;
+  }
+
+  .skills-head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .skills-panel {
+    padding: calc(var(--spacing) * 8);
+  }
+}
+
+/* ---- Pinned --------------------------------------------------------------- */
+
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  .js .skills {
+    min-height: 320vh;
+    padding-block: calc(var(--spacing) * 32);
+  }
+
+  .js .skills-sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    padding: 0 calc(var(--spacing) * 8);
+  }
+
+  .js .skills-head {
+    margin-bottom: calc(var(--spacing) * 16);
+  }
+
+  .js .skills-body {
+    display: flex;
+  }
+
+  .js .skills-list {
+    position: relative;
+    display: flex;
+    flex: 1.1;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 10%;
+  }
+
+  .js .skills-window {
+    position: relative;
+    display: block;
+    flex: 1;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+  }
+
+  .js .skills-strip {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    transform: translateY(calc(var(--active, 0) * -100%));
+    transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  .js .skills-strip > .skills-panel {
+    height: 100%;
+    flex-shrink: 0;
+  }
+
+  /* Steps: number then copy, the panel lives in the strip. The current one is at
+     full strength and steps over for the marker; the rest wait at 40%. */
+  .js .skills-step {
+    display: flex;
+    align-items: flex-start;
+    padding-left: calc(var(--spacing) * 4);
+    cursor: pointer;
+    opacity: 0.4;
+    transition:
+      opacity 0.8s cubic-bezier(0.76, 0, 0.24, 1),
+      transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  .js .skills-step[data-current] {
+    opacity: 1;
+    transform: translateX(calc(var(--spacing) * 12));
+  }
+
+  .js .skills-step-square,
+  .js .skills-step .skills-panel {
+    display: none;
+  }
+
+  /* One square travels to the current step, turning a quarter each move with a
+     slight dip and overshoot. */
+  .js .skills-marker {
+    position: absolute;
+    top: calc(var(--spacing) * 2);
+    left: calc(var(--spacing) * 7);
+    z-index: 1;
+    display: block;
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
+    transform: translateY(var(--marker-y, 0)) rotate(var(--marker-turn, 0deg));
+    transition: transform 0.8s cubic-bezier(0.68, -0.3, 0.32, 1.1);
   }
 }

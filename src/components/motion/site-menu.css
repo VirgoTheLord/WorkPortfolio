@@ -1,6 +1,15 @@
 /*
- * Menu-only styles. Everything with a design value lives in globals.css
- * tokens; this file holds what utilities cannot express (:has, ::backdrop).
+ * Navbar styles. Everything with a design value lives in globals.css tokens; this
+ * file holds what utilities cannot express (:has, @supports, state selectors).
+ *
+ * State lives on .menu: data-open is the logical state (set the moment the user
+ * asks) and data-shown is the panel's visible state (on while open and closing).
+ *
+ * The bar's pieces (scrim, surface, insets, rolls, the shifted row) are CSS
+ * transitions keyed to data-open and data-scrolled, as in the reference: they
+ * start the moment the state changes, in both directions.
+ * The panel and its content are GSAP (site-menu.tsx), which only animates between
+ * looks defined here, so reduced motion simply flips the attributes.
  */
 @reference '../../app/globals.css';
 
@@ -9,37 +18,285 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* Scroll lock follows the dialog itself, so it is restored on close and on unmount. */
-html:has(dialog.site-menu[open]) {
+/* Scroll lock follows the open state itself, so it is restored on close and on unmount. */
+html:has(.menu[data-open='true']) {
   overflow: hidden;
 }
 
-.site-menu {
+.menu {
+  --menu-marker: calc(var(--spacing) * 5);
+  --menu-gap: calc(var(--spacing) * 4);
+  /* How far the current row slides over: the marker and the space after it. */
+  --menu-shift: calc(var(--menu-marker) + var(--menu-gap));
+  /* The frame: the bar card and the panel sit this far from the viewport edges. */
+  --menu-edge: calc(var(--spacing) * 4);
+  /* How far the bar's contents sit inside the card: none at the top of the page,
+     a little once it has scrolled, the panel's own inset while open. */
+  --menu-inset: 0px;
+}
+
+.menu[data-scrolled='true'] {
+  --menu-inset: calc(var(--spacing) * 4);
+}
+
+.menu[data-open='true'] {
+  --menu-inset: var(--spacing-menu);
+}
+
+@media (min-width: 64rem) {
+  .menu {
+    --menu-marker: calc(var(--spacing) * 8);
+    --menu-gap: calc(var(--spacing) * 8);
+    --menu-edge: calc(var(--spacing) * 8);
+  }
+}
+
+.menu-frame {
+  padding-inline: var(--menu-edge);
+}
+
+/* Over the footer the bar slides away (0.4s, the reference's curve). */
+.menu-frame {
+  transition: transform 400ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.menu[data-hidden='true']:not([data-open='true']) .menu-frame {
+  transform: translateY(-120%);
+}
+
+/* Crossing into a themed section, the bar's colours follow: the island sets
+   data-swap for 450ms after the change, and everything that carries colour fades
+   (0.4s) instead of snapping. Hover timings are untouched the rest of the time. */
+.menu[data-swap='true'] :is(.menu-surface, .menu-brand-link, .menu-trigger, .menu-icon > span) {
+  transition-property: color, background-color, opacity, transform;
+  transition-duration: 400ms;
+  transition-timing-function: var(--ease-standard);
+}
+
+/* The bar: the header's height less the 1rem gap above it. */
+.menu-bar {
+  height: calc(var(--spacing-header) - var(--spacing) * 4);
+}
+
+/* ---- Bar layers ---------------------------------------------------------- */
+
+/* The page dims and softens behind the open navbar. */
+.menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-bar) var(--ease-standard);
+}
+
+.menu[data-open='true'] .menu-scrim {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The card behind the bar: absent over the top of the page, there once it has
+   scrolled and while open. */
+.menu-surface {
+  opacity: 0;
+  transition: opacity var(--duration-bar) var(--ease-standard);
+}
+
+.menu:is([data-scrolled='true'], [data-open='true']) .menu-surface {
+  opacity: 1;
+}
+
+/* The bar's contents move in from the card's edges by the current inset. They are
+   translated rather than padded, so the change never reflows the bar. */
+.menu-brand,
+.menu-action,
+.menu-cell {
+  transition: transform var(--duration-bar) var(--ease-standard);
+}
+
+.menu-brand {
+  transform: translateX(var(--menu-inset));
+}
+
+.menu-action {
+  transform: translateX(calc(var(--menu-inset) * -1));
+}
+
+/* Below lg the trigger is the right-hand item; from lg up it stays centred. */
+@media not all and (min-width: 64rem) {
+  .menu-cell {
+    transform: translateX(calc(var(--menu-inset) * -1));
+  }
+}
+
+/* The panel is there to be seen while open and while it is leaving. */
+.menu-panel {
+  visibility: hidden;
+}
+
+.menu[data-shown='true'] .menu-panel {
+  visibility: visible;
+}
+
+/* On a short screen the panel scrolls rather than running off the bottom. */
+.menu-panel-inner {
+  max-height: calc(100dvh - var(--spacing-header) - var(--spacing) * 6);
+  overflow-y: auto;
   overscroll-behavior: contain;
 }
 
-/* The green surface is the panel; the dialog's own backdrop stays invisible. */
-.site-menu::backdrop {
-  background: transparent;
+/* ---- Trigger and wordmark rolls ---------------------------------------- */
+
+/* A one-line mask with a second line stacked under it; opening rolls it up. */
+.menu-roll {
+  --menu-roll-gap: calc(var(--spacing) * 0.5);
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 1em;
+  line-height: 1;
 }
 
-/* The global focus ring is racing green, which disappears on the green surface. */
-.site-menu :focus-visible {
-  outline-color: var(--color-accent-fg);
+.menu-roll-label {
+  width: 3.5em;
 }
 
-/* Hover and keyboard focus dim the other destinations' labels; both behave the
-   same. Only the large label dims (still 4.7:1), so the small index stays legible. */
-.menu-label {
-  transition-property: transform, opacity;
+.menu-roll-track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--menu-roll-gap);
+  transition: transform var(--duration-base) var(--ease-standard);
 }
 
-.menu-link:hover .menu-label,
-.menu-link:focus-visible .menu-label {
-  transition-duration: var(--duration-fast);
+.menu-roll-brand .menu-roll-track {
+  transition-duration: var(--duration-bar);
 }
 
-.menu-list:has(.menu-link:hover) .menu-link:not(:hover) .menu-label,
-.menu-list:has(.menu-link:focus-visible) .menu-link:not(:focus-visible) .menu-label {
-  opacity: 0.6;
+.menu-roll-track > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.menu[data-open='true'] .menu-roll-track {
+  transform: translateY(calc(-1em - var(--menu-roll-gap)));
+}
+
+/* Two bars that cross into an X while open. */
+.menu-icon {
+  position: relative;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.menu-icon > span {
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+
+.menu-icon > span:first-child {
+  transform: translateY(-3px);
+}
+
+.menu-icon > span:last-child {
+  transform: translateY(3px);
+}
+
+.menu[data-open='true'] .menu-icon > span:first-child {
+  transform: rotate(45deg);
+}
+
+.menu[data-open='true'] .menu-icon > span:last-child {
+  transform: rotate(-45deg);
+}
+
+/* ---- Destinations ------------------------------------------------------- */
+
+/* Room for descenders inside a clipping mask. */
+.menu-mask {
+  overflow: hidden;
+  padding-block: 0.06em;
+}
+
+/* The current row slides over to make room for the marker, and back as soon as
+   it loses it. */
+.menu-link {
+  transition-property: color, translate;
+  transition-duration: var(--duration-base), var(--duration-slow);
+  transition-timing-function: var(--ease-standard), var(--ease-in-out);
+}
+
+/* The page you are on is in the accent. */
+.menu-link[aria-current] {
+  color: var(--color-accent);
+}
+
+[data-menu-item][data-current] > .menu-link {
+  translate: var(--menu-shift) 0;
+  color: var(--color-accent);
+}
+
+/* The marker is one square that rolls between rows: the wrapper travels (the
+   island sets its transform, with a slight dip and overshoot) and the square
+   arrives from the left. */
+.menu-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--menu-marker);
+  height: var(--menu-marker);
+  pointer-events: none;
+  transition: transform var(--duration-slow) var(--ease-spring);
+}
+
+.menu-marker-square {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: translateX(calc(var(--menu-shift) * -1));
+  transition:
+    transform var(--duration-slow) var(--ease-in-out),
+    opacity var(--duration-fast) linear;
+}
+
+.menu-marker[data-on='true'] .menu-marker-square {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Closing, the marker is gone at once. */
+.menu[data-open='false'] .menu-marker-square {
+  transition: none;
+}
+
+/* ---- Status dots -------------------------------------------------------- */
+
+/* The reference's pulse: down to half and back, every two seconds. */
+.menu[data-shown='true'] .menu-dot {
+  animation: dot-pulse 2s var(--ease-in-out) infinite;
+}
+
+/* ---- Project cards ------------------------------------------------------ */
+
+.menu-card {
+  transition: opacity var(--duration-bar) var(--ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-card:hover {
+    opacity: 0.8;
+  }
+}
+
+.menu-card:focus-visible {
+  opacity: 0.8;
 }
