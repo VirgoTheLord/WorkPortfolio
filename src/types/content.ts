@@ -1,27 +1,29 @@
 import type { StaticImageData } from 'next/image'
 
 export type HeroContent = {
-  eyebrow: string
-  year: string
-  /** Block-level phrases. Each wraps inside itself at narrow widths. */
-  statement: readonly string[]
-  index: { current: string; total: string }
-  name: string
-  role: string
+  /** The headline, one entry per line: the reference breaks it by hand. */
+  title: readonly string[]
+  /** The line under the headline. */
+  intro: string
+  /** The primary action, and the text link beside it. */
+  action: { label: string; href: string }
+  secondary: { label: string; href: string }
+  /** The row along the bottom edge: a label and the tools this site is built with. */
+  stack: { label: string; items: readonly string[] }
 }
 
 export type AboutContent = {
-  index: string
   label: string
-  /** Sentences set as separate blocks so each can reveal on its own. */
-  statement: readonly string[]
-  body: string
+  /** The first card's line. */
+  statement: string
+  /** One card each: the term is the card's label, the detail its line. */
   details: readonly { term: string; detail: string }[]
 }
 
 export type SkillsContent = {
-  index: string
+  /** The section label beside the headline, and the menu's name for it. */
   label: string
+  headline: string
   groups: readonly {
     index: string
     name: string
@@ -42,19 +44,28 @@ export type ProjectMeta = {
   cover: {
     image: StaticImageData
     alt: string
-    /** Which side of the image to keep when a frame crops it. Defaults to center. */
-    focus?: 'left' | 'center'
   }
   /** Destination, when a case study or live site exists. Omitted until then. */
   href?: string
 }
 
-export type WorkContent = { index: string; label: string }
+export type WorkContent = {
+  label: string
+  /** The headline, one entry per line. */
+  headline: readonly string[]
+  text: string
+  /** The call to action under the thumbnails. */
+  action: { label: string; href: string }
+  /** The thumbnail strip's accessible name, and the prefix of each link's. */
+  thumbsLabel: string
+  goTo: string
+}
 
 export type ContactContent = {
-  index: string
   label: string
-  /** Sentences set as separate blocks so each can reveal on its own. */
+  /** The headline. */
+  headline: string
+  /** The lead under it, one entry per line. */
   statement: readonly string[]
   emailLabel: string
   email: string
@@ -68,6 +79,26 @@ export type FooterContent = {
 }
 
 export type NavItem = { label: string; href: string }
+
+/** The expanded navbar: what it says besides the destinations. */
+export type MenuContent = {
+  label: string
+  closeLabel: string
+  home: NavItem
+  /** The call to action in the bar, from lg up. */
+  action: NavItem
+  contactLabel: string
+  /** The colour-mode switch: its label and the name of each mode. */
+  themeLabel: string
+  themeLight: string
+  themeDark: string
+  focusLabel: string
+  focus: string
+  /** Short facts set beside a marker at the foot of the details column. */
+  status: readonly string[]
+  /** Names the two project cards beside the details, from lg up. */
+  projectsLabel: string
+}
 
 export type SiteConfig = {
   name: string

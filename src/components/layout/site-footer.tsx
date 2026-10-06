@@ -1,56 +1,103 @@
 import Link from 'next/link'
-import { footer, site } from '@/content/site'
+import { ScrambleText } from '@/components/layout/scramble-text'
+import { FooterStage } from '@/components/motion/footer-stage'
+import { TextLink } from '@/components/ui/text-link'
+import { contact, footer, hero, menu, site } from '@/content/site'
+import './site-footer.css'
 
-/* The same hover and focus treatment as the header's brand link: colour and an
-   underline arrive together, quickly in and slowly out. */
-const link =
-  'inline-flex min-h-11 items-center underline decoration-transparent underline-offset-4 transition-colors duration-base ease-out hover:text-accent hover:decoration-accent hover:duration-fast focus-visible:text-accent focus-visible:decoration-accent focus-visible:duration-fast active:translate-y-px active:duration-instant md:min-h-0 md:py-1'
+const items = [menu.home, ...site.nav]
+const colophon = [footer.typeNote, `${hero.stack.label} ${hero.stack.items.join(', ')}`]
+const step = (i: number) => ({ '--i': i }) as React.CSSProperties
 
 /*
- * The closing element: a strong hairline like each section's, the name, the
- * existing destinations, and one line of small print. Compact on purpose; it
- * should read as the foot of the page, not another page. Static and calm: no
- * motion at all.
+ * The foot of the page, recreated from the reference's footer on a dark band and
+ * a screen tall: three columns across the top (the colophon with pulsing dots,
+ * the destinations centred, the address and the way back up), the small print
+ * centred below them, and the name set huge across the bottom edge. As the
+ * footer scrolls into view its contents rise into place (site-footer.css); the
+ * watermark's letters then slide up one by one and the small lines rise from
+ * masks (motion/footer-stage.tsx arms both). Without the island, or with reduced
+ * motion, all of it is simply there. The destinations scramble on hover, as the
+ * reference's do.
  */
 export function SiteFooter() {
   return (
-    <footer className="mx-auto w-full max-w-content px-margin pb-8 md:pb-10">
-      <div aria-hidden="true" className="h-px bg-rule-strong" />
+    <footer data-theme="dark" className="footer bg-bg text-fg">
+      <FooterStage>
+        <div className="footer-frame">
+          <div className="footer-top">
+            <ul className="footer-colophon font-label text-label text-fg-muted uppercase">
+              {colophon.map((line, i) => (
+                <li key={line} className="footer-mask">
+                  <span className="footer-rise footer-line" style={step(i)}>
+                    <span aria-hidden="true" className="footer-dot bg-accent" />
+                    <span>{line}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
 
-      <div className="grid grid-cols-4 gap-x-gutter gap-y-8 pt-8 md:grid-cols-12 md:pt-10">
-        <div className="col-span-4 md:col-span-6">
-          <p className="font-display text-2xl text-fg">{site.name}</p>
-          <p className="mt-2 font-label text-label text-fg-subtle uppercase">{site.role}</p>
+            <nav aria-label={footer.navLabel} className="footer-nav">
+              <ul>
+                {items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      data-scramble-link
+                      className="footer-link font-label text-label text-fg-muted uppercase"
+                    >
+                      <ScrambleText text={item.label} />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="footer-contact text-base text-fg-muted">
+              <div className="footer-mask w-fit">
+                <div className="footer-rise" style={step(0)}>
+                  <TextLink href={`mailto:${contact.email}`}>{contact.email}</TextLink>
+                </div>
+              </div>
+              <div className="footer-mask w-fit">
+                <div className="footer-rise" style={step(1)}>
+                  <TextLink href="#main">{footer.toTop}</TextLink>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="footer-legal text-base text-fg-muted">
+            <span className="footer-mask block">
+              <span className="footer-rise block tabular-nums" style={step(0)}>
+                © {site.year}
+              </span>
+            </span>
+            <span className="footer-mask block">
+              <span className="footer-rise block" style={step(1)}>
+                {site.name}
+              </span>
+            </span>
+            <span className="footer-mask block">
+              <span className="footer-rise block" style={step(2)}>
+                {site.role}
+              </span>
+            </span>
+          </p>
+
+          {/* The name, huge and faint: decorative (it is the first thing in the page's
+              title and the sign-off above), so hidden from assistive tech. */}
+          <div aria-hidden="true" className="footer-mark-box">
+            <p className="footer-mark font-display">
+              {Array.from(site.name).map((char, i) => (
+                <span key={i} className="footer-letter" style={{ '--i': i } as React.CSSProperties}>
+                  {char === ' ' ? ' ' : char}
+                </span>
+              ))}
+            </p>
+          </div>
         </div>
-
-        <nav
-          aria-label={footer.navLabel}
-          className="col-span-4 font-label text-label text-fg-muted uppercase md:col-span-3 md:col-start-7"
-        >
-          <ul className="grid grid-cols-2 gap-x-gutter md:block">
-            {site.nav.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className={link}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <p className="col-span-4 font-label text-label text-fg-muted uppercase md:col-span-3 md:col-start-10">
-          <a href="#main" className={link}>
-            {footer.toTop}
-          </a>
-        </p>
-      </div>
-
-      <div className="mt-8 flex flex-col gap-2 border-t border-rule pt-4 font-label text-label text-fg-subtle md:mt-10 md:flex-row md:items-baseline md:justify-between">
-        <p className="tabular-nums">
-          © {site.year} {site.name}
-        </p>
-        <p>{footer.typeNote}</p>
-      </div>
+      </FooterStage>
     </footer>
   )
 }

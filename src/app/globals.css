@@ -3,9 +3,9 @@
 /*
  * Design tokens — see DESIGN.md §4.
  * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color is the
- * finalized green system (DESIGN.md §9.2): four exact greens on pure white,
- * with a dark mode. Components use the semantic tokens via Tailwind utilities
- * only — never raw values.
+ * reference's orange system (DESIGN.md §9.2): off-white and off-black carry
+ * canvas and text, orange is the signature accent. Components use the semantic
+ * tokens via Tailwind utilities only — never raw values.
  */
 
 @theme {
@@ -18,31 +18,42 @@
   --radius-*: initial;
   --ease-*: initial;
 
-  /* Color — the green system, DESIGN.md §9.2. The four brand greens are exact
-     and never altered; modes reassign their roles instead. Prefer the semantic
-     tokens below to these raw ones. */
-  --color-green-deep: #5c7057; /* primary green: identity, text on white */
-  --color-green-mid: #89a482; /* secondary green: marks, graphics, dark-mode fields */
-  --color-green-soft: #acc5a6; /* soft green: hairlines, second surface */
-  --color-green-light: #d1edd3; /* light green: surfaces and mats */
+  /* Color — DESIGN.md §9.2. Exact values from the good-fella.com reference;
+     never altered for contrast. When a value cannot do a job, its role changes.
+     Prefer the semantic tokens below to these raw ones. */
+  --color-black: #141314; /* dark structure: dark canvas, light-mode text */
+  --color-white: #eeeeee; /* light structure: light canvas, dark-mode text */
+  --color-paper: #f7f7f7; /* light muted background */
+  --color-stone: #d5d5d5; /* light surface */
+  --color-grey: #696869; /* light muted text */
+  --color-grey-light: #818081; /* dark muted text */
+  --color-charcoal: #1a1a1a; /* dark muted background */
+  --color-graphite: #333333; /* dark surface */
+  --color-orange: #fb460d; /* the signature: brand fields, light accent */
+  --color-orange-bright: #fd551d; /* the accent on dark */
+  --color-orange-soft: #fd8d68; /* muted brand: marks, brand-field surface */
+  --color-orange-muted: #fd7142; /* muted background on a brand field */
 
-  /* Mode surfaces: neutral rooms for dark mode, not brand colors. */
-  --color-mode-surface: #0d130e;
-  --color-mode-surface-raised: #161e17;
+  /* Semantic roles, light mode (the default). Dark and brand are set below.
+     Rules are the reference's translucent black/white, not opaque greys. */
+  --color-bg: var(--color-white);
+  --color-surface: var(--color-stone);
+  --color-surface-2: var(--color-paper);
+  --color-fg: var(--color-black);
+  --color-fg-muted: var(--color-grey);
+  --color-fg-subtle: var(--color-grey);
+  --color-rule: #0000001a;
+  --color-rule-strong: #00000033;
+  --color-accent: var(--color-orange);
+  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent-fg: var(--color-black);
+  --color-focus: var(--color-black);
+  --color-selection: var(--color-orange);
+  --color-selection-fg: var(--color-white);
 
-  /* Semantic roles, light mode (the default). Dark values are set below. */
-  --color-bg: #ffffff;
-  --color-surface: var(--color-green-light);
-  --color-surface-2: var(--color-green-soft);
-  --color-fg: var(--color-green-deep);
-  --color-fg-muted: var(--color-green-deep);
-  --color-fg-subtle: var(--color-green-deep);
-  --color-rule: var(--color-green-soft);
-  --color-rule-strong: var(--color-green-mid);
-  --color-accent: var(--color-green-deep);
-  --color-accent-secondary: var(--color-green-mid);
-  --color-accent-fg: #ffffff;
-  --color-focus: var(--color-green-deep);
+  /* Aliases of fg and bg, so the hero and the menu keep their names. */
+  --color-ink: var(--color-black);
+  --color-canvas: var(--color-white);
 
   /* Display and text share Bricolage Grotesque. Label is Azeret Mono.
      next/font/local sets the *-face variables in src/lib/fonts.ts. */
@@ -76,13 +87,23 @@
   --text-display-xl: clamp(5.0664rem, 3.795rem + 5.6507vw, 8.8806rem);
   --text-display-xl--line-height: 0.95;
   --text-display-xl--letter-spacing: -0.035em;
+  /* The hero headline, on the reference's own fluid curve: 32px at 375px to 96px
+     at 1600px. Hero only; the rest of the page stays on the scale above. The
+     tracking is our display tracking: the reference's -0.035em crushes this face. */
+  --text-hero: clamp(2rem, 0.7757rem + 5.2245vw, 6rem);
+  --text-hero--line-height: 1.1;
+  --text-hero--letter-spacing: -0.025em;
 
   /* Space & layout. --spacing (4px base) is Tailwind's default. */
   --spacing-gutter: clamp(1rem, 0.6667rem + 1.4815vw, 2rem);
   --spacing-margin: clamp(1.25rem, 0.3333rem + 4.0741vw, 4rem);
-  /* The fixed header's height: the single source for its own size, the clearance
-     above <main>, and scroll offsets. */
-  --spacing-header: 2.75rem;
+  /* The fixed header's height (its top gap plus the bar): the single source for its
+     own size, the clearance above <main>, and scroll offsets. Larger from lg up;
+     see the :root override below. */
+  --spacing-header: 4.5rem;
+  /* The menu's inner inset: how far the bar's contents and the panel's contents sit
+     from the card edge once it is open. */
+  --spacing-menu: 1.5rem;
   --spacing-section-y: clamp(6rem, 4rem + 8.8889vw, 12rem);
   --spacing-exhibit-y: clamp(12rem, 70svh, 48rem);
   --container-content: 90rem;
@@ -101,7 +122,11 @@
   /* Motion — starting values, tuned by feel in Phase 6. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-press: cubic-bezier(0.3, 0, 0.5, 1);
+  --ease-emphasis: cubic-bezier(0.83, 0, 0.17, 1);
+  /* The navbar's standard departure: quick start, long soft landing. */
+  --ease-standard: cubic-bezier(0, 0, 0.2, 1);
+  /* A rolling marker: dips back, overshoots, settles. */
+  --ease-spring: cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
 
 /* Durations have no Tailwind theme namespace, so they are plain variables
@@ -113,67 +138,115 @@
   --opsz-text: 16;
 
   --duration-instant: 90ms;
+  --duration-bar: 500ms;
   --duration-fast: 160ms;
   --duration-base: 240ms;
   --duration-slow: 600ms;
   --duration-media: 900ms;
   --duration-intro: 1200ms;
+  --duration-deliberate: 700ms;
   --stagger: 50ms;
 }
 
-/* Modes. Light is the default above. Dark follows the system setting, and
-   data-theme="light" or "dark" forces a mode on the root or on any subtree
-   (/color-test uses this). Dark is its own composition, not an inversion: the
-   lightest greens carry text, the mid green is the field, the deepest green
-   drops to hairlines. Keep the three dark blocks identical. */
+@media (min-width: 64rem) {
+  :root {
+    --spacing-header: 5.5rem;
+    --spacing-menu: 4rem;
+  }
+}
+
+/* Modes, as the reference defines them. Light is the default above. Dark
+   follows the system setting, and data-theme="light" or "dark" forces a mode on
+   the root or on any subtree (/color-test uses this). data-theme="brand" is the
+   reference's orange field (its preloader): black on orange. It is never a
+   page-wide mode. Keep the light and dark blocks in step. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --color-bg: var(--color-mode-surface);
-    --color-surface: var(--color-mode-surface-raised);
-    --color-surface-2: var(--color-mode-surface-raised);
-    --color-fg: var(--color-green-light);
-    --color-fg-muted: var(--color-green-soft);
-    --color-fg-subtle: var(--color-green-mid);
-    --color-rule: var(--color-green-deep);
-    --color-rule-strong: var(--color-green-mid);
-    --color-accent: var(--color-green-mid);
-    --color-accent-secondary: var(--color-green-soft);
-    --color-accent-fg: var(--color-mode-surface);
-    --color-focus: var(--color-green-light);
+    --color-bg: var(--color-black);
+    --color-surface: var(--color-graphite);
+    --color-surface-2: var(--color-charcoal);
+    --color-fg: var(--color-white);
+    --color-fg-muted: var(--color-grey-light);
+    --color-fg-subtle: var(--color-grey-light);
+    --color-rule: #eeeeee0d;
+    --color-rule-strong: #eeeeee1a;
+    --color-accent: var(--color-orange-bright);
+    --color-accent-secondary: var(--color-orange-soft);
+    --color-accent-fg: var(--color-black);
+    --color-focus: var(--color-white);
+    --color-selection: var(--color-orange-bright);
+    --color-selection-fg: var(--color-black);
+    --color-ink: var(--color-white);
+    --color-canvas: var(--color-black);
   }
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --color-bg: var(--color-mode-surface);
-  --color-surface: var(--color-mode-surface-raised);
-  --color-surface-2: var(--color-mode-surface-raised);
-  --color-fg: var(--color-green-light);
-  --color-fg-muted: var(--color-green-soft);
-  --color-fg-subtle: var(--color-green-mid);
-  --color-rule: var(--color-green-deep);
-  --color-rule-strong: var(--color-green-mid);
-  --color-accent: var(--color-green-mid);
-  --color-accent-secondary: var(--color-green-soft);
-  --color-accent-fg: var(--color-mode-surface);
-  --color-focus: var(--color-green-light);
+  --color-bg: var(--color-black);
+  --color-surface: var(--color-graphite);
+  --color-surface-2: var(--color-charcoal);
+  --color-fg: var(--color-white);
+  --color-fg-muted: var(--color-grey-light);
+  --color-fg-subtle: var(--color-grey-light);
+  --color-rule: #eeeeee0d;
+  --color-rule-strong: #eeeeee1a;
+  --color-accent: var(--color-orange-bright);
+  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent-fg: var(--color-black);
+  --color-focus: var(--color-white);
+  --color-selection: var(--color-orange-bright);
+  --color-selection-fg: var(--color-black);
+  --color-ink: var(--color-white);
+  --color-canvas: var(--color-black);
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --color-bg: #ffffff;
-  --color-surface: var(--color-green-light);
-  --color-surface-2: var(--color-green-soft);
-  --color-fg: var(--color-green-deep);
-  --color-fg-muted: var(--color-green-deep);
-  --color-fg-subtle: var(--color-green-deep);
-  --color-rule: var(--color-green-soft);
-  --color-rule-strong: var(--color-green-mid);
-  --color-accent: var(--color-green-deep);
-  --color-accent-secondary: var(--color-green-mid);
-  --color-accent-fg: #ffffff;
-  --color-focus: var(--color-green-deep);
+  --color-bg: var(--color-white);
+  --color-surface: var(--color-stone);
+  --color-surface-2: var(--color-paper);
+  --color-fg: var(--color-black);
+  --color-fg-muted: var(--color-grey);
+  --color-fg-subtle: var(--color-grey);
+  --color-rule: #0000001a;
+  --color-rule-strong: #00000033;
+  --color-accent: var(--color-orange);
+  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent-fg: var(--color-black);
+  --color-focus: var(--color-black);
+  --color-selection: var(--color-orange);
+  --color-selection-fg: var(--color-white);
+  --color-ink: var(--color-black);
+  --color-canvas: var(--color-white);
+}
+
+[data-theme='brand'] {
+  color-scheme: light;
+  --color-bg: var(--color-orange);
+  --color-surface: var(--color-orange-soft);
+  --color-surface-2: var(--color-orange-muted);
+  --color-fg: var(--color-black);
+  --color-fg-muted: var(--color-charcoal);
+  --color-fg-subtle: var(--color-charcoal);
+  --color-rule: #00000033;
+  --color-rule-strong: #0000004d;
+  --color-accent: var(--color-orange-bright);
+  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent-fg: var(--color-black);
+  --color-focus: var(--color-black);
+  --color-selection: var(--color-white);
+  --color-selection-fg: var(--color-black);
+  --color-ink: var(--color-black);
+  --color-canvas: var(--color-orange);
+}
+
+/* The status dots' pulse: down to half and back (the reference's two seconds). */
+@keyframes dot-pulse {
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @utility duration-instant {
@@ -221,7 +294,7 @@
 
   /* Optical size follows the type step. Weight 500 is display, titles, and
      large figures; weight 400 is prose. Utilities can still override weight. */
-  :is(.text-display-xl, .text-display, .text-2xl) {
+  :is(.text-hero, .text-display-xl, .text-display, .text-2xl) {
     font-weight: var(--font-weight-medium);
     font-variation-settings: 'opsz' var(--opsz-display);
   }
@@ -251,6 +324,11 @@
   li,
   figcaption {
     text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-selection);
+    color: var(--color-selection-fg);
   }
 
   :focus-visible {

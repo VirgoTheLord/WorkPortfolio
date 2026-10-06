@@ -11,9 +11,9 @@ The primary impression should be: taste, polished interactions, and obsessive at
 
 ## Current phase
 
-**Phase 2: Design system** in progress. Typography (DESIGN.md §9.1) and color (DESIGN.md §9.2) are settled. Next: the hero concept (§9.3, decision 3). Update this line when a phase completes (see ARCHITECTURE.md §11).
+**Phase 2: Design system**, run as a stage-by-stage reference recreation of good-fella.com. Stages 0–10 (visual system, preloader, navbar, hero, about, skills, selected work, contact, footer, final polish, production audit) are complete and committed as the locked production checkpoint. Future work is a new, explicitly scoped iteration. Typography (DESIGN.md §9.1) and color (DESIGN.md §9.2) are settled. Reference-driven exceptions to DESIGN.md §3 are listed in DESIGN.md's replication note. Update this line when a phase completes (see ARCHITECTURE.md §11).
 
-Color is a pure white foundation with a bold, layered green identity (four exact greens, light and dark modes). Personality comes from color fields, type and composition. No gradients or decorative effects.
+Color is the exact good-fella.com palette: off-white `#EEEEEE` and off-black `#141314` as structure, grey for secondary text, translucent rules, and signature orange (`#FB460D` light, `#FD551D` dark) as the accent. Orange marks active states, marks and strong fields; it is never the default text or page color. A `brand` theme (black on orange) exists for single surfaces. No gradients or decorative effects.
 
 ## Stack (summary)
 

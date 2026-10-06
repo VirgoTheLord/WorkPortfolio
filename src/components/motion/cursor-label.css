@@ -1,0 +1,31 @@
+/*
+ * The cursor label: a pill 32px above the pointer, centred on it, turning about
+ * its bottom edge. It is moved by the island; this file holds its resting look.
+ */
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-label[data-on='true'] {
+  opacity: 1;
+}
+
+.cursor-label-tilt {
+  position: absolute;
+  top: calc(var(--spacing) * -8);
+  left: 0;
+  translate: -50% -100%;
+  transform-origin: 50% 100%;
+}
+
+.cursor-label-pill {
+  padding: var(--spacing) calc(var(--spacing) * 2);
+  text-align: center;
+  white-space: nowrap;
+}

@@ -1,0 +1,102 @@
+/*
+ * --theme-dark is 0 in light mode and 1 in dark mode, and everything on the toggle
+ * is drawn from it, so the control is correct before any script runs. The
+ * three blocks mirror globals.css: the visitor's choice on <html>, else the system.
+ */
+@reference '../../app/globals.css';
+
+.theme-toggle {
+  --theme-dark: 0;
+  --theme-track: calc(var(--spacing) * 16);
+  --theme-knob: calc(var(--spacing) * 7);
+}
+
+:root[data-theme='dark'] .theme-toggle {
+  --theme-dark: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .theme-toggle {
+    --theme-dark: 1;
+  }
+}
+
+.theme-track {
+  position: relative;
+  display: block;
+  width: var(--theme-track);
+  height: calc(var(--theme-knob) + var(--spacing) * 2);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 100vmax;
+  background-color: var(--color-surface);
+}
+
+/* The knob rolls a full turn across the track while the sun is eclipsed. */
+.theme-knob {
+  position: absolute;
+  top: 50%;
+  left: var(--spacing);
+  width: var(--theme-knob);
+  height: var(--theme-knob);
+  margin-top: calc(var(--theme-knob) / -2);
+  color: var(--color-accent);
+  transform: translateX(
+      calc(var(--theme-dark) * (var(--theme-track) - var(--theme-knob) - var(--spacing) * 2 - 2px))
+    )
+    rotate(calc(var(--theme-dark) * 360deg));
+  transition: transform var(--duration-intro) var(--ease-spring);
+}
+
+.theme-bite {
+  transform: translate(calc((1 - var(--theme-dark)) * 14px), calc((1 - var(--theme-dark)) * -14px));
+  transition: transform var(--duration-deliberate) var(--ease-in-out);
+}
+
+.theme-rays {
+  transform-origin: 12px 12px;
+  transform: scale(calc(1 - var(--theme-dark))) rotate(calc(var(--theme-dark) * 90deg));
+  opacity: calc(1 - var(--theme-dark));
+  transition:
+    transform var(--duration-deliberate) var(--ease-in-out),
+    opacity var(--duration-base) linear;
+}
+
+.theme-toggle:active .theme-knob {
+  scale: 0.9;
+}
+
+.theme-word {
+  position: relative;
+  display: grid;
+  min-width: 5ch;
+}
+
+.theme-word > span {
+  grid-area: 1 / 1;
+  transition: opacity var(--duration-base) linear;
+}
+
+.theme-word-light {
+  opacity: calc(1 - var(--theme-dark));
+}
+
+.theme-word-dark {
+  opacity: var(--theme-dark);
+}
+
+/* The page change itself: the new mode grows over the old one as a circle (the
+   animation is set from the pressed control in lib/page-modes.ts), so the
+   browser's default cross-fade is switched off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}

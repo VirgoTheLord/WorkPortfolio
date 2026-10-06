@@ -11,7 +11,7 @@ import portfolioCover from './portfolio/cover.png'
  * employers are claimed. Replace or extend with real projects as they exist:
  * the section renders however many are listed, in this order.
  */
-export const projects = [
+export const projects: readonly ProjectMeta[] = [
   {
     slug: 'portfolio',
     title: 'This portfolio',
@@ -22,35 +22,33 @@ export const projects = [
     stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'GSAP'],
     cover: {
       image: portfolioCover,
-      alt: 'The portfolio home page: a large statement in warm ink with its last phrase in racing green, a brass rule, and small monospace labels on an ivory ground.',
+      alt: 'The portfolio home page: the name set large in black on an off-white ground, an orange call to action and small monospace labels.',
     },
   },
   {
     slug: 'design-system',
-    title: 'Heritage design system',
+    title: 'Design system',
     summary:
-      'Ivory, ink, racing green and antique brass, set in Bricolage Grotesque and Azeret Mono and documented as tokens with measured contrast.',
+      'Off-white, off-black and signature orange, set in Bricolage Grotesque and Azeret Mono and documented as tokens with measured contrast.',
     category: 'Design system',
     year: '2026',
     stack: ['Tailwind CSS', 'Design tokens'],
     cover: {
       image: designSystemCover,
-      focus: 'left',
-      alt: 'A palette specimen listing the rule, racing green and antique brass tokens as labelled swatches on ivory.',
+      alt: 'The color reference page: twelve labelled palette swatches, orange first, above a list of semantic tokens.',
     },
   },
   {
     slug: 'navigation',
-    title: 'Full-screen navigation',
+    title: 'Navigation',
     summary:
-      'A native dialog menu driven by one reversible GSAP timeline: focus trapped, scroll locked, and a reduced-motion path that keeps every function.',
+      'An expanding navbar panel with separate open and close sequences in GSAP: the page behind goes inert, focus returns to the trigger, and a reduced-motion path keeps every function.',
     category: 'Interaction',
     year: '2026',
-    stack: ['GSAP', 'Native dialog'],
+    stack: ['GSAP', 'CSS'],
     cover: {
       image: navigationCover,
-      focus: 'left',
-      alt: 'The open full-screen menu: a racing green surface with About, Skills, Selected Work and Contact set large in ivory beside small index numbers.',
+      alt: 'The open navbar: a panel with Home, About, Skills, Selected Work and Contact set large beside contact details and two project cards, over a dimmed page.',
     },
   },
-] satisfies readonly ProjectMeta[]
+]

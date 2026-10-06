@@ -1,39 +1,30 @@
 import Link from 'next/link'
 import { site } from '@/content/site'
 
-const tone = {
-  ink: 'text-fg hover:text-accent focus-visible:text-accent hover:decoration-accent focus-visible:decoration-accent',
-  onGreen:
-    'text-accent-fg hover:decoration-accent-fg focus-visible:decoration-accent-fg focus-visible:outline-accent-fg',
-} as const
+const [first = site.name] = site.name.split(' ')
+const initials = site.name
+  .split(' ')
+  .map((word) => word.charAt(0))
+  .join('')
 
 /*
- * The wordmark. `masked` wraps the text for the menu's reveal; the header
- * instance stays plain. The mask lives inside the link so its focus ring is
- * never clipped.
+ * The wordmark: the initials, which roll up to the first name while the menu is
+ * open (the roll is driven by the menu's open state, see site-menu.css). The
+ * link's name is the full name, so the roll is hidden from assistive tech.
  */
-export function SiteBrand({
-  tone: toneName = 'ink',
-  masked = false,
-}: {
-  tone?: keyof typeof tone
-  masked?: boolean
-}) {
+export function SiteBrand() {
   return (
     <Link
       href="/"
       aria-label={`${site.name}, home`}
-      className={`inline-flex h-header items-center font-label text-label font-medium uppercase underline decoration-transparent underline-offset-4 transition-colors duration-base ease-out hover:duration-fast focus-visible:duration-fast active:translate-y-px active:duration-instant ${tone[toneName]}`}
+      className="menu-brand-link inline-flex min-h-11 items-center font-display text-lg font-medium tracking-wide text-ink uppercase transition-colors duration-base ease-out hover:text-accent hover:duration-fast focus-visible:text-accent focus-visible:duration-fast active:translate-y-px active:duration-instant"
     >
-      {masked ? (
-        <span className="block overflow-hidden">
-          <span data-menu-bar className="block">
-            {site.name}
-          </span>
+      <span aria-hidden="true" className="menu-roll menu-roll-brand">
+        <span className="menu-roll-track">
+          <span>{initials}</span>
+          <span>{first}</span>
         </span>
-      ) : (
-        site.name
-      )}
+      </span>
     </Link>
   )
 }

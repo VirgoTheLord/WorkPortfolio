@@ -1,95 +1,107 @@
-import type { CSSProperties } from 'react'
-import { SectionReveal } from '@/components/motion/section-reveal'
+import { HeadlineWipe } from '@/components/motion/headline-wipe'
+import { SkillsSteps } from '@/components/motion/skills-steps'
 import { skills } from '@/content/site'
 import './skills.css'
 
-const index = (i: number) => ({ '--i': i }) as CSSProperties
-
 /*
- * A capability index: each row is a capability (large), what it means in
- * practice (middle), and the tools that support it (small, right). Rows reveal
- * one at a time as they scroll into view, so a tall section never finishes
- * its animation off-screen. Same grid as About: labels in the left columns,
- * content from column 4, secondary detail from column 10.
+ * Skills, recreated from the reference's process section: a headline with the
+ * section label beside it, then the three groups as numbered steps, each with a
+ * panel of the tools behind it (standing in for the reference's photographs).
+ *
+ * From lg, with motion allowed and scripting on, the section is pinned for a few
+ * screens of scroll and one step is current at a time; the island
+ * (motion/skills-steps.tsx) picks it from the scroll position and moves the
+ * marker and the panel strip to it. Otherwise it is a plain list, each step
+ * followed by its panel. Every step and panel is in the HTML and readable either
+ * way; the first step is current from the start.
  */
 export function Skills() {
-  const last = skills.groups.length - 1
-
   return (
-    <section
-      id="skills"
-      aria-labelledby="skills-heading"
-      className="mx-auto flex section-screen w-full max-w-content scroll-mt-header flex-col px-margin pb-8 focus:outline-none md:pb-10"
-    >
-      <SectionReveal as="div">
-        <div aria-hidden="true" className="skills-draw h-px bg-rule-strong" style={index(0)} />
-        <h2
-          id="skills-heading"
-          className="skills-mask flex items-center gap-4 pt-4 font-label text-label text-fg-subtle uppercase"
-          style={index(1)}
-        >
-          <span aria-hidden="true" className="h-px w-8 bg-accent-secondary" />
-          <span aria-hidden="true" className="font-medium text-accent tabular-nums">
-            {skills.index}
-          </span>
-          <span aria-hidden="true">—</span>
-          {skills.label}
-        </h2>
-      </SectionReveal>
+    <section id="skills" aria-labelledby="skills-heading" className="skills scroll-mt-header">
+      <SkillsSteps>
+        <div className="skills-sticky">
+          <div className="skills-frame">
+            <div className="skills-head">
+              <h2 id="skills-heading" className="font-display text-3xl font-normal text-fg">
+                <HeadlineWipe lines={[skills.headline]} />
+              </h2>
+              <p className="font-label text-base tracking-wide text-fg uppercase">
+                <span aria-hidden="true" className="text-accent">
+                  {'// '}
+                </span>
+                {skills.label}
+              </p>
+            </div>
 
-      <ol className="flex flex-1 flex-col pt-8 md:pt-10">
-        {skills.groups.map((group, i) => (
-          <SectionReveal
-            key={group.name}
-            as="li"
-            className="relative grid flex-1 grid-cols-4 content-start items-baseline gap-x-gutter gap-y-3 py-5 md:grid-cols-12 md:gap-y-4 md:py-8"
-            style={{ '--row': i } as CSSProperties}
-          >
-            <span
-              aria-hidden="true"
-              className="skills-draw absolute inset-x-0 top-0 h-px bg-rule"
-              style={index(0)}
-            />
-            {i === last ? (
-              <span
-                aria-hidden="true"
-                className="skills-draw absolute inset-x-0 bottom-0 h-px bg-rule"
-                style={index(3)}
-              />
-            ) : null}
+            <div className="skills-body">
+              <div className="skills-list">
+                <span aria-hidden="true" data-skills-marker className="skills-marker bg-accent" />
+                <ol className="skills-steps">
+                  {skills.groups.map((group, i) => (
+                    <li
+                      key={group.name}
+                      data-skills-step={i}
+                      data-current={i === 0 ? '' : undefined}
+                      className="skills-step"
+                    >
+                      <span className="skills-step-mark">
+                        <span aria-hidden="true" className="skills-step-square bg-accent" />
+                        <span className="font-label text-sm text-fg-muted tabular-nums">
+                          {group.index}
+                        </span>
+                      </span>
+                      <div className="skills-step-copy">
+                        <h3 className="font-display text-xl text-fg">{group.name}</h3>
+                        <p className="mt-2 text-base text-fg-muted">{group.description}</p>
+                      </div>
+                      <SkillsPanel name={group.name} index={group.index} tools={group.tools} />
+                    </li>
+                  ))}
+                </ol>
+              </div>
 
-            <p
-              className="skills-mask col-span-1 font-label text-label font-medium text-accent tabular-nums md:col-span-3 md:row-start-1"
-              style={index(1)}
-            >
-              {group.index}
-            </p>
-
-            <h3
-              className="skills-mask col-span-3 font-display text-2xl wrap-break-word text-fg md:col-span-5 md:col-start-4 md:row-start-1"
-              style={index(1)}
-            >
-              {group.name}
-            </h3>
-            <p
-              className="skills-mask col-span-4 max-w-measure font-text text-base wrap-break-word text-fg-muted md:col-span-5 md:col-start-4 md:row-start-2"
-              style={index(2)}
-            >
-              {group.description}
-            </p>
-
-            <ul
-              aria-label={`${group.name}: tools and practices`}
-              className="skills-mask col-span-4 flex flex-wrap gap-x-5 gap-y-1 font-label text-sm font-medium text-fg-muted md:col-span-3 md:col-start-10 md:row-span-2 md:row-start-1 md:flex-col md:gap-x-0"
-              style={index(3)}
-            >
-              {group.tools.map((tool) => (
-                <li key={tool}>{tool}</li>
-              ))}
-            </ul>
-          </SectionReveal>
-        ))}
-      </ol>
+              {/* Pinned only: one panel per step in a strip that slides to the current
+                  one. The list carries each panel too, for assistive tech. */}
+              <div aria-hidden="true" className="skills-window">
+                <div className="skills-strip">
+                  {skills.groups.map((group) => (
+                    <SkillsPanel
+                      key={group.name}
+                      name={group.name}
+                      index={group.index}
+                      tools={group.tools}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SkillsSteps>
     </section>
+  )
+}
+
+/* The tools behind one group. */
+function SkillsPanel({
+  name,
+  index,
+  tools,
+}: {
+  name: string
+  index: string
+  tools: readonly string[]
+}) {
+  return (
+    <div className="skills-panel bg-surface-2">
+      <p className="font-label text-label text-fg uppercase">
+        <span className="tabular-nums">{index}</span> — {name}
+      </p>
+      <ul aria-label={`${name}: tools and practices`} className="font-display text-2xl text-fg">
+        {tools.map((tool) => (
+          <li key={tool}>{tool}</li>
+        ))}
+      </ul>
+    </div>
   )
 }

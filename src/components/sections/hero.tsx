@@ -1,66 +1,81 @@
-import type { CSSProperties } from 'react'
+import { WorkTogetherButton } from '@/components/interactive/work-together-button'
+import { TextLink } from '@/components/ui/text-link'
 import { hero } from '@/content/site'
 import './hero.css'
 
-const index = (i: number) => ({ '--i': i }) as CSSProperties
-
+/*
+ * The opening composition, on one centre line: the name on two hand-broken
+ * lines, a line under it and the actions, centred in the screen; the stack row
+ * along the bottom edge. Spacing, type and the entrance follow the good-fella.com
+ * hero. The navbar (components/layout/site-header.tsx) floats over the top edge.
+ *
+ * Every element carries the hooks the intro animates (components/motion/
+ * hero-intro.tsx). Without the intro they are inert and this is the final state.
+ */
 export function Hero() {
-  const last = hero.statement.length - 1
-
   return (
     <section
+      data-hero
       aria-labelledby="hero-heading"
-      className="mx-auto flex section-screen w-full max-w-content flex-col justify-between gap-8 px-margin pb-8 md:gap-10 md:pb-10"
+      className="hero relative isolate overflow-hidden bg-canvas text-fg"
     >
-      <div className="relative">
-        <div
-          aria-hidden="true"
-          className="hero-rule absolute inset-x-0 top-0 h-px bg-rule-strong"
-        />
-        <div className="flex items-center justify-between pt-4 font-label text-label text-fg-subtle uppercase">
-          <p className="hero-meta flex items-center gap-3" style={index(0)}>
-            <span aria-hidden="true" className="hero-green size-2 bg-accent" />
-            {hero.eyebrow}
-          </p>
-          <p className="hero-meta tabular-nums" style={index(1)}>
-            {hero.year}
-          </p>
-        </div>
-      </div>
+      <div className="hero-push">
+        <div className="hero-frame">
+          <div className="hero-copy">
+            <div className="hero-main">
+              <h1 id="hero-heading" className="font-display text-hero font-normal">
+                {hero.title.map((line, i) => (
+                  <span key={line}>
+                    {i > 0 ? <br /> : null}
+                    <span className="hero-line">
+                      <span data-hero-text className="hero-line-text">
+                        {line}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        data-hero-block="lead"
+                        className="hero-block bg-accent"
+                      />
+                      <span
+                        aria-hidden="true"
+                        data-hero-block="trail"
+                        className="hero-block bg-fg"
+                      />
+                    </span>
+                  </span>
+                ))}
+              </h1>
 
-      <h1 id="hero-heading" className="font-display text-display-xl text-fg">
-        {hero.statement.map((phrase, i) => (
-          <span
-            key={phrase}
-            className={`hero-line block ${i === last ? 'text-accent' : ''}`}
-            style={index(i)}
-          >
-            {phrase}{' '}
-          </span>
-        ))}
-      </h1>
+              <p className="hero-mask text-sm text-fg lg:text-base lg:text-fg-muted">
+                <span data-hero-intro className="block">
+                  {hero.intro}
+                </span>
+              </p>
 
-      <div className="grid grid-cols-4 items-end gap-x-gutter md:grid-cols-12">
-        <div className="col-span-2 md:col-span-3">
-          <div aria-hidden="true" className="hero-brass h-px w-16 bg-accent-secondary" />
-          <p
-            className="hero-support mt-4 font-label text-label font-medium text-fg tabular-nums"
-            style={index(0)}
-          >
-            {hero.index.current}
-            <span className="text-fg-subtle">{` / ${hero.index.total}`}</span>
-          </p>
-        </div>
-        <div className="col-span-2 md:col-span-4 md:col-start-9">
-          <p className="hero-support font-text text-base text-fg md:text-lg" style={index(1)}>
-            {hero.name}
-          </p>
-          <p
-            className="hero-support mt-1 font-label text-label text-fg-subtle uppercase"
-            style={index(2)}
-          >
-            {hero.role}
-          </p>
+              <div data-hero-actions className="flex flex-wrap items-center justify-center gap-4">
+                <WorkTogetherButton
+                  label={hero.action.label}
+                  href={hero.action.href}
+                  tone="accent"
+                />
+                <TextLink href={hero.secondary.href} className="text-base text-fg">
+                  {hero.secondary.label}
+                </TextLink>
+              </div>
+            </div>
+
+            {/* Bottom edge: what this site is built with, in the reference's client row. */}
+            <ul
+              aria-label={hero.stack.label}
+              className="hero-stack font-label text-label text-fg-muted uppercase"
+            >
+              {hero.stack.items.map((item) => (
+                <li key={item} data-hero-stack>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
