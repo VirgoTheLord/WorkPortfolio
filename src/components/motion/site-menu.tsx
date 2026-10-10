@@ -510,7 +510,7 @@ export function SiteMenu({
         className="menu-field fixed inset-0"
       >
         <div aria-hidden="true" data-menu-frost className="menu-frost absolute inset-0" />
-        <div className="menu-field-inner relative size-full text-ink">
+        <div data-lenis-prevent className="menu-field-inner relative size-full text-ink">
           <div className="menu-field-frame mx-auto h-full w-full max-w-content">{children}</div>
         </div>
       </div>

@@ -80,6 +80,19 @@
   gap: calc(var(--spacing) * 1);
   padding-left: calc(var(--spacing) * 4);
   border-left: 1px solid currentColor;
+  line-height: 1.4;
+}
+
+/* Links and plain lines share one row height, so the four columns run on one
+   rhythm: the site link's vertical padding (which is there to hold its underline
+   clear in running text) is dropped here, and its underline sits just under the
+   letters instead of half a line below them. */
+.footer-links .text-link {
+  padding-block: 0;
+}
+
+.footer-links .text-link-rule {
+  bottom: 0.05em;
 }
 
 @media (min-width: 48rem) {
@@ -125,6 +138,9 @@
   line-height: 0.82;
   letter-spacing: -0.045em;
   white-space: nowrap;
+  /* The tail of the y falls about 0.15em below the baseline; this keeps the
+     hairline under it, not through it. */
+  padding-bottom: 0.1em;
 }
 
 .footer-letter-mask {
