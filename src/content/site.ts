@@ -123,21 +123,17 @@ export const site = {
 } satisfies SiteConfig
 
 /*
- * The expanded navbar. Only facts the project already holds: the destinations
- * above, the contact address and focus stated elsewhere on the page, the role
- * and the year. It makes no claim about availability, clients or location.
+ * The navbar and its menu: the trigger's two labels, the destinations (Home,
+ * then the sections above), the bar's call to action, the colour-mode switch's
+ * words, and the role and year the contact section sets.
  */
 export const menu = {
   label: 'Menu',
   closeLabel: 'Close',
   home: { label: 'Home', href: '/' },
   action: { label: 'Write to me', href: '/#contact' },
-  contactLabel: 'Contact',
   themeLabel: 'Theme',
   themeLight: 'Light',
   themeDark: 'Dark',
-  focusLabel: 'Focus',
-  focus: about.details.find((item) => item.term === 'Focus')?.detail ?? '',
   status: [site.role, `Portfolio ${site.year}`],
-  projectsLabel: 'Selected work',
 } satisfies MenuContent

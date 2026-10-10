@@ -101,9 +101,6 @@
      own size, the clearance above <main>, and scroll offsets. Larger from lg up;
      see the :root override below. */
   --spacing-header: 4.5rem;
-  /* The menu's inner inset: how far the bar's contents and the panel's contents sit
-     from the card edge once it is open. */
-  --spacing-menu: 1.5rem;
   --spacing-section-y: clamp(6rem, 4rem + 8.8889vw, 12rem);
   --spacing-exhibit-y: clamp(12rem, 70svh, 48rem);
   --container-content: 90rem;
@@ -151,7 +148,6 @@
 @media (min-width: 64rem) {
   :root {
     --spacing-header: 5.5rem;
-    --spacing-menu: 4rem;
   }
 }
 

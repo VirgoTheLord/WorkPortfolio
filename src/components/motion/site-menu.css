@@ -3,13 +3,12 @@
  * file holds what utilities cannot express (:has, @supports, state selectors).
  *
  * State lives on .menu: data-open is the logical state (set the moment the user
- * asks) and data-shown is the panel's visible state (on while open and closing).
+ * asks) and data-shown is the field's visible state (on while open and closing).
  *
- * The bar's pieces (scrim, surface, insets, rolls, the shifted row) are CSS
- * transitions keyed to data-open and data-scrolled, as in the reference: they
- * start the moment the state changes, in both directions.
- * The panel and its content are GSAP (site-menu.tsx), which only animates between
- * looks defined here, so reduced motion simply flips the attributes.
+ * The bar's pieces (surface, insets, the label crossfades, the action) are CSS
+ * transitions keyed to data-open and data-scrolled: they start the moment the
+ * state changes, in both directions. The menu itself is one GSAP timeline
+ * (site-menu.tsx); without it the field simply shows, unanimated.
  */
 @reference '../../app/globals.css';
 
@@ -24,48 +23,45 @@ html:has(.menu[data-open='true']) {
 }
 
 .menu {
-  --menu-marker: calc(var(--spacing) * 5);
-  --menu-gap: calc(var(--spacing) * 4);
-  /* How far the current row slides over: the marker and the space after it. */
-  --menu-shift: calc(var(--menu-marker) + var(--menu-gap));
-  /* The frame: the bar card and the panel sit this far from the viewport edges. */
+  /* The frame: the bar and the menu's content sit this far from the viewport
+     edges, so the wordmark lines up with the destinations under it. */
   --menu-edge: calc(var(--spacing) * 4);
-  /* How far the bar's contents sit inside the card: none at the top of the page,
-     a little once it has scrolled, the panel's own inset while open. */
+  /* How far the bar's contents sit inside the card: none at the top of the page
+     and while open (on the frame edge, over the frost), a little once scrolled. */
   --menu-inset: 0px;
+  /* How far a receding destination goes out of focus. */
+  --menu-blur: calc(var(--spacing) * 2);
+  /* The reference's one curve for every state change in the menu. */
+  --menu-ease: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-.menu[data-scrolled='true'] {
+.menu[data-scrolled='true']:not([data-open='true']) {
   --menu-inset: calc(var(--spacing) * 4);
-}
-
-.menu[data-open='true'] {
-  --menu-inset: var(--spacing-menu);
 }
 
 @media (min-width: 64rem) {
   .menu {
-    --menu-marker: calc(var(--spacing) * 8);
-    --menu-gap: calc(var(--spacing) * 8);
     --menu-edge: calc(var(--spacing) * 8);
+    --menu-blur: calc(var(--spacing) * 3);
   }
 }
 
-.menu-frame {
+.menu-frame,
+.menu-field-frame {
   padding-inline: var(--menu-edge);
 }
 
-/* Over the footer the bar slides away (0.4s, the reference's curve). */
+/* Over the footer the bar slides away (0.4s). */
 .menu-frame {
-  transition: transform 400ms cubic-bezier(0.76, 0, 0.24, 1);
+  transition: transform 400ms var(--menu-ease);
 }
 
 .menu[data-hidden='true']:not([data-open='true']) .menu-frame {
   transform: translateY(-120%);
 }
 
-/* Crossing into a themed section, the bar's colours follow: the island sets
-   data-swap for 450ms after the change, and everything that carries colour fades
+/* When the bar's theme changes (a themed section, or the menu opening), the
+   island sets data-swap for 450ms and everything that carries colour fades
    (0.4s) instead of snapping. Hover timings are untouched the rest of the time. */
 .menu[data-swap='true'] :is(.menu-surface, .menu-brand-link, .menu-trigger, .menu-icon > span) {
   transition-property: color, background-color, opacity, transform;
@@ -80,29 +76,14 @@ html:has(.menu[data-open='true']) {
 
 /* ---- Bar layers ---------------------------------------------------------- */
 
-/* The page dims and softens behind the open navbar. */
-.menu-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--duration-bar) var(--ease-standard);
-}
-
-.menu[data-open='true'] .menu-scrim {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* The card behind the bar: absent over the top of the page, there once it has
-   scrolled and while open. */
+/* The card behind the bar: there once the page has scrolled. Opening dissolves
+   it, so the bar sits straight on the frost. */
 .menu-surface {
   opacity: 0;
   transition: opacity var(--duration-bar) var(--ease-standard);
 }
 
-.menu:is([data-scrolled='true'], [data-open='true']) .menu-surface {
+.menu[data-scrolled='true']:not([data-open='true']) .menu-surface {
   opacity: 1;
 }
 
@@ -129,31 +110,77 @@ html:has(.menu[data-open='true']) {
   }
 }
 
-/* The panel is there to be seen while open and while it is leaving. */
-.menu-panel {
-  visibility: hidden;
+/* While the menu is up the call to action goes out of focus and away (Contact
+   is in the list), and comes back once it has gone. It is hidden outright, so
+   it cannot be focused over the menu. */
+.menu-action > * {
+  transition:
+    opacity 800ms var(--menu-ease),
+    filter 800ms var(--menu-ease),
+    visibility 0s;
 }
 
-.menu[data-shown='true'] .menu-panel {
+.menu:is([data-open='true'], [data-shown='true']) .menu-action > * {
+  opacity: 0;
+  filter: blur(10px);
+  visibility: hidden;
+  transition:
+    opacity 800ms var(--menu-ease),
+    filter 800ms var(--menu-ease),
+    visibility 0s 800ms;
+}
+
+/* ---- The menu ----------------------------------------------------------- */
+
+/* Behind the bar. Present only while shown, and only catches the pointer while
+   open, so a closing menu never blocks the page it is giving back. */
+.menu-field {
+  z-index: -1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.menu[data-shown='true'] .menu-field {
   visibility: visible;
 }
 
-/* On a short screen the panel scrolls rather than running off the bottom. */
-.menu-panel-inner {
-  max-height: calc(100dvh - var(--spacing-header) - var(--spacing) * 6);
-  overflow-y: auto;
-  overscroll-behavior: contain;
+.menu[data-open='true'] .menu-field {
+  pointer-events: auto;
 }
 
-/* ---- Trigger and wordmark rolls ---------------------------------------- */
+/* The frost: the page stays where it is and goes soft and dark beneath it.
+   Translucent black over a backdrop blur, as in the reference. The blur is
+   wider than the reference's 20px, which leaves the shapes of large type on a
+   light page; at 40px the page dissolves into soft light. A little darker than
+   the reference, so the small labels keep AA over a light page. Where backdrop
+   blur is not supported it is plain black. The island fades it in (autoAlpha). */
+.menu-frost {
+  background-color: color-mix(in srgb, var(--color-black) 62%, transparent);
+  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
+}
 
-/* A one-line mask with a second line stacked under it; opening rolls it up. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .menu-frost {
+    background-color: var(--color-black);
+  }
+}
+
+/* Clears the bar at the top and the home indicator at the bottom; on a short
+   screen the content scrolls rather than running off the edge. */
+.menu-field-inner {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: calc(var(--spacing-header) + var(--spacing) * 6);
+  padding-bottom: max(calc(var(--spacing) * 8), env(safe-area-inset-bottom));
+}
+
+/* ---- Trigger and wordmark crossfades ------------------------------------ */
+
+/* Two labels in one place: opening takes the first out of focus and brings the
+   second into it (0.8s), as the reference's close control comes in. */
 .menu-roll {
-  --menu-roll-gap: calc(var(--spacing) * 0.5);
-  position: relative;
   display: block;
-  overflow: hidden;
-  height: 1em;
   line-height: 1;
 }
 
@@ -162,25 +189,26 @@ html:has(.menu[data-open='true']) {
 }
 
 .menu-roll-track {
-  display: flex;
-  flex-direction: column;
-  gap: var(--menu-roll-gap);
-  transition: transform var(--duration-base) var(--ease-standard);
-}
-
-.menu-roll-brand .menu-roll-track {
-  transition-duration: var(--duration-bar);
+  display: grid;
 }
 
 .menu-roll-track > span {
-  display: block;
-  height: 1em;
-  line-height: 1;
+  grid-area: 1 / 1;
   white-space: nowrap;
+  transition:
+    opacity 800ms var(--menu-ease),
+    filter 800ms var(--menu-ease);
 }
 
-.menu[data-open='true'] .menu-roll-track {
-  transform: translateY(calc(-1em - var(--menu-roll-gap)));
+.menu-roll-track > span:last-child,
+.menu[data-open='true'] .menu-roll-track > span:first-child {
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.menu[data-open='true'] .menu-roll-track > span:last-child {
+  opacity: 1;
+  filter: blur(0);
 }
 
 /* Two bars that cross into an X while open. */
@@ -198,7 +226,7 @@ html:has(.menu[data-open='true']) {
   width: 100%;
   height: 2px;
   background-color: currentColor;
-  transition: transform var(--duration-base) var(--ease-standard);
+  transition: transform 800ms var(--menu-ease);
 }
 
 .menu-icon > span:first-child {
@@ -219,84 +247,119 @@ html:has(.menu[data-open='true']) {
 
 /* ---- Destinations ------------------------------------------------------- */
 
-/* Room for descenders inside a clipping mask. */
-.menu-mask {
-  overflow: hidden;
-  padding-block: 0.06em;
+/* Each destination's row: room around it as padding rather than gaps, so the
+   hit areas meet and moving between destinations never crosses empty space.
+   The index, word and slash sit inside it. */
+.menu-item {
+  column-gap: calc(var(--spacing) * 4);
+  padding-block: calc(var(--spacing) * 1.5);
 }
 
-/* The current row slides over to make room for the marker, and back as soon as
-   it loses it. */
-.menu-link {
-  transition-property: color, translate;
-  transition-duration: var(--duration-base), var(--duration-slow);
-  transition-timing-function: var(--ease-standard), var(--ease-in-out);
-}
-
-/* The page you are on is in the accent. */
-.menu-link[aria-current] {
-  color: var(--color-accent);
-}
-
-[data-menu-item][data-current] > .menu-link {
-  translate: var(--menu-shift) 0;
-  color: var(--color-accent);
-}
-
-/* The marker is one square that rolls between rows: the wrapper travels (the
-   island sets its transform, with a slight dip and overshoot) and the square
-   arrives from the left. */
-.menu-marker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: var(--menu-marker);
-  height: var(--menu-marker);
-  pointer-events: none;
-  transition: transform var(--duration-slow) var(--ease-spring);
-}
-
-.menu-marker-square {
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transform: translateX(calc(var(--menu-shift) * -1));
-  transition:
-    transform var(--duration-slow) var(--ease-in-out),
-    opacity var(--duration-fast) linear;
-}
-
-.menu-marker[data-on='true'] .menu-marker-square {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Closing, the marker is gone at once. */
-.menu[data-open='false'] .menu-marker-square {
-  transition: none;
-}
-
-/* ---- Status dots -------------------------------------------------------- */
-
-/* The reference's pulse: down to half and back, every two seconds. */
-.menu[data-shown='true'] .menu-dot {
-  animation: dot-pulse 2s var(--ease-in-out) infinite;
-}
-
-/* ---- Project cards ------------------------------------------------------ */
-
-.menu-card {
-  transition: opacity var(--duration-bar) var(--ease-standard);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .menu-card:hover {
-    opacity: 0.8;
+@media (min-width: 64rem) {
+  .menu-item {
+    column-gap: calc(var(--spacing) * 5);
+    padding-block: calc(var(--spacing) * 3);
+    padding-inline: calc(var(--spacing) * 4);
   }
 }
 
-.menu-card:focus-visible {
-  opacity: 0.8;
+/* Below md the list is one destination per line, as large as the widest of them
+   ("Selected Work", about 6.3em) fits the width: the size follows the viewport
+   up to where the display size takes over. */
+@media not all and (min-width: 48rem) {
+  .menu-item {
+    font-size: min(14vw, var(--text-display));
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Index and word are trimmed to their capitals (text-box), so with both aligned
+   to the top the number sits exactly on the top-left corner of the word's
+   capitals, whatever the size of either. */
+.menu-index,
+.menu-text,
+[data-split] .menu-chars > span {
+  text-box: trim-both cap alphabetic;
+}
+
+/* A clipping mask, with room past the trimmed box for ascenders above the
+   capitals and anything below the baseline. */
+.menu-mask {
+  overflow: hidden;
+  padding-block: 0.25em;
+  margin-block: -0.25em;
+}
+
+/* The reference's hairline slash: as tall as the word's capitals (the row
+   carries the word's size, so 1cap is the word's), its width following the
+   reference's slope. The island opens it from the middle and carries it along
+   as its word unfolds. */
+.menu-slash {
+  height: 1cap;
+  width: calc(1cap * 55 / 201);
+}
+
+/* The split copy sits over the real word, each letter placed by the island.
+   Until it is split (and without JavaScript) the real word shows. The real word
+   stays in the flow and in the accessibility tree either way. */
+.menu-chars {
+  display: none;
+}
+
+[data-split] .menu-chars {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
+[data-split] .menu-chars > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: pre;
+}
+
+[data-split] .menu-text {
+  opacity: 0;
+}
+
+/* One response for pointer and keyboard alike, the reference's: the destination
+   you are on holds and the others recede, fading and going out of focus, so the
+   eye lands on one word (1s both ways). Hover is read off the row (the link and
+   the slash after it), and the rows sit edge to edge, so moving between
+   destinations never crosses a gap. */
+.menu-link,
+.menu-slash {
+  transition:
+    opacity 1s var(--menu-ease),
+    filter 1s var(--menu-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-list:has(> li:hover) > li:not(:hover) :is(.menu-link, .menu-slash) {
+    opacity: 0.3;
+    filter: blur(var(--menu-blur));
+  }
+}
+
+.menu-list:has(.menu-link:focus-visible)
+  > li:not(:has(:focus-visible))
+  :is(.menu-link, .menu-slash) {
+  opacity: 0.3;
+  filter: blur(var(--menu-blur));
+}
+
+.menu-link:focus-visible {
+  outline-offset: 0;
+}
+
+/* The page you are on: a square after its index. It goes the moment the menu
+   starts to close, so it never trails the folding words. */
+.menu-current {
+  opacity: 0;
+}
+
+.menu[data-open='true'] .menu-link[aria-current] .menu-current {
+  opacity: 1;
 }
