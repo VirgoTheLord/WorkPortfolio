@@ -14,7 +14,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={fontVariables || undefined} suppressHydrationWarning>
       <head>
-        {/* Adds .js (scripting is on; ARCHITECTURE.md §6). On the home page it also
+        {/* Adds .js (scripting is on; ARCHITECTURE.md §6). The colour mode follows the
+            system (prefers-color-scheme) and nothing overrides it: the stored choice
+            an earlier light/dark switch saved is cleared, so no visitor stays locked
+            to the mode they once picked. On the home page it also
             marks the intro as playing before first paint, so the overlay
             covers the hero from the start. Skipped for reduced motion, for deep
             links (a hash), and for every route but the home page. If the intro
@@ -23,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')d.dataset.theme=t}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-intro');history.scrollRestoration='manual';setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro')},4000)}}catch(e){}",
+              "try{var d=document.documentElement;d.classList.add('js');try{localStorage.removeItem('theme')}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-intro');history.scrollRestoration='manual';setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro')},4000)}}catch(e){}",
           }}
         />
       </head>

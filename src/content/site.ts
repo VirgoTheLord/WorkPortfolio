@@ -130,16 +130,12 @@ export const site = {
 
 /*
  * The navbar and its menu: the trigger's two labels, the destinations (Home,
- * then the sections above), the bar's call to action, the colour-mode switch's
- * words, and the role and year the contact section sets.
+ * then the sections above), the bar's call to action, and the role and year the contact section sets.
  */
 export const menu = {
   label: 'Menu',
   closeLabel: 'Close',
   home: { label: 'Home', href: '/' },
   action: { label: 'Write to me', href: '/#contact' },
-  themeLabel: 'Theme',
-  themeLight: 'Light',
-  themeDark: 'Dark',
   status: [site.role, `Portfolio ${site.year}`],
 } satisfies MenuContent
