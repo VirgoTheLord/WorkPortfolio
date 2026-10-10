@@ -87,17 +87,12 @@ export type MenuContent = {
   home: NavItem
   /** The call to action in the bar, from lg up. */
   action: NavItem
-  contactLabel: string
   /** The colour-mode switch: its label and the name of each mode. */
   themeLabel: string
   themeLight: string
   themeDark: string
-  focusLabel: string
-  focus: string
-  /** Short facts set beside a marker at the foot of the details column. */
+  /** Short facts: the role and the year (set in the contact section). */
   status: readonly string[]
-  /** Names the two project cards beside the details, from lg up. */
-  projectsLabel: string
 }
 
 export type SiteConfig = {
