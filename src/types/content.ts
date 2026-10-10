@@ -73,9 +73,13 @@ export type ContactContent = {
 
 export type FooterContent = {
   navLabel: string
+  /** The headings of the four columns; the second is the hero's own "Built with". */
+  navigationLabel: string
+  typefacesLabel: string
+  contactLabel: string
+  /** The two typefaces the site is actually set in. */
+  typefaces: readonly string[]
   toTop: string
-  /** Names the two typefaces the site is actually set in. */
-  typeNote: string
 }
 
 export type NavItem = { label: string; href: string }

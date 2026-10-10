@@ -11,3 +11,27 @@ export function loadGsap() {
   gsapPromise ??= import('gsap').then((module) => module.gsap)
   return gsapPromise
 }
+
+/*
+ * GSAP with ScrollTrigger registered, for scroll-linked sequences. ScrollTrigger
+ * ships inside the gsap package, so it is not a new dependency; it is only
+ * fetched by the islands that need it, and registered once. It reads the
+ * window's scroll, so a smooth-scroll layer (Lenis, if it is ever approved) only
+ * has to call ScrollTrigger.update on its scroll event; nothing here changes.
+ */
+let scrollTriggerPromise:
+  | Promise<{
+      gsap: typeof import('gsap').gsap
+      ScrollTrigger: typeof import('gsap/ScrollTrigger').ScrollTrigger
+    }>
+  | undefined
+
+export function loadScrollTrigger() {
+  scrollTriggerPromise ??= Promise.all([loadGsap(), import('gsap/ScrollTrigger')]).then(
+    ([gsap, module]) => {
+      gsap.registerPlugin(module.ScrollTrigger)
+      return { gsap, ScrollTrigger: module.ScrollTrigger }
+    },
+  )
+  return scrollTriggerPromise
+}
