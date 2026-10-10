@@ -11,7 +11,7 @@ Technical decisions for the portfolio. If code and this file disagree, either fi
 | Framework | **Next.js, latest stable, App Router** | RSC lets us ship near-zero component JS; first-class metadata, image, font and OG tooling. |
 | Language | **TypeScript, `strict: true`** + `noUncheckedIndexedAccess` | Content schemas are types. A type error fails the build. |
 | Styling | **Tailwind CSS v4** (CSS-first `@theme`, no JS config) | Tokens live in CSS. No runtime cost. |
-| Motion | **CSS first. GSAP core** (+ ScrollTrigger only if needed; CustomEase, from the same package, for the menu's arrival curve) for orchestrated sequences. Scroll-linked motion uses CSS scroll-driven animations where they can express it (the hero's push), so no script runs on scroll | GSAP is lazy-loaded inside client islands and never sits on the critical path. |
+| Motion | **CSS first. GSAP core**, with **Lenis** for smooth scrolling (§6.10, §9) (+ ScrollTrigger only if needed; CustomEase, from the same package, for the menu's arrival curve) for orchestrated sequences. Scroll-linked motion uses CSS scroll-driven animations where they can express it (the hero's push), so no script runs on scroll | GSAP is lazy-loaded inside client islands and never sits on the critical path. |
 | Content | **Local MDX** via `@next/mdx` + typed TS modules | No CMS, no frontmatter parser. Metadata is exported from MDX as typed JS. |
 | Fonts | `next/font/local` with self-hosted variable woff2 | No layout shift, no third-party requests. |
 | Images | `next/image` (AVIF/WebP) | Explicit dimensions, responsive `sizes`. |
@@ -152,10 +152,10 @@ The visual motion language lives in DESIGN.md §6. Implementation rules:
    - CSS `.js [data-reveal] { opacity: 0 }` only under `no-preference`
    - a CSS failsafe animation reveals `[data-reveal]` after ~2.5 s if GSAP never runs.
 6. Animate only `transform`, `opacity` and (sparingly) `clip-path`. Never animate layout properties.
-7. **Banned:** scroll-jacking, smooth-scroll libraries, scroll-locked pinning of the whole page, cursor followers, infinite decorative loops.
+7. **Banned:** scroll-jacking, any smooth-scroll library other than Lenis (item 10), scroll-locked pinning of the whole page, cursor followers, infinite decorative loops.
 8. Route transitions: none in v1. Revisit React `<ViewTransition>` once it's stable.
 9. **ScrollTrigger** ships in the `gsap` package, so it is not a new dependency. It is registered in one place, `loadScrollTrigger()` in `lib/motion/gsap.ts`, and only islands that need scroll-linked motion fetch it (today, the footer). Scroll-linked sequences are scrubbed, nothing is pinned, and every range is clamped to the end of the page.
-10. **Lenis** is not installed, and the footer brief that asked for it needs approval under §9 first. The scroll-linked code reads the window's scroll, so adding it later is one shared instance, driven from one frame loop, calling `ScrollTrigger.update` on its scroll event. Until then scrolling is native.
+10. **Lenis** (smooth scrolling) is approved for the site (§9), under these rules. There is one instance, created and destroyed by one leaf island (`components/motion/smooth-scroll.tsx`, mounted once in the root layout), and the library is fetched with a dynamic import after the page is interactive, so it is never in the initial bundle. It is driven by GSAP's ticker (`gsap.ticker.add`, `autoRaf: false`, `lagSmoothing(0)`), so there is exactly one frame loop, and it calls `ScrollTrigger.update` on its scroll event, so ScrollTrigger and Lenis agree on the position. It is off for `prefers-reduced-motion`, and touch devices keep native scrolling (`syncTouch` stays false). It never scrolls the page while the page is locked: while the intro plays (`html.is-intro`) and while the full-screen menu is open, a `prevent` check hands the wheel back to the browser, because `overflow: hidden` on the root stops the user but not a library calling `scrollTo`. Nested scrollers carry `data-lenis-prevent`. Nothing sets `overflow: hidden` on the page as a workaround, and nothing else scrolls the page by a second route: programmatic scrolls (`window.scrollTo`, hash links, focus) are native and Lenis follows them. Scroll-linked code (ScrollTrigger, CSS scroll timelines) reads the real scroll position and is unchanged by it. Lenis's smoothing and a scrub's glide add up, so a `scrub` number is measured with Lenis on before it is kept (the footer's were: its name still finishes about half a second after the page stops).
 
 ---
 
@@ -212,7 +212,9 @@ export const meta = {
 
 ## 9. Dependency policy
 
-**Allowed runtime deps (the complete list):** `next`, `react`, `react-dom`, `gsap`, `@next/mdx`, `@mdx-js/loader`, `@mdx-js/react`.
+**Allowed runtime deps (the complete list):** `next`, `react`, `react-dom`, `gsap`, `lenis`, `@next/mdx`, `@mdx-js/loader`, `@mdx-js/react`.
+
+**`lenis`: justification (approved by the site owner).** The footer's scroll-driven closing scene is recreated from references whose scroll is smoothed with Lenis, and the owner asked for it explicitly; native scrolling steps with the wheel and made the footer's scrubbed motion feel uneven. Lenis is small (5.5 KB gzipped as built, in its own chunk), has no dependencies, is loaded lazily after the page is interactive, and is the same library the references use, which is why it is the one smooth-scroll library allowed (§6.7). It is pinned to an exact version. Its integration rules are §6.10; the measured cost is recorded in `DESIGN.md` with the footer.
 **Allowed dev deps:** `typescript`, `@types/*`, `tailwindcss`, `@tailwindcss/postcss`, `eslint`, `eslint-config-next`, `prettier`, `prettier-plugin-tailwindcss`, `@playwright/test`, `@axe-core/playwright`, `@next/bundle-analyzer`, and `shiki`/rehype plugins only when needed.
 
 Adding anything else requires a one-line justification in this section first.
@@ -222,7 +224,7 @@ Adding anything else requires a one-line justification in this section first.
 | Don't | Use instead |
 |---|---|
 | framer-motion / motion, react-spring, AOS | CSS + GSAP |
-| Lenis / locomotive-scroll / any smooth scroll | Native scrolling |
+| locomotive-scroll, ScrollSmoother, any smooth-scroll library other than Lenis | Lenis (approved, §6.10) or native scrolling |
 | three.js / R3F / WebGL hero | Typography and layout |
 | clsx, classnames, tailwind-merge, cva | `lib/cn.ts` + explicit variant maps |
 | shadcn/ui, Radix, Headless UI, MUI, Chakra | Hand-built primitives (we have almost no complex widgets) |

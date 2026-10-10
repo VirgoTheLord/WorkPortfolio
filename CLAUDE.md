@@ -17,7 +17,7 @@ Color is the exact good-fella.com palette: off-white `#EEEEEE` and off-black `#1
 
 ## Stack (summary)
 
-Next.js App Router · TypeScript strict · Tailwind CSS v4 · GSAP (lazy, islands only) · local MDX · pnpm · Vercel (fully static).
+Next.js App Router · TypeScript strict · Tailwind CSS v4 · GSAP (lazy, islands only) · Lenis (one lazy instance, smooth scroll; ARCHITECTURE.md §6.10) · local MDX · pnpm · Vercel (fully static).
 
 ## Commands
 
