@@ -154,6 +154,8 @@ The visual motion language lives in DESIGN.md §6. Implementation rules:
 6. Animate only `transform`, `opacity` and (sparingly) `clip-path`. Never animate layout properties.
 7. **Banned:** scroll-jacking, smooth-scroll libraries, scroll-locked pinning of the whole page, cursor followers, infinite decorative loops.
 8. Route transitions: none in v1. Revisit React `<ViewTransition>` once it's stable.
+9. **ScrollTrigger** ships in the `gsap` package, so it is not a new dependency. It is registered in one place, `loadScrollTrigger()` in `lib/motion/gsap.ts`, and only islands that need scroll-linked motion fetch it (today, the footer). Scroll-linked sequences are scrubbed, nothing is pinned, and every range is clamped to the end of the page.
+10. **Lenis** is not installed, and the footer brief that asked for it needs approval under §9 first. The scroll-linked code reads the window's scroll, so adding it later is one shared instance, driven from one frame loop, calling `ScrollTrigger.update` on its scroll event. Until then scrolling is native.
 
 ---
 

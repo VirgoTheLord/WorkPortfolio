@@ -96,13 +96,19 @@ export const contact = {
 } satisfies ContactContent
 
 /*
- * Footer. Only facts the project already holds: the name and year from `site`,
- * the existing navigation, and the two typefaces the site is set in.
+ * Footer. Only facts the project already holds: the name, role and year from
+ * `site`, the existing navigation, the stack from the hero, and the two typefaces
+ * the site is set in. There are no social profiles, no location and no
+ * availability in the project, so none are listed (and no live clock stands in
+ * for them).
  */
 export const footer = {
   navLabel: 'Footer',
+  navigationLabel: 'Navigation',
+  typefacesLabel: 'Typefaces',
+  contactLabel: 'Contact',
+  typefaces: ['Bricolage Grotesque', 'Azeret Mono'],
   toTop: 'Back to top',
-  typeNote: 'Set in Bricolage Grotesque and Azeret Mono',
 } satisfies FooterContent
 
 /*

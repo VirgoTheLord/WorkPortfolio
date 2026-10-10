@@ -269,6 +269,9 @@
 @layer base {
   html {
     color-scheme: light dark;
+    /* No rubber-banding past either end: the light hero at the top and the dark
+       footer at the bottom would each show the other's colour in the stretch. */
+    overscroll-behavior: none;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     font-kerning: normal;
