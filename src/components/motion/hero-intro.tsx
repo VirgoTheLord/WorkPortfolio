@@ -137,7 +137,14 @@ export function HeroIntro() {
   }, [])
 
   return (
-    <div ref={overlayRef} aria-hidden="true" data-theme="brand" className="intro bg-bg text-fg">
+    // data-bar-ignore: the navbar must not take this cover's theme (site-menu.tsx).
+    <div
+      ref={overlayRef}
+      aria-hidden="true"
+      data-theme="brand"
+      data-bar-ignore
+      className="intro bg-bg text-fg"
+    >
       <div data-intro-mark className="intro-mark">
         <div className="intro-squares">
           {[0, 1, 2, 3].map((i) => (

@@ -344,9 +344,14 @@ export function SiteMenu({
   // The bar takes the theme of the section under it: while a section carrying
   // data-theme covers the bar's band at the top of the screen, the bar carries
   // the same theme, and its tokens follow. While the menu is open the field's
-  // theme wins, and the section's is applied once it closes.
+  // theme wins, and the section's is applied once it closes. Elements marked
+  // data-bar-ignore are not sections the bar sits over (the intro's full-screen
+  // cover): following one would give the bar its theme while it plays, and then a
+  // visible fade back once it goes.
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>('main [data-theme]'))
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>('main [data-theme]:not([data-bar-ignore])'),
+    )
     if (sections.length === 0) return
     const under = new Set<HTMLElement>()
     const observer = new IntersectionObserver(
