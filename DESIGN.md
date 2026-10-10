@@ -277,4 +277,4 @@ Candidates. Ship **3–5**, chosen after decisions 1–4. Each must be CSS-only 
 - Numbered figures and sidenotes in case studies that cross-reference on hover/focus
 - Fine-tuned `text-underline-offset` and optical kerning on the name/wordmark
 
-Shipped beyond this list: a light/dark switch in the navbar panel, a pill whose sun knob rolls across and is eclipsed into a moon while the new mode grows over the page as a circle from the knob. The choice is stored and applied before first paint. Hero text is black in light mode and white in dark.
+The colour mode follows the system (`prefers-color-scheme`) and nothing overrides it. A light/dark switch shipped in the navbar panel for a while; it was removed with the menu redesign, and with it the stored choice (the head script now clears any choice an earlier visit saved, so nobody stays locked to a mode). Hero text is black in light mode and white in dark.

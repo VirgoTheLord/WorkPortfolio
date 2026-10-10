@@ -91,10 +91,6 @@ export type MenuContent = {
   home: NavItem
   /** The call to action in the bar, from lg up. */
   action: NavItem
-  /** The colour-mode switch: its label and the name of each mode. */
-  themeLabel: string
-  themeLight: string
-  themeDark: string
   /** Short facts: the role and the year (set in the contact section). */
   status: readonly string[]
 }
