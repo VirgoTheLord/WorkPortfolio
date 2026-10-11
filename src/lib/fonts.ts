@@ -25,4 +25,20 @@ const azeretMono = localFont({
   fallback: ['ui-monospace', 'monospace'],
 })
 
-export const fontVariables = [bricolageGrotesque.variable, azeretMono.variable].join(' ')
+/* The logo's face. Served as the original TTF: its licence allows distribution
+   only unaltered (src/fonts/licenses/DEUTSCH.TXT), so it is not converted or
+   subset. Preloaded, because the mark is in the navbar on every page. */
+const deutschGothic = localFont({
+  src: '../fonts/deutsch-gothic.ttf',
+  variable: '--font-mark-face',
+  weight: '400',
+  display: 'swap',
+  adjustFontFallback: false,
+  fallback: ['serif'],
+})
+
+export const fontVariables = [
+  bricolageGrotesque.variable,
+  azeretMono.variable,
+  deutschGothic.variable,
+].join(' ')

@@ -10,13 +10,13 @@ import type {
 } from '@/types/content'
 
 /*
- * Hero copy. The title is the name, on two lines. The line under it names the
+ * Hero copy. The title is the name, on one line across the hero. The line under it names the
  * three areas the Skills section is organised around (engineering, interaction,
  * craft), so it claims nothing the page does not already say. The stack row
  * lists tools this site is built with (see `skills`).
  */
 export const hero = {
-  title: ['Alwin Aby', 'Mathew'],
+  title: ['Alwin Aby Mathew'],
   intro: 'Code · Motion · Craft',
   action: { label: 'See What I Build', href: '#work' },
   stack: { label: 'Built with', items: ['Next.js', 'React', 'TypeScript', 'GSAP'] },
@@ -117,6 +117,7 @@ export const footer = {
  */
 export const site = {
   name: 'Alwin Aby Mathew',
+  mark: 'AW',
   role: 'Software engineer',
   year: '2026',
   nav: [

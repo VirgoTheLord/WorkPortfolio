@@ -5,11 +5,6 @@ import { contact, footer, hero, menu, site } from '@/content/site'
 import './site-footer.css'
 
 const items = [menu.home, ...site.nav]
-// The initials, as the navbar's wordmark sets them.
-const initials = site.name
-  .split(' ')
-  .map((word) => word.charAt(0))
-  .join('')
 
 /*
  * The footer, recreated from neuemontreal.com's: a solid field (here the brand
@@ -19,7 +14,7 @@ const initials = site.name
  * the frame along the bottom edge, a hairline, and the credits. Four columns of
  * what the project really holds: the destinations, the stack, the two typefaces,
  * and the way to write (the address is only in the link, never printed). The
- * reference's mark is a ring of its own letters; this one is the initials. Without
+ * reference's mark is a ring of its own letters; this one is the logo ("AW"). Without
  * script, or with reduced motion, it is all simply there; FooterScene
  * (motion/footer-scene.tsx) adds the scroll-linked motion over the data-footer-*
  * hooks.
@@ -33,9 +28,9 @@ export function SiteFooter() {
             <p
               data-footer-badge
               aria-hidden="true"
-              className="footer-badge font-display text-3xl font-semibold"
+              className="footer-badge font-mark text-2xl font-normal"
             >
-              {initials}
+              {site.mark}
             </p>
 
             <div className="footer-columns text-base">

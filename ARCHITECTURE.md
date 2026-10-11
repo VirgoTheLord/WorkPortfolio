@@ -249,7 +249,7 @@ Adding anything else requires a one-line justification in this section first.
 - Generic `<Motion>` abstraction layers over GSAP. Write direct, scoped timelines.
 - Monorepo/turborepo, Docker, custom servers, edge middleware: none are needed.
 - Excessive `@theme` tokens. If a token is used once, it's a value, not a token.
-- WebGL/canvas effects that cost performance budget to look like every other portfolio.
+- WebGL/canvas effects that cost performance budget to look like every other portfolio. One deliberate exception, by request: the hero grid's canvas (`motion/hero-grid.tsx`, DESIGN.md §4), a 2D canvas that redraws the existing CSS grid so its lines can bend under the pointer. It draws once at rest and only while the bend is moving, caps the pixel ratio at 2, is never created for touch or reduced motion, and the CSS grid remains the page's grid without it.
 - Perfect test coverage of presentational components. Test behavior and accessibility, not markup.
 - Premature abstraction of sections into "configurable" blocks driven by JSON.
 
