@@ -80,6 +80,159 @@ html.is-intro .intro {
   clip-path: circle(calc(var(--ring) * 1em - var(--line) - 0.06em) at 50% 50%);
 }
 
+/* Corner brackets: the screen's four corners, inset to the page's frame edge,
+   each two sides of a box that draws out of its own corner. */
+.intro-corner {
+  position: absolute;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0 solid currentColor;
+}
+
+.intro-corner-tl,
+.intro-corner-tr {
+  top: 1rem;
+}
+
+.intro-corner-bl,
+.intro-corner-br {
+  bottom: 1rem;
+}
+
+.intro-corner-tl,
+.intro-corner-bl {
+  left: 1rem;
+}
+
+.intro-corner-tr,
+.intro-corner-br {
+  right: 1rem;
+}
+
+.intro-corner-tl {
+  border-width: 3px 0 0 3px;
+  transform-origin: top left;
+}
+
+.intro-corner-tr {
+  border-width: 3px 3px 0 0;
+  transform-origin: top right;
+}
+
+.intro-corner-bl {
+  border-width: 0 0 3px 3px;
+  transform-origin: bottom left;
+}
+
+.intro-corner-br {
+  border-width: 0 3px 3px 0;
+  transform-origin: bottom right;
+}
+
+@media (min-width: 48rem) {
+  .intro-corner-tl,
+  .intro-corner-tr {
+    top: 1.5rem;
+  }
+
+  .intro-corner-bl,
+  .intro-corner-br {
+    bottom: 1.5rem;
+  }
+
+  .intro-corner-tl,
+  .intro-corner-bl {
+    left: 1.5rem;
+  }
+
+  .intro-corner-tr,
+  .intro-corner-br {
+    right: 1.5rem;
+  }
+}
+
+/* The logo, centred right above the ring (the mark face, as the navbar sets it),
+   as far above it as the status line is below. Each letter sits in its own mask
+   (clipped, with room for the blackletter's flourishes) so it can rise into
+   place. */
+.intro-logo {
+  position: absolute;
+  bottom: calc(50% + var(--ring) * var(--loader-size) + 2rem);
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  font-family: var(--font-mark);
+  font-size: var(--text-2xl);
+  line-height: 1;
+  letter-spacing: var(--tracking-widest);
+}
+
+.intro-letter {
+  display: block;
+  overflow: clip;
+  padding: 0.18em 0.06em;
+  margin: -0.18em -0.06em;
+}
+
+.intro-letter-glyph {
+  display: block;
+  opacity: 0;
+}
+
+/* The status line under the counter (the label face, small capitals): a window
+   one line tall, a strip of lines rolled up inside it like the digits, and a
+   block cursor that blinks after the text. Hidden until the island raises it. */
+.intro-status {
+  position: absolute;
+  /* Below the ring: measured from the counter's size (--loader-size), not this
+     line's own small type. */
+  top: calc(50% + var(--ring) * var(--loader-size) + 2rem);
+  left: 50%;
+  translate: -50% 0;
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: var(--text-label);
+  line-height: 1.4;
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  opacity: 0;
+}
+
+.intro-status-window {
+  display: block;
+  height: 1.4em;
+  overflow: clip;
+}
+
+.intro-status-strip {
+  display: block;
+}
+
+.intro-status-line {
+  display: block;
+  height: 1.4em;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* The cursor blinks while it is working; the last line, the greeting, has none. */
+.intro-status-line:not(:last-child)::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 0.9em;
+  margin-left: 0.35em;
+  vertical-align: -0.1em;
+  background-color: currentColor;
+  animation: intro-cursor 1s steps(1) infinite;
+}
+
+@keyframes intro-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+
 .intro-count {
   display: flex;
   font-family: var(--font-count);
