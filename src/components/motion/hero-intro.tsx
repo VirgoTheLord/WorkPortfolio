@@ -12,6 +12,8 @@ type Gsap = Awaited<ReturnType<typeof loadGsap>>
    custom properties; they are read once, below. */
 const LINE = 0.026
 const LINE_MIN = 3
+/* The gap between the dark disc and the ring's line around it, in em. */
+const DISC_GAP = 0.06
 
 /* The loader's beats (s). The count starts once the fonts and GSAP are ready
    (the timeline is only built then); the page itself is static and loaded.
@@ -161,25 +163,48 @@ export function HeroIntro() {
       className="intro text-fg"
     >
       <div className="intro-field">
-        <p className="intro-count">
-          {/* Each slot holds a strip of digits; the island adds the rest of
-              each strip and rolls it. */}
-          {[
-            ['hundreds', '\u00a0'],
-            ['tens', '0'],
-            ['units', '1'],
-          ].map(([slot, digit]) => (
-            <span key={slot} data-intro-slot={slot} className="intro-slot">
-              <span data-intro-strip className="intro-strip block">
-                <span>{digit}</span>
-              </span>
-            </span>
-          ))}
-        </p>
+        <Counter />
+      </div>
+      {/* The same counter, inverted (a dark disc, orange figures), clipped to the
+          ring: inside the ring the colours are inverted. */}
+      <div data-intro-inverse className="intro-field intro-inverse">
+        <Counter />
       </div>
       <div data-intro-track className="intro-ring intro-track" />
       <div data-intro-ring className="intro-ring" />
     </div>
+  )
+}
+
+/* The counter: each slot holds a strip of digits (the island adds the rest of
+   each strip and rolls it). Rendered twice, normal and inverted, and rolled
+   together. */
+function Counter() {
+  return (
+    <p className="intro-count">
+      {[
+        ['hundreds', '\u00a0'],
+        ['tens', '0'],
+        ['units', '1'],
+      ].map(([slot, digit]) => (
+        <span key={slot} data-intro-slot={slot} className="intro-slot">
+          <span data-intro-strip className="intro-strip block">
+            <span>{digit}</span>
+          </span>
+        </span>
+      ))}
+    </p>
+  )
+}
+
+/* A rounded rectangle as an SVG path: centre, half sizes and corner radius. */
+function roundedRect(x: number, y: number, hx: number, hy: number, radius: number) {
+  const k = Math.max(0, Math.min(radius, hx, hy))
+  const [l, t, r, b] = [x - hx, y - hy, x + hx, y + hy]
+  const arc = `A${k} ${k} 0 0 1`
+  return (
+    `M${l + k} ${t}H${r - k}${arc} ${r} ${t + k}V${b - k}${arc} ${r - k} ${b}` +
+    `H${l + k}${arc} ${l} ${b - k}V${t + k}${arc} ${l + k} ${t}Z`
   )
 }
 
@@ -191,6 +216,7 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const slots = all('[data-intro-slot]', overlay)
   const ringEl = all('[data-intro-ring]', overlay)[0]
   const trackEl = all('[data-intro-track]', overlay)[0]
+  const inverseEl = all('[data-intro-inverse]', overlay)[0]
 
   // The navbar lives in the header, outside the hero.
   const nav = all('[data-hero-nav]', document.body)
@@ -251,6 +277,7 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     r: ringSize,
   }
   let open = false
+  let inverted = true
   // How much of the ring's inner edge the window has grown to (0 to 1).
   const win = { k: 0 }
   const draw = () => {
@@ -259,6 +286,18 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     overlay.style.setProperty('--rx', `${ring.rx}px`)
     overlay.style.setProperty('--ry', `${ring.ry}px`)
     overlay.style.setProperty('--rr', `${ring.r}px`)
+    // Inside the ring the colours are inverted: the inverted counter is clipped
+    // to a disc a gap inside the ring's line, so the ring is an outline around it.
+    if (inverted && inverseEl) {
+      const inset = line + DISC_GAP * em
+      inverseEl.style.clipPath = `path('${roundedRect(
+        ring.x,
+        ring.y,
+        Math.max(0, ring.rx - inset),
+        Math.max(0, ring.ry - inset),
+        Math.max(0, ring.r - inset),
+      )}')`
+    }
     if (!open || !field) return
     // The window is the ring's inner edge, one line in (the same rounded
     // rectangle, grown half a pixel under the line so no seam shows), scaled
@@ -269,35 +308,32 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
       field.style.clipPath = 'none'
       return
     }
-    const k = Math.max(0, Math.min((ring.r - line + 0.5) * win.k, ax, ay))
-    const [l, t, r, b] = [ring.x - ax, ring.y - ay, ring.x + ax, ring.y + ay]
-    const arc = `A${k} ${k} 0 0 1`
     field.style.clipPath =
       `path(evenodd, 'M0 0H${width}V${height}H0Z` +
-      `M${l + k} ${t}H${r - k}${arc} ${r} ${t + k}V${b - k}${arc} ${r - k} ${b}` +
-      `H${l + k}${arc} ${l} ${b - k}V${t + k}${arc} ${l + k} ${t}Z')`
+      roundedRect(ring.x, ring.y, ax, ay, (ring.r - line + 0.5) * win.k) +
+      `')`
   }
   draw()
 
   /* Count. Each column's strip is filled here (so a re-run starts clean): the
      units 0–9 ten times and a last 0, the tens 0–9 and a last 0, the hundreds
      a blank and the 1. One tally drives all three. */
-  const strip = (name: string) =>
-    overlay.querySelector<HTMLElement>(`[data-intro-slot="${name}"] > [data-intro-strip]`)
-  const fill = (el: HTMLElement | null, cells: string[]) => {
-    el?.replaceChildren(
-      ...cells.map((digit) => {
-        const cell = document.createElement('span')
-        cell.textContent = digit
-        return cell
-      }),
+  const strips = (name: string) => all(`[data-intro-slot="${name}"] > [data-intro-strip]`, overlay)
+  const fill = (els: HTMLElement[], cells: string[]) =>
+    els.forEach((el) =>
+      el.replaceChildren(
+        ...cells.map((digit) => {
+          const cell = document.createElement('span')
+          cell.textContent = digit
+          return cell
+        }),
+      ),
     )
-  }
-  const units = strip('units')
-  const tens = strip('tens')
-  const hundreds = strip('hundreds')
-  const hundredsSlot = hundreds?.parentElement
-  tensCell = () => tens?.lastElementChild ?? null
+  const units = strips('units')
+  const tens = strips('tens')
+  const hundreds = strips('hundreds')
+  const hundredsSlots = hundreds.map((el) => el.parentElement)
+  tensCell = () => tens[0]?.lastElementChild ?? null
   fill(
     units,
     Array.from({ length: 101 }, (_, i) => String(i % 10)),
@@ -312,10 +348,10 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     const value = tally.value
     // The 1 rises, and its slot opens, over the last ten.
     const last = Math.min(Math.max((value - 90) / 10, 0), 1)
-    if (units) units.style.transform = `translateY(${-value}em)`
-    if (tens) tens.style.transform = `translateY(${(-10 * (value - 1)) / 99}em)`
-    if (hundreds) hundreds.style.transform = `translateY(${-last}em)`
-    if (hundredsSlot) hundredsSlot.style.width = `${one * last}px`
+    units.forEach((el) => (el.style.transform = `translateY(${-value}em)`))
+    tens.forEach((el) => (el.style.transform = `translateY(${(-10 * (value - 1)) / 99}em)`))
+    hundreds.forEach((el) => (el.style.transform = `translateY(${-last}em)`))
+    hundredsSlots.forEach((el) => el && (el.style.width = `${one * last}px`))
     // The comet: a bright arc orbits (two turns over the count, faster as it
     // goes), its tail growing from 50° to the whole circle, the tail's far end
     // rising from clear to solid over the last twelve, so it is the whole ring
@@ -356,6 +392,21 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     },
     CONTRACT,
   )
+  /* Normal again: as the ring lands on the zero the inverted disc fades out and
+     the colours are back to normal. */
+  const normalAt = CONTRACT + CONTRACT_DURATION - 0.3
+  if (inverseEl) {
+    tl.to(inverseEl, { opacity: 0, duration: 0.3, ease: 'power2.inOut' }, normalAt)
+    tl.call(
+      () => {
+        inverted = false
+        inverseEl.style.display = 'none'
+      },
+      undefined,
+      normalAt + 0.3,
+    )
+  }
+
   /* Reveal: one growth on one curve. The window onto the hero is the ring's
      inner edge, scaled about its centre: it opens from a point at the zero's
      centre and fills the zero's outline when it reaches `inner` (the zero's

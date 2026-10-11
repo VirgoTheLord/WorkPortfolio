@@ -51,7 +51,7 @@ html.is-intro .intro {
   --one: 0.67;
   --fh: 0.71;
   --ftop: 0.1325;
-  --line: 1.5px;
+  --line: 3px;
   --rx: calc(var(--ring) * 1em);
   --ry: calc(var(--ring) * 1em);
   --rr: calc(var(--ring) * 1em);
@@ -68,6 +68,16 @@ html.is-intro .intro {
   align-items: center;
   justify-content: center;
   background-color: var(--color-bg);
+}
+
+/* Inside the ring the colours are inverted: the same field, dark with orange
+   figures, over the normal one, clipped to a disc a gap (0.06em) inside the
+   ring's line, so the ring is an outline around it (the island rewrites the clip
+   as the ring moves; this is the ring at rest). */
+.intro-inverse {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  clip-path: circle(calc(var(--ring) * 1em - var(--line) - 0.06em) at 50% 50%);
 }
 
 .intro-count {
