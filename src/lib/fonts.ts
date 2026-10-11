@@ -37,8 +37,24 @@ const deutschGothic = localFont({
   fallback: ['serif'],
 })
 
+/* The preloader's counter (motion/hero-intro.tsx): Archivo, its Expanded
+   instance (width 125) at weight 600 (SIL OFL), cut down to the ten digits
+   (2.5 KB), the only glyphs the counter draws; the intro is aria-hidden, so the
+   digits are never read as text. Preloaded, and `block` so the count never shows
+   in a fallback face first; the intro waits for fonts before it measures the
+   zero it contracts onto. */
+const archivoExpanded = localFont({
+  src: '../fonts/archivo-expanded-digits.woff2',
+  variable: '--font-count-face',
+  weight: '600',
+  display: 'block',
+  adjustFontFallback: false,
+  fallback: ['sans-serif'],
+})
+
 export const fontVariables = [
   bricolageGrotesque.variable,
   azeretMono.variable,
   deutschGothic.variable,
+  archivoExpanded.variable,
 ].join(' ')

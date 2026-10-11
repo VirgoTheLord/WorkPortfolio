@@ -1,57 +1,170 @@
 /*
- * The preloader: the brand field (black on orange) with four squares and a label
- * at its centre, recreated from the good-fella.com reference. It exists only
- * while <html> has .is-intro; the hero (hero.css) sits underneath, so when the
- * field is swept away it is the real hero that is revealed.
+ * The preloader: the brand field (black on orange) with a counter in a thin ring
+ * at its centre. It exists only while <html> has .is-intro; the hero (hero.css)
+ * sits underneath, so what the ring opens onto is the real hero.
+ *
+ * Everything is sized in em of the counter (--loader-size), so the composition
+ * is one figure at every screen size. The counter is Archivo Expanded 600; the
+ * custom properties on .intro below are its measurements, in em, taken in the
+ * browser at 400px from the figures' ink:
+ *
+ *   --slot, --one   the advance of a 0 (every digit slot but the hundreds) and of
+ *                   a 1 (the hundreds slot); the figures are proportional, so a
+ *                   digit's slot is a zero wide and the count never shifts
+ *   --fh, --ftop    the height of the figures and how far below the top of a
+ *                   line-height 1 box they start, so a slot shows exactly one
+ *   --zx, --zy      the zero's outer half-width and half-height
+ *   --zr            the radius of the corners of its outer contour: both zeros
+ *                   are rounded rectangles (a circular-cornered rectangle fits
+ *                   to within 1%; an ellipse only to 3–11%)
+ *   --zc            how far below the top of its cell the zero's centre sits
+ *
+ * The zero is 0.6525em by 0.7125em with 0.30em corners and a 0.757em advance; a 1
+ * is 0.67em.
+ *
+ * The ring is one element (over a faint track of itself while it draws): a
+ * rounded rectangle --rx by --ry (outer half-sizes, corner radius --rr) around
+ * (--cx, --cy) in a light line (--line). While it is
+ * large it is a circle; as it contracts its corners tighten to the zero's, and
+ * it lies on the middle zero's outer contour, inside its ink, so the two read as
+ * one. The island (hero-intro.tsx) then opens the same ring past the corners,
+ * cutting the field away inside it.
  */
 
 .intro {
   display: none;
 }
 
-/* Above the header and the page. The island sweeps it away with clip-path. */
+/* Above the header and the page. */
 html.is-intro .intro {
   position: fixed;
   inset: 0;
   z-index: 50;
+  display: block;
+  --loader-size: min(16vmin, 8.5rem);
+  --ring: 1.5;
+  --zx: 0.32625;
+  --zy: 0.35625;
+  --zr: 0.3;
+  --zc: 0.48875;
+  --slot: 0.757;
+  --one: 0.67;
+  --fh: 0.71;
+  --ftop: 0.1325;
+  --line: 1.5px;
+  --rx: calc(var(--ring) * 1em);
+  --ry: calc(var(--ring) * 1em);
+  --rr: calc(var(--ring) * 1em);
+  /* The centre of "01": its box is centred. */
+  --cx: 50%;
+  --cy: 50%;
+  font-size: var(--loader-size);
+}
+
+.intro-field {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--color-bg);
 }
 
-.intro-mark {
+.intro-count {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing);
+  font-family: var(--font-count);
+  font-weight: 600;
+  font-kerning: none;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
-/*
- * The squares' track: four squares and three 1/8 gaps wide. Overflow is clipped
- * sideways only, so the first square can wait off the left edge while a rolling
- * square may still swing above the track.
- */
-.intro-squares {
-  position: relative;
-  width: calc(var(--spacing) * 17.5);
-  height: calc(var(--spacing) * 4);
-  overflow-x: clip;
-  overflow-y: visible;
+/* One digit's slot, one zero wide and as tall as the figures, clipped above and
+   below, so a digit rolls in from under the baseline and out over the figure
+   height and is never seen in between. Cells stay a full 1em (the strip is
+   lifted to the figures' top), so consecutive digits never share the window.
+   The hundreds slot opens from nothing as the 1 arrives. */
+.intro-slot {
+  display: block;
+  width: calc(var(--slot) * 1em);
+  height: calc(var(--fh) * 1em);
+  overflow-x: visible;
+  overflow-y: clip;
+  text-align: center;
 }
 
-/* Each square rolls a quarter turn over its bottom-right corner into the next
-   slot. They all wait one square to the left of the track. */
-.intro-square {
+/* Narrow figures (a 1) hug the middle of the number, so "01" or "41" never
+   opens a gap; a zero fills its slot, so "100" is unchanged. */
+.intro-slot[data-intro-slot='tens'] {
+  text-align: right;
+}
+
+.intro-slot[data-intro-slot='units'] {
+  text-align: left;
+}
+
+.intro-slot[data-intro-slot='hundreds'] {
+  width: 0;
+}
+
+.intro-strip {
+  margin-top: calc(var(--ftop) * -1em);
+}
+
+.intro-strip > span {
+  display: block;
+  height: 1em;
+}
+
+.intro-ring {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(var(--spacing) * 4);
-  height: calc(var(--spacing) * 4);
-  transform: translateX(-100%);
-  transform-origin: 100% 100%;
+  top: var(--cy);
+  left: var(--cx);
+  box-sizing: border-box;
+  width: calc(var(--rx) * 2);
+  height: calc(var(--ry) * 2);
+  translate: -50% -50%;
+  border-style: solid;
+  border-color: currentColor;
+  border-width: var(--line);
+  border-radius: var(--rr);
 }
 
-.intro-label {
-  position: relative;
-  overflow: hidden;
+/* The ring counts with the number, over a faint track of itself; at 100 the
+   mask comes off. Three behaviours are being compared (html[data-ring], from
+   ?ring= in the inline script in layout.tsx; dial by default), each a mask on
+   the ring driven by custom properties the island writes from the count:
+     dial   100 ticks (a repeating conic mask, a gap of --gap in each 3.6deg)
+            lit by the count (a sweep up to --sweep)
+     comet  an arc whose head is at --spin and whose tail is --tail long, fading
+            out behind it from --floor (solid by 100)
+     sweep  the ring drawn clockwise from the top up to --sweep */
+.intro-ring:not(.intro-track) {
+  mask-image:
+    repeating-conic-gradient(#000 0 calc(3.6deg - var(--gap, 0deg)), transparent 0 3.6deg),
+    conic-gradient(#000 var(--sweep, 360deg), transparent 0);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+html[data-ring='comet'] .intro-ring:not(.intro-track) {
+  mask-image: conic-gradient(
+    from calc(var(--spin, 0deg) - var(--tail, 360deg)),
+    rgb(0 0 0 / var(--floor, 1)) 0deg,
+    #000 var(--tail, 360deg),
+    transparent var(--tail, 360deg)
+  );
+}
+
+html[data-ring='sweep'] .intro-ring:not(.intro-track) {
+  mask-image: conic-gradient(#000 var(--sweep, 360deg), transparent 0);
+}
+
+/* Closed: no mask at all, so no seam shows where the ring met itself. */
+.intro-ring[data-full] {
+  mask-image: none !important;
+}
+
+.intro-track {
+  opacity: 0.2;
 }

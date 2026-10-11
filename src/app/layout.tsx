@@ -22,11 +22,13 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             covers the hero from the start. Skipped for reduced motion, for deep
             links (a hash), and for every route but the home page. If the intro
             island has not picked it up within 4s (scripts failed or are very
-            slow), the page is released in its final state. */}
+            slow), the page is released in its final state. It also picks what the
+            preloader's ring does while it counts, for the comparison
+            (?ring=comet or sweep; dial otherwise); remove with the losing ones. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;d.classList.add('js');try{localStorage.removeItem('theme')}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-intro');history.scrollRestoration='manual';setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro')},4000)}}catch(e){}",
+              "try{var d=document.documentElement;d.classList.add('js');try{localStorage.removeItem('theme')}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-intro');var r=new URLSearchParams(location.search).get('ring');d.dataset.ring=r==='comet'||r==='sweep'?r:'dial';history.scrollRestoration='manual';setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro')},4000)}}catch(e){}",
           }}
         />
       </head>

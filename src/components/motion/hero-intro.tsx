@@ -2,25 +2,34 @@
 
 import { useEffect, useRef } from 'react'
 import { loadGsap } from '@/lib/motion/gsap'
-import { NOISE } from '@/lib/motion/scramble'
 import './hero-intro.css'
 
 type Gsap = Awaited<ReturnType<typeof loadGsap>>
 
-/* The loader's label. UI microcopy, decorative only (the overlay is aria-hidden). */
-const LABEL = 'Loading'
+/* The ring's line, in em of the counter, and the least it may be (px): a light
+   outline, about 3.5px at desktop size. The zero it contracts onto, the digit
+   slots and the ring at rest are per typeface and live in hero-intro.css as
+   custom properties; they are read once, below. */
+const LINE = 0.026
+const LINE_MIN = 3
 
-/* The loader's beats (s), taken from the reference's own timeline. */
-const ROLL = { duration: 0.5, ease: 'expo.inOut' }
-/* The squares are done; the field starts to sweep. */
-const SWEEP = 1.625
-const SWEEP_DURATION = 1.05
-/* The sweep reaches 90% of its travel (expo.inOut at 61.6% of its time), the
-   reference's cue for the page to start entering. The hero is timed from here. */
-const REVEAL = SWEEP + 0.616 * SWEEP_DURATION
-/* The page enters 0.35s after that. Measured on the reference against the end
-   of its sweep, as are the two beats below. */
-const ENTER = REVEAL + 0.35
+/* The loader's beats (s). The count starts once the fonts and GSAP are ready
+   (the timeline is only built then); the page itself is static and loaded.
+   The count is an odometer: every column slides up continuously, the units
+   through every number, the tens in proportion, on one in-out curve, and the
+   ring draws itself round on the same curve, closing as 100 lands. */
+const COUNT = 3.9
+/* 100 has landed and holds for a beat before the ring contracts. */
+const CONTRACT = COUNT + 0.35
+const CONTRACT_DURATION = 0.85
+/* The reveal is one growth, from a point at the zero's centre to past the
+   corners, on one curve; it starts just before the ring lands, so the ring
+   never stops. */
+const OPEN = CONTRACT + CONTRACT_DURATION - 0.1
+const REVEAL_DURATION = 1.7
+/* The hero has been fully revealed; the page enters (as it did when the earlier
+   sweep finished). The hero entrance is timed from here and is unchanged. */
+const ENTER = OPEN + REVEAL_DURATION
 /* From 768px the navbar and the copy wait 0.35s more (the reference's lead). */
 const ART_LEAD = 0.35
 /* The copy starts 0.3s after the navbar is in. */
@@ -29,18 +38,28 @@ const COPY = 0.3
 /*
  * Preloader, page reveal and hero entrance as ONE timeline.
  *
- *   Loader   0.00   the label scrambles in: faint noise fills it from the left
- *                   (0.1–0.7), the letters resolve 0.1 behind it (0.2–0.8);
- *                   four squares roll out one by
- *                   one, each a quarter turn over its bottom-right corner into
- *                   the next slot (0.5s, expo.inOut, each starting 25% before
- *                   the previous lands: 0, 0.375, 0.75, 1.125)
- *   Sweep    1.625  the field is cut away by a line pivoting on its bottom-left
- *                   corner: the line's far end runs along the top edge, then
- *                   down the right edge (1.05s, expo.inOut); the mark fades from
- *                   1.765 (0.28s, power3.out)
- *   Reveal   2.27   at 90% of the sweep the page is cued to enter
- *   Enter    2.62   the page enters
+ *   Count    0.00   the counter in the ring runs from 01 to 100 as an odometer
+ *                   (3.9s, power3.inOut): each column is a strip of figures
+ *                   sliding up behind its slot, the units through every
+ *                   number, the tens in proportion, so digits leave over the
+ *                   top as the next rise from below; the 1 of 100 rises with
+ *                   the last ten as its slot opens. The ring counts with it, over
+ *                   a faint track of itself; three behaviours are being compared
+ *                   (?ring=dial, comet or sweep), each solid as 100 lands:
+ *                   dial, 100 ticks lighting up one by one, their gaps closing at
+ *                   the end; comet, a bright arc orbiting faster with a growing
+ *                   tail that catches up with itself; sweep, the ring drawing
+ *                   itself round
+ *   Contract 4.25   100 has held for 0.35s; the ring contracts onto the middle
+ *                   zero's outline (0.85s, power3.inOut), its corners tightening
+ *                   to the zero's; the digits never move
+ *   Reveal   5.00   0.1s before the ring lands, one growth begins (1.7s,
+ *                   power4.inOut): a window onto the hero opens from a point at
+ *                   the zero's centre, grows out through the zero (taking its
+ *                   ink with it) to the ring, and from there the ring and the
+ *                   window carry on together, past the farthest corner. One
+ *                   curve, so it never stops or changes gear at the zero
+ *   Enter    6.70   the hero is fully revealed and the page enters
  *            +0.35  (from 768px; at once below) the navbar slides down and fades
  *                   in as one piece (0.9s, power3.out): logo, menu and action
  *                   arrive together
@@ -51,10 +70,11 @@ const COPY = 0.3
  *                   rises from its mask at t+0.15 (0.8s, power3.out); the
  *                   actions lift in at t+0.3 (0.6s, power3.out), the stack row
  *                   from t+0.5 (0.5s, power3.out, 0.08s apart)
- *   Settle   ~4.6   the stack row, last, has landed
+ *   Settle   ~8.7   the stack row, last, has landed
  *
- * Every value is the reference's own: durations and eases from its code, the
- * three entry beats measured frame by frame against it.
+ * The hero entrance (from Enter) is the reference's own: durations and eases
+ * from its code, the entry beats measured frame by frame against it. The loader
+ * is this site's own.
  *
  * Runs only when <html> has .is-intro (inline script in layout.tsx). Any input
  * (wheel, touch, key) fast-forwards it. If anything fails, the page is simply
@@ -143,25 +163,27 @@ export function HeroIntro() {
       aria-hidden="true"
       data-theme="brand"
       data-bar-ignore
-      className="intro bg-bg text-fg"
+      className="intro text-fg"
     >
-      <div data-intro-mark className="intro-mark">
-        <div className="intro-squares">
-          {[0, 1, 2, 3].map((i) => (
-            <span key={i} data-intro-square className="intro-square bg-fg" />
+      <div className="intro-field">
+        <p className="intro-count">
+          {/* Each slot holds a strip of digits; the island adds the rest of
+              each strip and rolls it. */}
+          {[
+            ['hundreds', '\u00a0'],
+            ['tens', '0'],
+            ['units', '1'],
+          ].map(([slot, digit]) => (
+            <span key={slot} data-intro-slot={slot} className="intro-slot">
+              <span data-intro-strip className="intro-strip block">
+                <span>{digit}</span>
+              </span>
+            </span>
           ))}
-        </div>
-        {/* The real word sizes the line, invisibly. Over it, the resolved letters
-            and a band of noise in the accent, which on the brand field is orange
-            on orange: present, but faint. */}
-        <div className="intro-label text-sm uppercase">
-          <span className="opacity-0">{LABEL}</span>
-          <span className="absolute inset-0 whitespace-pre">
-            <span data-intro-label />
-            <span data-intro-noise className="text-accent" />
-          </span>
-        </div>
+        </p>
       </div>
+      <div data-intro-track className="intro-ring intro-track" />
+      <div data-intro-ring className="intro-ring" />
     </div>
   )
 }
@@ -170,9 +192,10 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const all = (selector: string, scope: ParentNode) =>
     Array.from(scope.querySelectorAll<HTMLElement>(selector))
 
-  const mark = all('[data-intro-mark]', overlay)
-  const squares = all('[data-intro-square]', overlay)
-  const label = all('[data-intro-label]', overlay)
+  const field = all('.intro-field', overlay)[0]
+  const slots = all('[data-intro-slot]', overlay)
+  const ringEl = all('[data-intro-ring]', overlay)[0]
+  const trackEl = all('[data-intro-track]', overlay)[0]
 
   // The navbar lives in the header, outside the hero.
   const nav = all('[data-hero-nav]', document.body)
@@ -186,65 +209,196 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
      would stay behind on top of the yPercent tween. */
   const tl = gsap.timeline({ onComplete: onDone })
 
-  /* Loader. Two fronts cross the label from the left, 0.1s apart: noise appears,
-     then the letters resolve over it. */
-  const noise = all('[data-intro-noise]', overlay)
-  const word = { time: 0 }
-  const front = (t: number) => Math.round(Math.min(Math.max(t / 0.6, 0), 1) * LABEL.length)
-  tl.to(
-    word,
-    {
-      time: 0.8,
-      duration: 0.8,
-      ease: 'none',
-      onUpdate: () => {
-        const resolved = front(word.time - 0.2)
-        const scrambled = front(word.time - 0.1) - resolved
-        let band = ''
-        for (let i = 0; i < scrambled; i++) band += NOISE[Math.floor(Math.random() * NOISE.length)]
-        label.forEach((el) => (el.textContent = LABEL.slice(0, resolved)))
-        noise.forEach((el) => (el.textContent = band))
-      },
-    },
-    0,
-  )
+  /* The ring starts around "01" (the counter's box is centred). Where the
+     middle zero of "100" sits is measured from its own cell when the ring
+     starts to contract, once, so the target is the zero as rendered: --zc below
+     the cell's top, centred across it. The zero's size and the corner radius it
+     is drawn with come from the typeface's custom properties. */
+  const style = getComputedStyle(overlay)
+  const em = parseFloat(style.fontSize) || 0
+  const unit = (name: string) => (parseFloat(style.getPropertyValue(name)) || 0) * em
+  const ringSize = unit('--ring')
+  const zeroX = unit('--zx')
+  const zeroY = unit('--zy')
+  const zeroRadius = unit('--zr')
+  const zeroCentre = unit('--zc')
+  const one = unit('--one')
+  const box = slots[0]?.parentElement?.getBoundingClientRect()
+  const width = window.innerWidth
+  const height = window.innerHeight
+  const line = Math.max(LINE_MIN, LINE * em)
+  overlay.style.setProperty('--line', `${line}px`)
+  const zero = { x: width / 2, y: height / 2 }
+  let tensCell: () => Element | null = () => null
+  const findZero = () => {
+    const cell = tensCell()?.getBoundingClientRect()
+    if (cell) {
+      zero.x = cell.left + cell.width / 2
+      zero.y = cell.top + zeroCentre
+    }
+  }
+  // The ring's inner edge past the farthest corner.
+  const far = () =>
+    Math.hypot(Math.max(zero.x, width - zero.x), Math.max(zero.y, height - zero.y)) + line + 2
 
-  /* Each square starts on top of the one before and rolls over its bottom-right
-     corner into the next slot; the first comes in from off the track. Positions
-     follow the rendered square, so the track scales with the spacing token. */
-  const size = squares[0]?.offsetWidth ?? 0
-  const step = size * 1.125
-  squares.forEach((square, i) => {
-    tl.fromTo(
-      square,
-      { x: i === 0 ? -size : (i - 1) * step, rotation: 0 },
-      { x: step * i - size, rotation: 90, ...ROLL, immediateRender: false },
-      i === 0 ? 0 : '>-25%',
+  /* The ring: its centre, outer half-sizes and corner radius drive the element
+     (via --cx/--cy, --rx/--ry and --rr) and, once it opens, the hole cut in the
+     field, which is the ring's own inner edge, grown half a pixel under the line
+     so no seam shows. */
+  const ring = {
+    x: box ? box.left + box.width / 2 : width / 2,
+    y: box ? box.top + box.height / 2 : height / 2,
+    rx: ringSize,
+    ry: ringSize,
+    r: ringSize,
+  }
+  let open = false
+  // How much of the ring's inner edge the window has grown to (0 to 1).
+  const win = { k: 0 }
+  const draw = () => {
+    overlay.style.setProperty('--cx', `${ring.x}px`)
+    overlay.style.setProperty('--cy', `${ring.y}px`)
+    overlay.style.setProperty('--rx', `${ring.rx}px`)
+    overlay.style.setProperty('--ry', `${ring.ry}px`)
+    overlay.style.setProperty('--rr', `${ring.r}px`)
+    if (!open || !field) return
+    // The window is the ring's inner edge, one line in (the same rounded
+    // rectangle, grown half a pixel under the line so no seam shows), scaled
+    // about the ring's centre by how far it has grown.
+    const ax = (ring.rx - line + 0.5) * win.k
+    const ay = (ring.ry - line + 0.5) * win.k
+    if (ax < 0.5 || ay < 0.5) {
+      field.style.clipPath = 'none'
+      return
+    }
+    const k = Math.max(0, Math.min((ring.r - line + 0.5) * win.k, ax, ay))
+    const [l, t, r, b] = [ring.x - ax, ring.y - ay, ring.x + ax, ring.y + ay]
+    const arc = `A${k} ${k} 0 0 1`
+    field.style.clipPath =
+      `path(evenodd, 'M0 0H${width}V${height}H0Z` +
+      `M${l + k} ${t}H${r - k}${arc} ${r} ${t + k}V${b - k}${arc} ${r - k} ${b}` +
+      `H${l + k}${arc} ${l} ${b - k}V${t + k}${arc} ${l + k} ${t}Z')`
+  }
+  draw()
+
+  /* Count. Each column's strip is filled here (so a re-run starts clean): the
+     units 0–9 ten times and a last 0, the tens 0–9 and a last 0, the hundreds
+     a blank and the 1. One tally drives all three. */
+  const strip = (name: string) =>
+    overlay.querySelector<HTMLElement>(`[data-intro-slot="${name}"] > [data-intro-strip]`)
+  const fill = (el: HTMLElement | null, cells: string[]) => {
+    el?.replaceChildren(
+      ...cells.map((digit) => {
+        const cell = document.createElement('span')
+        cell.textContent = digit
+        return cell
+      }),
     )
-  })
+  }
+  const units = strip('units')
+  const tens = strip('tens')
+  const hundreds = strip('hundreds')
+  const hundredsSlot = hundreds?.parentElement
+  tensCell = () => tens?.lastElementChild ?? null
+  fill(
+    units,
+    Array.from({ length: 101 }, (_, i) => String(i % 10)),
+  )
+  fill(
+    tens,
+    Array.from({ length: 11 }, (_, i) => String(i % 10)),
+  )
+  fill(hundreds, ['\u00a0', '1'])
+  const tally = { value: 1 }
+  const roll = () => {
+    const value = tally.value
+    // The 1 rises, and its slot opens, over the last ten.
+    const last = Math.min(Math.max((value - 90) / 10, 0), 1)
+    if (units) units.style.transform = `translateY(${-value}em)`
+    if (tens) tens.style.transform = `translateY(${(-10 * (value - 1)) / 99}em)`
+    if (hundreds) hundreds.style.transform = `translateY(${-last}em)`
+    if (hundredsSlot) hundredsSlot.style.width = `${one * last}px`
+    // What the ring does while it counts (hero-intro.css picks one by
+    // html[data-ring]); each is a mask on the ring that is solid at 100.
+    const done = Math.min(value, 100)
+    const ease = (x: number) => x * x * (3 - 2 * x)
+    const clamp = (x: number) => Math.min(Math.max(x, 0), 1)
+    //  sweep: the ring draws itself clockwise, a degree per 1/360 of the count.
+    overlay.style.setProperty('--sweep', `${done * 3.6}deg`)
+    //  dial: 100 ticks light up with the count; the gaps between them close over
+    //  the last nine, fusing the ticks into the ring.
+    overlay.style.setProperty('--gap', `${1.9 * (1 - ease(clamp((done - 91) / 9)))}deg`)
+    //  comet: a bright arc orbits (two turns over the count, faster as it goes),
+    //  its tail growing from 50° to the whole circle, the tail's far end rising
+    //  from clear to solid over the last twelve.
+    overlay.style.setProperty('--spin', `${done * 7.2}deg`)
+    overlay.style.setProperty('--tail', `${50 + 310 * ((done - 1) / 99)}deg`)
+    overlay.style.setProperty('--floor', `${ease(clamp((done - 88) / 12))}`)
+  }
+  roll()
+  tl.to(tally, { value: 100, duration: COUNT, ease: 'power3.inOut', onUpdate: roll }, 0)
+  // Closed: the mask comes off (no seam where the sweep met itself) and the
+  // track under it, no longer needed, goes.
+  tl.call(() => ringEl?.setAttribute('data-full', ''), undefined, COUNT)
+  if (trackEl) tl.set(trackEl, { opacity: 0 }, COUNT)
 
-  /* Sweep. A line from the bottom-left corner cuts the field away: its far end
-     runs along the top edge in the first half, down the right edge in the second.
-     The mark lets go just after the line starts. */
-  const sweep = { progress: 0 }
+  /* Contract: the ring closes onto the middle zero's outer contour, its corners
+     tightening to the zero's as it goes. */
   tl.to(
-    sweep,
+    ring,
     {
-      progress: 1,
-      duration: SWEEP_DURATION,
-      ease: 'expo.inOut',
+      x: () => {
+        findZero()
+        return zero.x
+      },
+      y: () => {
+        findZero()
+        return zero.y
+      },
+      rx: zeroX,
+      ry: zeroY,
+      r: zeroRadius,
+      duration: CONTRACT_DURATION,
+      ease: 'power3.inOut',
+      onUpdate: draw,
+    },
+    CONTRACT,
+  )
+
+  /* Reveal: one growth on one curve. The window onto the hero is the ring's
+     inner edge, scaled about its centre: it opens from a point at the zero's
+     centre and fills the zero's outline when it reaches `inner` (the zero's
+     inner half-height); past that the ring and the window grow together, each
+     size inflated by the same amount, so the zero's rounded rectangle slides
+     into a circle as it goes. */
+  const inner = Math.min(zeroX, zeroY) - line + 0.5
+  const reveal = { w: 0 }
+  tl.call(
+    () => {
+      open = true
+      draw()
+    },
+    undefined,
+    OPEN,
+  )
+  tl.to(
+    reveal,
+    {
+      w: () => inner + Math.max(0, far() - zeroX),
+      duration: REVEAL_DURATION,
+      ease: 'power4.inOut',
       onUpdate: () => {
-        const p = sweep.progress
-        overlay.style.clipPath =
-          p <= 0.5
-            ? `polygon(0% 100%, ${p * 200}% 0%, 100% 0%, 100% 100%)`
-            : `polygon(0% 100%, 100% ${(p - 0.5) * 200}%, 100% 100%)`
+        win.k = Math.min(1, reveal.w / inner)
+        const grow = Math.max(0, reveal.w - inner)
+        ring.rx = zeroX + grow
+        ring.ry = zeroY + grow
+        ring.r = zeroRadius + grow
+        draw()
       },
     },
-    SWEEP,
+    OPEN,
   )
-  tl.to(mark, { opacity: 0, duration: 0.28, ease: 'power3.out' }, SWEEP + 0.14)
-  tl.set(overlay, { autoAlpha: 0 }, SWEEP + SWEEP_DURATION)
+  tl.set(overlay, { autoAlpha: 0 }, ENTER)
 
   /* Enter. From 768px the navbar and the copy hold back a little longer, as the
      reference's do. */

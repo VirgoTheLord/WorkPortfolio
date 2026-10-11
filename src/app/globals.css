@@ -68,6 +68,8 @@
   --font-label: var(--font-label-face, ui-monospace, 'SF Mono', Menlo, monospace);
   /* The logo only: Deutsch Gothic, a blackletter (DESIGN.md §9.1). */
   --font-mark: var(--font-mark-face, serif);
+  /* The preloader's counter only: Archivo Expanded, digits only (DESIGN.md §9.1). */
+  --font-count: var(--font-count-face, sans-serif);
 
   /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
   --text-label: clamp(0.7812rem, 0.7604rem + 0.0926vw, 0.8438rem);
