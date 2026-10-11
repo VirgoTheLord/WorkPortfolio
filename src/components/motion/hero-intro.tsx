@@ -17,19 +17,17 @@ const LINE_MIN = 3
    (the timeline is only built then); the page itself is static and loaded.
    The count is an odometer: every column slides up continuously, the units
    through every number, the tens in proportion, on one in-out curve, and the
-   ring draws itself round on the same curve, closing as 100 lands. */
+   ring's comet runs on the same curve, closing into the ring as 100 lands. */
 const COUNT = 3.9
-/* 100 has landed and holds for a beat before the ring contracts. */
+/* 100 has landed and holds for a beat, then the ring contracts onto the middle
+   zero. */
 const CONTRACT = COUNT + 0.35
 const CONTRACT_DURATION = 0.85
 /* The reveal is one growth, from a point at the zero's centre to past the
    corners, on one curve; it starts just before the ring lands, so the ring
    never stops. */
-const OPEN = CONTRACT + CONTRACT_DURATION - 0.1
 const REVEAL_DURATION = 1.7
-/* The hero has been fully revealed; the page enters (as it did when the earlier
-   sweep finished). The hero entrance is timed from here and is unchanged. */
-const ENTER = OPEN + REVEAL_DURATION
+
 /* From 768px the navbar and the copy wait 0.35s more (the reference's lead). */
 const ART_LEAD = 0.35
 /* The copy starts 0.3s after the navbar is in. */
@@ -43,16 +41,13 @@ const COPY = 0.3
  *                   sliding up behind its slot, the units through every
  *                   number, the tens in proportion, so digits leave over the
  *                   top as the next rise from below; the 1 of 100 rises with
- *                   the last ten as its slot opens. The ring counts with it, over
- *                   a faint track of itself; three behaviours are being compared
- *                   (?ring=dial, comet or sweep), each solid as 100 lands:
- *                   dial, 100 ticks lighting up one by one, their gaps closing at
- *                   the end; comet, a bright arc orbiting faster with a growing
- *                   tail that catches up with itself; sweep, the ring drawing
- *                   itself round
+ *                   the last ten as its slot opens. The ring is a comet over a
+ *                   faint track of itself: a bright arc orbits (two turns,
+ *                   faster as it goes) with a tail growing from 50 degrees to
+ *                   the whole circle, so it catches its own tail as 100 lands
  *   Contract 4.25   100 has held for 0.35s; the ring contracts onto the middle
  *                   zero's outline (0.85s, power3.inOut), its corners tightening
- *                   to the zero's; the digits never move
+ *                   from a circle to the zero's; the digits never move
  *   Reveal   5.00   0.1s before the ring lands, one growth begins (1.7s,
  *                   power4.inOut): a window onto the hero opens from a point at
  *                   the zero's centre, grows out through the zero (taking its
@@ -223,6 +218,9 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const zeroRadius = unit('--zr')
   const zeroCentre = unit('--zc')
   const one = unit('--one')
+  // The reveal starts 0.1s before the ring lands; the hero enters when it ends.
+  const openAt = CONTRACT + CONTRACT_DURATION - 0.1
+  const enter = openAt + REVEAL_DURATION
   const box = slots[0]?.parentElement?.getBoundingClientRect()
   const width = window.innerWidth
   const height = window.innerHeight
@@ -318,26 +316,20 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     if (tens) tens.style.transform = `translateY(${(-10 * (value - 1)) / 99}em)`
     if (hundreds) hundreds.style.transform = `translateY(${-last}em)`
     if (hundredsSlot) hundredsSlot.style.width = `${one * last}px`
-    // What the ring does while it counts (hero-intro.css picks one by
-    // html[data-ring]); each is a mask on the ring that is solid at 100.
+    // The comet: a bright arc orbits (two turns over the count, faster as it
+    // goes), its tail growing from 50° to the whole circle, the tail's far end
+    // rising from clear to solid over the last twelve, so it is the whole ring
+    // at 100 (hero-intro.css turns these into a conic mask on the ring).
     const done = Math.min(value, 100)
     const ease = (x: number) => x * x * (3 - 2 * x)
     const clamp = (x: number) => Math.min(Math.max(x, 0), 1)
-    //  sweep: the ring draws itself clockwise, a degree per 1/360 of the count.
-    overlay.style.setProperty('--sweep', `${done * 3.6}deg`)
-    //  dial: 100 ticks light up with the count; the gaps between them close over
-    //  the last nine, fusing the ticks into the ring.
-    overlay.style.setProperty('--gap', `${1.9 * (1 - ease(clamp((done - 91) / 9)))}deg`)
-    //  comet: a bright arc orbits (two turns over the count, faster as it goes),
-    //  its tail growing from 50° to the whole circle, the tail's far end rising
-    //  from clear to solid over the last twelve.
     overlay.style.setProperty('--spin', `${done * 7.2}deg`)
     overlay.style.setProperty('--tail', `${50 + 310 * ((done - 1) / 99)}deg`)
     overlay.style.setProperty('--floor', `${ease(clamp((done - 88) / 12))}`)
   }
   roll()
   tl.to(tally, { value: 100, duration: COUNT, ease: 'power3.inOut', onUpdate: roll }, 0)
-  // Closed: the mask comes off (no seam where the sweep met itself) and the
+  // Closed: the mask comes off (no seam where the comet met its tail) and the
   // track under it, no longer needed, goes.
   tl.call(() => ringEl?.setAttribute('data-full', ''), undefined, COUNT)
   if (trackEl) tl.set(trackEl, { opacity: 0 }, COUNT)
@@ -364,7 +356,6 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     },
     CONTRACT,
   )
-
   /* Reveal: one growth on one curve. The window onto the hero is the ring's
      inner edge, scaled about its centre: it opens from a point at the zero's
      centre and fills the zero's outline when it reaches `inner` (the zero's
@@ -379,7 +370,7 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
       draw()
     },
     undefined,
-    OPEN,
+    openAt,
   )
   tl.to(
     reveal,
@@ -396,9 +387,9 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
         draw()
       },
     },
-    OPEN,
+    openAt,
   )
-  tl.set(overlay, { autoAlpha: 0 }, ENTER)
+  tl.set(overlay, { autoAlpha: 0 }, enter)
 
   /* Enter. From 768px the navbar and the copy hold back a little longer, as the
      reference's do. */
@@ -407,13 +398,13 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     nav,
     { yPercent: -100, y: 0, opacity: 0 },
     { yPercent: 0, opacity: 1, duration: 0.9, ease: 'power3.out' },
-    ENTER + lead,
+    enter + lead,
   )
 
   /* Headline. Per line, an accent block runs across it and a text-coloured block
      follows 0.1s behind; the line switches on under them, and they leave to the
      right in the same order. */
-  const t = ENTER + lead + COPY
+  const t = enter + lead + COPY
   const cross = { duration: 0.45, ease: 'power3.inOut' }
   lines.forEach((line, i) => {
     const text = all('[data-hero-text]', line)
