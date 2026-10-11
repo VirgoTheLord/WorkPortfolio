@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { WorkTogetherButton } from '@/components/interactive/work-together-button'
 import { HeadlineWipe } from '@/components/motion/headline-wipe'
+import { KeyLink } from '@/components/ui/key-link'
 import { TextLink } from '@/components/ui/text-link'
 import { SectionReveal } from '@/components/motion/section-reveal'
 import { contact, menu, site } from '@/content/site'
@@ -55,11 +55,7 @@ export function Contact() {
 
           <div className="contact-mask contact-hit w-fit">
             <div className="contact-rise" style={step(2)}>
-              <WorkTogetherButton
-                label={menu.action.label}
-                href={`mailto:${contact.email}`}
-                tone="ink"
-              />
+              <KeyLink label={menu.action.label} href={`mailto:${contact.email}`} />
             </div>
           </div>
 

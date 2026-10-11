@@ -1,4 +1,5 @@
 import { FooterScene } from '@/components/motion/footer-scene'
+import { KeyLink } from '@/components/ui/key-link'
 import { TextLink } from '@/components/ui/text-link'
 import { contact, footer, hero, menu, site } from '@/content/site'
 import './site-footer.css'
@@ -71,7 +72,11 @@ export function SiteFooter() {
                 <h2 className="footer-heading">{footer.contactLabel}</h2>
                 <ul className="footer-links">
                   <li>
-                    <TextLink href={`mailto:${contact.email}`}>{menu.action.label}</TextLink>
+                    <KeyLink
+                      label={menu.action.label}
+                      href={`mailto:${contact.email}`}
+                      size="compact"
+                    />
                   </li>
                   <li>
                     <TextLink href="#main">{footer.toTop}</TextLink>

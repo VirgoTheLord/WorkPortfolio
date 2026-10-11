@@ -25,7 +25,7 @@ export function SiteHeader() {
         <SiteMenu
           brand={<SiteBrand />}
           action={
-            <WorkTogetherButton label={menu.action.label} href={menu.action.href} tone="accent" />
+            <WorkTogetherButton label={menu.action.label} href={menu.action.href} tone="ink" />
           }
         >
           <SiteNav />

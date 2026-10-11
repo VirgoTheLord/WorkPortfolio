@@ -1,11 +1,10 @@
 import { WorkTogetherButton } from '@/components/interactive/work-together-button'
-import { TextLink } from '@/components/ui/text-link'
 import { hero } from '@/content/site'
 import './hero.css'
 
 /*
  * The opening composition, on one centre line: the name on two hand-broken
- * lines, a line under it and the actions, centred in the screen; the stack row
+ * lines, a line under it and the action, centred in the screen; the stack row
  * along the bottom edge. Spacing, type and the entrance follow the good-fella.com
  * hero. The navbar (components/layout/site-header.tsx) floats over the top edge.
  *
@@ -58,9 +57,6 @@ export function Hero() {
                   href={hero.action.href}
                   tone="accent"
                 />
-                <TextLink href={hero.secondary.href} className="text-base text-fg">
-                  {hero.secondary.label}
-                </TextLink>
               </div>
             </div>
 

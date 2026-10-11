@@ -5,9 +5,8 @@ export type HeroContent = {
   title: readonly string[]
   /** The line under the headline. */
   intro: string
-  /** The primary action, and the text link beside it. */
+  /** The one action, to the work. */
   action: { label: string; href: string }
-  secondary: { label: string; href: string }
   /** The row along the bottom edge: a label and the tools this site is built with. */
   stack: { label: string; items: readonly string[] }
 }

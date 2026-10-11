@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { WorkTogetherButton } from '@/components/interactive/work-together-button'
+import { KeyLink } from '@/components/ui/key-link'
 import { ScrambleText } from '@/components/layout/scramble-text'
 import { CursorLabel } from '@/components/motion/cursor-label'
 import { HeadlineWipe } from '@/components/motion/headline-wipe'
@@ -62,7 +62,7 @@ export function SelectedWork() {
             </nav>
 
             <div className="work-cta">
-              <WorkTogetherButton label={work.action.label} href={work.action.href} tone="accent" />
+              <KeyLink label={work.action.label} href={work.action.href} />
             </div>
           </div>
 
