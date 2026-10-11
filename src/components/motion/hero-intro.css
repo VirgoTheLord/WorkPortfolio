@@ -130,34 +130,17 @@ html.is-intro .intro {
   border-radius: var(--rr);
 }
 
-/* The ring counts with the number, over a faint track of itself; at 100 the
-   mask comes off. Three behaviours are being compared (html[data-ring], from
-   ?ring= in the inline script in layout.tsx; dial by default), each a mask on
-   the ring driven by custom properties the island writes from the count:
-     dial   100 ticks (a repeating conic mask, a gap of --gap in each 3.6deg)
-            lit by the count (a sweep up to --sweep)
-     comet  an arc whose head is at --spin and whose tail is --tail long, fading
-            out behind it from --floor (solid by 100)
-     sweep  the ring drawn clockwise from the top up to --sweep */
+/* The ring is a comet while it counts, over a faint track of itself: a conic
+   mask whose head is at --spin and whose tail is --tail long, fading out behind
+   it from --floor (the island writes all three from the count; solid by 100,
+   when the mask comes off). */
 .intro-ring:not(.intro-track) {
-  mask-image:
-    repeating-conic-gradient(#000 0 calc(3.6deg - var(--gap, 0deg)), transparent 0 3.6deg),
-    conic-gradient(#000 var(--sweep, 360deg), transparent 0);
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in;
-}
-
-html[data-ring='comet'] .intro-ring:not(.intro-track) {
   mask-image: conic-gradient(
     from calc(var(--spin, 0deg) - var(--tail, 360deg)),
     rgb(0 0 0 / var(--floor, 1)) 0deg,
     #000 var(--tail, 360deg),
     transparent var(--tail, 360deg)
   );
-}
-
-html[data-ring='sweep'] .intro-ring:not(.intro-track) {
-  mask-image: conic-gradient(#000 var(--sweep, 360deg), transparent 0);
 }
 
 /* Closed: no mask at all, so no seam shows where the ring met itself. */
