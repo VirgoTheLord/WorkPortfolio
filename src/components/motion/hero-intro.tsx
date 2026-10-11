@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { loader, site } from '@/content/site'
 import { loadGsap } from '@/lib/motion/gsap'
 import './hero-intro.css'
 
@@ -47,16 +48,25 @@ const COPY = 0.3
  *                   faint track of itself: a bright arc orbits (two turns,
  *                   faster as it goes) with a tail growing from 50 degrees to
  *                   the whole circle, so it catches its own tail as 100 lands
+ *   (0.3 on)        a status line under the counter rises in; its line rolls
+ *                   up at even stretches of the count and lands on a greeting
+ *                   as 100 does; it leaves just before the ring moves
+ *   (0.4 on)        the AW logo rises in right above the ring, a letter at a
+ *                   time (0.9s each, power3.out, 0.25s apart, from a mask), and
+ *                   stays until the growing window covers it
  *   Contract 4.25   100 has held for 0.35s; the ring contracts onto the middle
  *                   zero's outline (0.85s, power3.inOut), its corners tightening
  *                   from a circle to the zero's; the digits never move
- *   Reveal   5.00   0.1s before the ring lands, one growth begins (1.7s,
+ *   Exit     4.25   as the ring starts to shrink the letters drop back down
+ *                   behind their masks, A then W (0.6s, power3.in, 0.12s apart),
+ *                   the entry in reverse; gone before the ring lands
+ *   Reveal   4.90   one growth begins (1.7s,
  *                   power4.inOut): a window onto the hero opens from a point at
  *                   the zero's centre, grows out through the zero (taking its
  *                   ink with it) to the ring, and from there the ring and the
  *                   window carry on together, past the farthest corner. One
  *                   curve, so it never stops or changes gear at the zero
- *   Enter    6.70   the hero is fully revealed and the page enters
+ *   Enter    6.60   the hero is fully revealed and the page enters
  *            +0.35  (from 768px; at once below) the navbar slides down and fades
  *                   in as one piece (0.9s, power3.out): logo, menu and action
  *                   arrive together
@@ -67,7 +77,7 @@ const COPY = 0.3
  *                   rises from its mask at t+0.15 (0.8s, power3.out); the
  *                   actions lift in at t+0.3 (0.6s, power3.out), the stack row
  *                   from t+0.5 (0.5s, power3.out, 0.08s apart)
- *   Settle   ~8.7   the stack row, last, has landed
+ *   Settle   ~8.6   the stack row, last, has landed
  *
  * The hero entrance (from Enter) is the reference's own: durations and eases
  * from its code, the entry beats measured frame by frame against it. The loader
@@ -164,6 +174,34 @@ export function HeroIntro() {
     >
       <div className="intro-field">
         <Counter />
+        {/* The logo, split into letters, right above the ring: A then W rise in as
+            the count starts. It is part of this layer, so the growing window
+            cuts it away as it passes over it. */}
+        {/* Four corner brackets framing the screen, like a viewfinder: each draws
+            out of its own corner as the count starts. */}
+        {(['tl', 'tr', 'bl', 'br'] as const).map((corner) => (
+          <span key={corner} data-intro-corner className={`intro-corner intro-corner-${corner}`} />
+        ))}
+        <span data-intro-logo className="intro-logo">
+          {Array.from(site.mark).map((letter, i) => (
+            <span key={i} data-intro-letter className="intro-letter">
+              <span className="intro-letter-glyph">{letter}</span>
+            </span>
+          ))}
+        </span>
+        {/* The status line under the counter: one line per stretch of the count,
+            rolled up like the digits, ending on a greeting. */}
+        <p data-intro-status className="intro-status">
+          <span className="intro-status-window">
+            <span data-intro-status-strip className="intro-status-strip">
+              {[...loader.status, loader.done].map((line) => (
+                <span key={line} className="intro-status-line">
+                  {line}
+                </span>
+              ))}
+            </span>
+          </span>
+        </p>
       </div>
       {/* The same counter, inverted (a dark disc, orange figures), clipped to the
           ring: inside the ring the colours are inverted. */}
@@ -217,6 +255,9 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const ringEl = all('[data-intro-ring]', overlay)[0]
   const trackEl = all('[data-intro-track]', overlay)[0]
   const inverseEl = all('[data-intro-inverse]', overlay)[0]
+  const statusEl = all('[data-intro-status]', overlay)[0]
+  const glyphs = all('[data-intro-letter] > span', overlay)
+  const statusStrip = all('[data-intro-status-strip]', overlay)[0]
 
   // The navbar lives in the header, outside the hero.
   const nav = all('[data-hero-nav]', document.body)
@@ -244,8 +285,10 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const zeroRadius = unit('--zr')
   const zeroCentre = unit('--zc')
   const one = unit('--one')
-  // The reveal starts 0.1s before the ring lands; the hero enters when it ends.
-  const openAt = CONTRACT + CONTRACT_DURATION - 0.1
+  // The ring lands 0.1s before the contraction's curve ends (it is all but
+  // there); the AW exits with the contraction, and the reveal starts as the ring lands. The hero enters when the reveal ends.
+  const landAt = CONTRACT + CONTRACT_DURATION - 0.1
+  const openAt = landAt
   const enter = openAt + REVEAL_DURATION
   const box = slots[0]?.parentElement?.getBoundingClientRect()
   const width = window.innerWidth
@@ -314,6 +357,69 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
       `')`
   }
   draw()
+
+  /* The status line rises in as the count starts, rolls to its next line at
+     even stretches of the count (found on the count's own curve, so each change
+     lands as the number reaches it), lands on its greeting as 100 does, and is
+     gone before the ring moves. */
+  if (statusEl) {
+    tl.fromTo(
+      statusEl,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+      0.3,
+    )
+  }
+  if (statusEl) {
+    tl.to(statusEl, { opacity: 0, y: -6, duration: 0.35, ease: 'power2.in' }, CONTRACT - 0.1)
+  }
+
+  /* The corner brackets draw out of their corners as the count starts. */
+  const corners = all('[data-intro-corner]', overlay)
+  if (corners.length) {
+    tl.fromTo(
+      corners,
+      { scale: 0 },
+      { scale: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08 },
+      0.2,
+    )
+  }
+
+  /* The logo rises in as the count starts, a letter at a time from its mask. */
+  tl.fromTo(
+    glyphs,
+    { yPercent: 160, y: 0, opacity: 1 },
+    { yPercent: 0, duration: 0.9, ease: 'power3.out', stagger: 0.25 },
+    0.4,
+  )
+
+  /* The exit mirrors the entry: as the ring starts to shrink, each letter drops
+     back down behind its mask, A then W, so the mark is gone before the ring lands. */
+  tl.to(glyphs, { yPercent: 160, duration: 0.6, ease: 'power3.in', stagger: 0.12 }, CONTRACT)
+
+  const steps = statusStrip?.children.length ?? 0
+  if (statusStrip && steps > 1) {
+    const curve = gsap.parseEase('power3.inOut')
+    // When the count (eased) first reaches `value`: bisect the curve.
+    const timeAt = (value: number) => {
+      let lo = 0
+      let hi = 1
+      for (let i = 0; i < 24; i++) {
+        const mid = (lo + hi) / 2
+        if (curve(mid) * 99 + 1 < value) lo = mid
+        else hi = mid
+      }
+      return COUNT * hi
+    }
+    for (let i = 1; i < steps; i++) {
+      const at = i === steps - 1 ? COUNT : timeAt(1 + (i * 99) / (steps - 1))
+      tl.to(
+        statusStrip,
+        { yPercent: (-100 * i) / steps, duration: 0.5, ease: 'power3.out' },
+        Math.min(at, COUNT),
+      )
+    }
+  }
 
   /* Count. Each column's strip is filled here (so a re-run starts clean): the
      units 0–9 ten times and a last 0, the tens 0–9 and a last 0, the hundreds

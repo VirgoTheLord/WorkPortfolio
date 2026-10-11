@@ -94,6 +94,13 @@ export type MenuContent = {
   status: readonly string[]
 }
 
+export type LoaderContent = {
+  /** What the preloader says while it counts, one line per stretch of the count. */
+  status: readonly string[]
+  /** The line it lands on when the count reaches 100. */
+  done: string
+}
+
 export type SiteConfig = {
   name: string
   /** The logo: a short mark set in the mark face (Deutsch Gothic). */

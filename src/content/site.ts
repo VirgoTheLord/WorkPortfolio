@@ -3,6 +3,7 @@ import type {
   ContactContent,
   FooterContent,
   HeroContent,
+  LoaderContent,
   MenuContent,
   SiteConfig,
   SkillsContent,
@@ -101,6 +102,25 @@ export const contact = {
  * availability in the project, so none are listed (and no live clock stands in
  * for them).
  */
+/*
+ * The preloader's voice: a status line under the counter, dry and a little
+ * self-aware, about the work that really goes into this site (the grid, the
+ * type, the flexbox, the code that was deleted). It claims nothing it is not
+ * doing, and says hello when the count reaches 100.
+ */
+export const loader = {
+  status: [
+    'Warming up the pixels',
+    'Aligning the grid',
+    'Kerning the numbers',
+    'Negotiating with flexbox',
+    'Deleting unused code',
+    'Polishing the orange',
+    'Almost there. Probably.',
+  ],
+  done: 'Hello.',
+} satisfies LoaderContent
+
 export const footer = {
   navLabel: 'Footer',
   navigationLabel: 'Navigation',
