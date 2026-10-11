@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
+import { isInPageHref } from '@/lib/in-page-href'
 import './text-link.css'
 
 /*
@@ -7,16 +8,28 @@ import './text-link.css'
  * runs out to the right on hover and focus while a new one runs in from the left
  * behind it, and the reverse on leaving (text-link.css). One motif for every
  * inline link that is not a navigation row or a button. A real anchor
- * (next/link), so mailto: and hash links work as they do anywhere.
+ * (plain in the page, next/link to another route; lib/in-page-href.ts), so mailto:
+ * and hash links work as they do anywhere.
  */
 export function TextLink({ children, className = '', ...props }: ComponentProps<typeof Link>) {
-  return (
-    <Link {...props} className={`text-link ${className}`}>
+  const classes = `text-link ${className}`
+  const content = (
+    <>
       {children}
       <span aria-hidden="true" className="text-link-rule">
         <span />
         <span />
       </span>
+    </>
+  )
+  const { href } = props
+  return isInPageHref(href) ? (
+    <a {...props} href={href} className={classes}>
+      {content}
+    </a>
+  ) : (
+    <Link {...props} className={classes}>
+      {content}
     </Link>
   )
 }

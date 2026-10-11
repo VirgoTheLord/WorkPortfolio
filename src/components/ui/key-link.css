@@ -1,0 +1,127 @@
+/*
+ * The key, measured from the reference's own animation files (Lottie, 60fps):
+ *
+ *   rest    the face, outlined, on a solid block a quarter of its height deep,
+ *           running down and to the left at 45° with chamfered corners where it
+ *           meets the face.
+ *   hover   20 frames (333ms): the face lifts up and to the right by about 9% of
+ *           its height and the block deepens by the same, so its foot stays put.
+ *   press   20 frames: the face drives down and to the left onto the foot of the
+ *           block, flat, with no depth left.
+ *   both    on cubic-bezier(0.001, 0, 0, 1), the reference's own curve: an almost
+ *           instant start and a long settle. Leaving either state runs back the
+ *           same way.
+ *
+ * The block is the face's own shadow, stacked: twelve hard shadows each a twelfth
+ * of the depth further down and left, which fills in as one solid shape with the
+ * chamfers the reference draws. The depth is a registered custom property, so
+ * the stack animates as one. The face moves by transform; the foot never moves,
+ * because the depth changes by exactly as much as the face does. The link's box
+ * includes the block (padding on its left and bottom), so nothing overflows
+ * where it rests.
+ *
+ * Colours are the page's own: the face is the background, the outline, block and
+ * label are ink, so the key is black on light and white on dark, and black on
+ * the orange of a brand field. Pressed, the face takes the accent, the one place
+ * orange marks it, as the system uses orange for active states.
+ */
+@reference '../../app/globals.css';
+
+@property --key-d {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.key {
+  --key-depth: calc(var(--spacing) * 2.5);
+  --key-lift: calc(var(--spacing) * 1);
+  --key-ease: cubic-bezier(0.001, 0, 0, 1);
+  --key-time: 333ms;
+  display: inline-flex;
+  width: fit-content;
+  padding: 0 0 var(--key-depth) var(--key-depth);
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key-face {
+  --key-d: var(--key-depth);
+  display: inline-flex;
+  min-height: calc(var(--spacing) * 11);
+  align-items: center;
+  justify-content: center;
+  padding-inline: calc(var(--spacing) * 5);
+  border: calc(var(--spacing) * 0.5) solid currentColor;
+  border-radius: calc(var(--spacing) * 1.5);
+  background-color: var(--color-bg);
+  font-size: var(--text-lg);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow:
+    calc(var(--key-d) * -1 / 12) calc(var(--key-d) * 1 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -2 / 12) calc(var(--key-d) * 2 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -3 / 12) calc(var(--key-d) * 3 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -4 / 12) calc(var(--key-d) * 4 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -5 / 12) calc(var(--key-d) * 5 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -6 / 12) calc(var(--key-d) * 6 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -7 / 12) calc(var(--key-d) * 7 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -8 / 12) calc(var(--key-d) * 8 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -9 / 12) calc(var(--key-d) * 9 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -10 / 12) calc(var(--key-d) * 10 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -11 / 12) calc(var(--key-d) * 11 / 12) 0 0 currentColor,
+    calc(var(--key-d) * -1) var(--key-d) 0 0 currentColor;
+  transition:
+    transform var(--key-time) var(--key-ease),
+    --key-d var(--key-time) var(--key-ease),
+    background-color var(--key-time) var(--key-ease),
+    color var(--key-time) var(--key-ease);
+}
+
+/* Compact: a smaller key for small type and tight spaces (the
+   footer). A 36px face on an 8px block, so the link is still a 44px target. */
+.key-compact {
+  --key-depth: calc(var(--spacing) * 2);
+  --key-lift: calc(var(--spacing) * 0.75);
+}
+
+.key-compact .key-face {
+  min-height: calc(var(--spacing) * 9);
+  padding-inline: calc(var(--spacing) * 3.5);
+  font-size: var(--text-base);
+}
+
+/* Lift: a pointer that can hover, or keyboard focus. */
+@media (hover: hover) and (pointer: fine) {
+  .key:hover .key-face {
+    --key-d: calc(var(--key-depth) + var(--key-lift));
+    transform: translate(var(--key-lift), calc(var(--key-lift) * -1));
+  }
+}
+
+.key:focus-visible .key-face {
+  --key-d: calc(var(--key-depth) + var(--key-lift));
+  transform: translate(var(--key-lift), calc(var(--key-lift) * -1));
+}
+
+/* Press: the face goes down onto the foot of the block, and takes the accent.
+   data-pressed holds it down after the click, until the page moves
+   (motion/smooth-scroll.tsx), so a quick click still shows the whole press. */
+.key:active .key-face,
+.key[data-pressed] .key-face {
+  --key-d: 0px;
+  transform: translate(calc(var(--key-depth) * -1), var(--key-depth));
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+/* The focus ring follows the face, not the link's box. */
+.key:focus-visible {
+  outline: none;
+}
+
+.key:focus-visible .key-face {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}

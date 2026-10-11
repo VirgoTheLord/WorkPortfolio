@@ -18,8 +18,7 @@ import type {
 export const hero = {
   title: ['Alwin Aby', 'Mathew'],
   intro: 'Code · Motion · Craft',
-  action: { label: 'See the work', href: '#work' },
-  secondary: { label: 'Write to me', href: '#contact' },
+  action: { label: 'See What I Build', href: '#work' },
   stack: { label: 'Built with', items: ['Next.js', 'React', 'TypeScript', 'GSAP'] },
 } satisfies HeroContent
 
@@ -77,7 +76,7 @@ export const work = {
   label: 'Selected Work',
   headline: ['Selected', 'work.'],
   text: 'Three pieces of this site, shown as they run.',
-  action: { label: 'Write to me', href: '/#contact' },
+  action: { label: "Let's Talk", href: '/#contact' },
   thumbsLabel: 'Projects',
   goTo: 'Go to',
 } satisfies WorkContent
@@ -136,6 +135,6 @@ export const menu = {
   label: 'Menu',
   closeLabel: 'Close',
   home: { label: 'Home', href: '/' },
-  action: { label: 'Write to me', href: '/#contact' },
+  action: { label: "Let's Talk", href: '/#contact' },
   status: [site.role, `Portfolio ${site.year}`],
 } satisfies MenuContent

@@ -96,8 +96,8 @@
 /* The action's mask leaves room inside it for the 44px touch area; the negative
    margin keeps the layout as it was. */
 .contact-hit {
-  padding-block: calc(var(--spacing) * 1.5);
-  margin-block: calc(var(--spacing) * -1.5);
+  padding: calc(var(--spacing) * 3);
+  margin: calc(var(--spacing) * -3);
 }
 
 [data-reveal='pending'] .contact-panel {
