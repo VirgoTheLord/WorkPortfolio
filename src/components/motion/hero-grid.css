@@ -1,0 +1,31 @@
+/*
+ * The hero grid's canvas (hero-grid.tsx): over the hero's CSS grid, under the
+ * copy, never taking the pointer, and shown only once it has drawn
+ * (data-grid="live" on the hero), when the CSS grid steps aside. It carries the
+ * same mask as the CSS grid (hero.css), so the two are the same surface.
+ */
+@reference '../../app/globals.css';
+
+/* Registered so the cell reads back in pixels for the island. */
+@property --cell-px {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.hero-grid {
+  --cell-px: var(--spacing-grid);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mask-image: var(--hero-grid-mask);
+  mask-composite: intersect;
+}
+
+[data-grid='live'] > .hero-grid {
+  display: block;
+}

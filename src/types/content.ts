@@ -96,6 +96,8 @@ export type MenuContent = {
 
 export type SiteConfig = {
   name: string
+  /** The logo: a short mark set in the mark face (Deutsch Gothic). */
+  mark: string
   role: string
   year: string
   nav: readonly NavItem[]

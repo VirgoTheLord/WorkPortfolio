@@ -44,6 +44,12 @@
   --color-fg-subtle: var(--color-grey);
   --color-rule: #0000001a;
   --color-rule-strong: #00000033;
+  /* The hero's pressed-in grid (DESIGN.md §4): the groove's shaded edge and the
+     lit edge beside it, light falling from the top left. */
+  --color-groove: #00000020;
+  --color-groove-lit: #ffffff8c;
+  --color-groove-near: #0000003b;
+  --color-groove-lit-near: #ffffff;
   --color-accent: var(--color-orange);
   --color-accent-secondary: var(--color-orange-soft);
   --color-accent-fg: var(--color-black);
@@ -60,6 +66,8 @@
   --font-display: var(--font-text-face, ui-sans-serif, system-ui, sans-serif);
   --font-text: var(--font-text-face, ui-sans-serif, system-ui, sans-serif);
   --font-label: var(--font-label-face, ui-monospace, 'SF Mono', Menlo, monospace);
+  /* The logo only: Deutsch Gothic, a blackletter (DESIGN.md §9.1). */
+  --font-mark: var(--font-mark-face, serif);
 
   /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
   --text-label: clamp(0.7812rem, 0.7604rem + 0.0926vw, 0.8438rem);
@@ -101,6 +109,8 @@
      own size, the clearance above <main>, and scroll offsets. Larger from lg up;
      see the :root override below. */
   --spacing-header: 4.5rem;
+  /* The hero grid's cell. */
+  --spacing-grid: 2rem;
   --spacing-section-y: clamp(6rem, 4rem + 8.8889vw, 12rem);
   --spacing-exhibit-y: clamp(12rem, 70svh, 48rem);
   --container-content: 90rem;
@@ -145,9 +155,16 @@
   --stagger: 50ms;
 }
 
+@media (min-width: 48rem) {
+  :root {
+    --spacing-grid: 2.5rem;
+  }
+}
+
 @media (min-width: 64rem) {
   :root {
     --spacing-header: 5.5rem;
+    --spacing-grid: 3rem;
   }
 }
 
@@ -167,6 +184,10 @@
     --color-fg-subtle: var(--color-grey-light);
     --color-rule: #eeeeee0d;
     --color-rule-strong: #eeeeee1a;
+    --color-groove: #000000a0;
+    --color-groove-lit: #eeeeee15;
+    --color-groove-near: #000000d9;
+    --color-groove-lit-near: #eeeeee2f;
     --color-accent: var(--color-orange-bright);
     --color-accent-secondary: var(--color-orange-soft);
     --color-accent-fg: var(--color-black);
@@ -188,6 +209,10 @@
   --color-fg-subtle: var(--color-grey-light);
   --color-rule: #eeeeee0d;
   --color-rule-strong: #eeeeee1a;
+  --color-groove: #000000a0;
+  --color-groove-lit: #eeeeee15;
+  --color-groove-near: #000000d9;
+  --color-groove-lit-near: #eeeeee2f;
   --color-accent: var(--color-orange-bright);
   --color-accent-secondary: var(--color-orange-soft);
   --color-accent-fg: var(--color-black);
@@ -200,6 +225,10 @@
 
 [data-theme='light'] {
   color-scheme: light;
+  --color-groove: #00000020;
+  --color-groove-lit: #ffffff8c;
+  --color-groove-near: #0000003b;
+  --color-groove-lit-near: #ffffff;
   --color-bg: var(--color-white);
   --color-surface: var(--color-stone);
   --color-surface-2: var(--color-paper);
@@ -228,6 +257,10 @@
   --color-fg-subtle: var(--color-charcoal);
   --color-rule: #00000033;
   --color-rule-strong: #0000004d;
+  --color-groove: #0000002b;
+  --color-groove-lit: #ffffff26;
+  --color-groove-near: #00000047;
+  --color-groove-lit-near: #ffffff4d;
   --color-accent: var(--color-orange-bright);
   --color-accent-secondary: var(--color-orange-soft);
   --color-accent-fg: var(--color-black);

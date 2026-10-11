@@ -14,8 +14,68 @@
   --hero-edge: calc(var(--spacing) * 4);
   --hero-top: calc(var(--spacing) * 13);
   --hero-bottom: calc(var(--spacing) * 8);
+  /* The grid's mask, shared with its canvas (motion/hero-grid.tsx). */
+  --hero-grid-mask:
+    linear-gradient(to bottom, black 0 45%, transparent 100%),
+    radial-gradient(
+      ellipse 60% 55% at 50% 45%,
+      color-mix(in srgb, black 60%, transparent) 0%,
+      black 100%
+    );
   min-height: 100svh;
   view-timeline: --hero block;
+}
+
+/*
+ * The surface: a fine grid pressed into the canvas. Each line is a groove, a
+ * hairline in its shaded tone with a hairline of light beside it (below a
+ * horizontal, right of a vertical, as if lit from the top left), so up close it
+ * reads as cut into the surface and from a distance as a flat, faintly ruled
+ * page. Where the lines cross, a dot a touch darker marks the intersection.
+ *
+ * Hard-stop backgrounds on one pseudo-element: no image, no DOM per cell, no
+ * script, nothing that moves or repaints on scroll (it sits on the hero, not on
+ * the drifting contents). It is centred on the hero's centre line (a vertical
+ * groove runs through the middle of the headline) and hangs from the hero's top
+ * edge. The mask calms it behind the copy (down to 40%, rising gently, so it
+ * never looks spotlit) and lets it go before the hero ends, so there is no edge
+ * where the next section begins. Colours are tokens, set per theme in
+ * globals.css (--color-groove, --color-groove-lit); the cell is --spacing-grid.
+ */
+.hero::before {
+  --cell: var(--spacing-grid);
+  --at-x: calc(50% + var(--cell) / 2);
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, var(--color-groove) 0 1px, transparent 1.5px),
+    linear-gradient(
+      to right,
+      var(--color-groove) 0 1px,
+      var(--color-groove-lit) 1px 2px,
+      transparent 2px
+    ),
+    linear-gradient(
+      to bottom,
+      var(--color-groove) 0 1px,
+      var(--color-groove-lit) 1px 2px,
+      transparent 2px
+    );
+  background-size: var(--cell) var(--cell);
+  background-position:
+    50% calc(var(--cell) / -2),
+    var(--at-x) 0,
+    var(--at-x) 0;
+  mask-image: var(--hero-grid-mask);
+  mask-composite: intersect;
+}
+
+/* The canvas has drawn the same grid over it and can bend it (hero-grid.tsx). */
+.hero[data-grid='live']::before {
+  background-image: none;
 }
 
 /* The navbar is fixed and transparent over the hero, so the hero starts at the
@@ -36,6 +96,7 @@
    bottom edge, all on one centre line. */
 .hero-copy {
   position: relative;
+  container-type: inline-size;
   display: grid;
   min-height: calc(100svh - var(--hero-top));
   grid-template-rows: 1fr auto;
@@ -75,6 +136,15 @@
 }
 
 /* ---- Headline ----------------------------------------------------------- */
+
+/* The name on one line, as wide as the frame: 100cqw is the frame's width (the
+   copy is the query container) and --fit is the name's measured width in em, in
+   this face, weight and tracking. Revisit it if the name or its setting change. */
+.hero-title {
+  --fit: 7.36;
+  font-size: calc(100cqw / var(--fit));
+  line-height: 1;
+}
 
 /* Each line is its own box, so the wipe blocks cover exactly one line. */
 .hero-line {

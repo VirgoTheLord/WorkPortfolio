@@ -1,7 +1,7 @@
 /*
  * The footer, from neuemontreal.com's: a solid brand field in the ordinary flow, on
  * the hero's frame edge (16px, 24px from md), capped at the content width. Its
- * pieces, top to bottom: the initials mark and four columns (a heading over a
+ * pieces, top to bottom: the logo mark and four columns (a heading over a
  * hairline, the links beside a vertical hairline), a hairline, the name as wide
  * as the frame, a hairline, the credits. From md the mark sits to the left of
  * the columns, two by two until lg and four across from there; below md the mark
@@ -47,8 +47,8 @@
   flex: none;
   min-width: calc(var(--spacing) * 28);
   line-height: 0.9;
-  letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' var(--opsz-display);
+  /* The logo, spaced as the navbar's (site-brand.tsx). */
+  letter-spacing: var(--tracking-widest);
 }
 
 /* Below md, two by two, sharing the width; the right-hand column (Built with,

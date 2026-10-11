@@ -1,10 +1,11 @@
+import { HeroGrid } from '@/components/motion/hero-grid'
 import { WorkTogetherButton } from '@/components/interactive/work-together-button'
 import { hero } from '@/content/site'
 import './hero.css'
 
 /*
- * The opening composition, on one centre line: the name on two hand-broken
- * lines, a line under it and the action, centred in the screen; the stack row
+ * The opening composition, on one centre line: the name on one line, as wide
+ * as the hero, a line under it and the action, centred in the screen; the stack row
  * along the bottom edge. Spacing, type and the entrance follow the good-fella.com
  * hero. The navbar (components/layout/site-header.tsx) floats over the top edge.
  *
@@ -18,11 +19,12 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="hero relative isolate overflow-hidden bg-canvas text-fg"
     >
+      <HeroGrid />
       <div className="hero-push">
         <div className="hero-frame">
           <div className="hero-copy">
             <div className="hero-main">
-              <h1 id="hero-heading" className="font-display text-hero font-normal">
+              <h1 id="hero-heading" className="hero-title font-display text-hero font-normal">
                 {hero.title.map((line, i) => (
                   <span key={line}>
                     {i > 0 ? <br /> : null}
