@@ -1,0 +1,94 @@
+/*
+ * The pointer's trail and lens (motion/pointer-fx.tsx). Both sit above the page
+ * and below the cursor label, and take no pointer events.
+ *
+ * The lens blends with what is under it, so it must be a direct child of the root
+ * stacking context: a transformed parent would isolate it. Its own transform
+ * (set by the island) carries the position and, through --s, the scale, which is a
+ * registered property so it can transition.
+ */
+@reference '../../app/globals.css';
+
+@property --s {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0.43;
+}
+
+@property --hs {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0.3;
+}
+
+.pointer-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.pointer-lens {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 55;
+  width: 2.8rem;
+  height: 2.8rem;
+  /* Any grey: with the saturation blend it takes the backdrop's colour away and
+     keeps its lightness. */
+  background-color: var(--color-grey);
+  mix-blend-mode: saturation;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+  transition:
+    --s 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 250ms;
+}
+
+.pointer-lens[data-on='true'] {
+  --s: 1;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* The head: a solid square at the pointer, in the accent colour (black over a brand
+   field, where orange would vanish). It is always there while the pointer is on
+   the page, still or moving, and goes when the pointer leaves it. */
+.pointer-head {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 56;
+  width: calc(var(--spacing) * 1.75);
+  height: calc(var(--spacing) * 1.75);
+  background-color: var(--color-accent);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition:
+    opacity 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    --hs 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* It shrinks as it fades, so it dies away rather than blinking out. */
+.pointer-head[data-on='true'] {
+  --hs: 1;
+  opacity: 1;
+}
+
+.pointer-head[data-surface='brand'] {
+  background-color: var(--color-black);
+}
+
+/* The footer's reveal is this square grown (motion/footer-ink.tsx): while it is
+   open the square gives way to it, and comes back as it closes. */
+html[data-ink-reveal='true'] .pointer-head {
+  opacity: 0;
+}
