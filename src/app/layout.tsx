@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteHeader } from '@/components/layout/site-header'
+import { PointerFx } from '@/components/motion/pointer-fx'
 import { SmoothScroll } from '@/components/motion/smooth-scroll'
 import { fontVariables } from '@/lib/fonts'
 import './globals.css'
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         </main>
         <SiteFooter />
         <SmoothScroll />
+        <PointerFx />
       </body>
     </html>
   )

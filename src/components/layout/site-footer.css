@@ -14,6 +14,7 @@
    motion, and the name's masks, must never lengthen the page past the footer and
    leave a strip of the page's own colour beneath it. */
 .footer {
+  position: relative;
   overflow: clip;
 }
 
@@ -125,6 +126,7 @@
 /* ---- The name and the credits ------------------------------------------------------ */
 
 .footer-bottom {
+  position: relative;
   display: flex;
   flex-direction: column;
 }

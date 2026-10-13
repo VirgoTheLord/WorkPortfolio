@@ -1,3 +1,4 @@
+import { FooterInk } from '@/components/motion/footer-ink'
 import { FooterScene } from '@/components/motion/footer-scene'
 import { KeyLink } from '@/components/ui/key-link'
 import { TextLink } from '@/components/ui/text-link'
@@ -119,6 +120,7 @@ export function SiteFooter() {
           </div>
         </div>
       </FooterScene>
+      <FooterInk />
     </footer>
   )
 }

@@ -92,14 +92,13 @@
   padding-inline: var(--hero-edge);
 }
 
-/* The copy: the main block centred in the screen, then the stack row along the
-   bottom edge, all on one centre line. */
+/* The copy: the main block centred in the screen on one centre line. */
 .hero-copy {
   position: relative;
   container-type: inline-size;
   display: grid;
   min-height: calc(100svh - var(--hero-top));
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr;
   padding-bottom: var(--hero-bottom);
   text-align: center;
 }
@@ -112,15 +111,6 @@
   gap: calc(var(--spacing) * 6);
 }
 
-.hero-stack {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
-  margin-top: calc(var(--spacing) * 8);
-}
-
 @media (min-width: 64rem) {
   .hero {
     --hero-edge: calc(var(--spacing) * 8);
@@ -128,10 +118,6 @@
 
   .hero-main {
     gap: calc(var(--spacing) * 8);
-  }
-
-  .hero-stack {
-    margin-top: 0;
   }
 }
 
@@ -222,8 +208,7 @@ html.is-intro [data-hero-intro] {
   transform: translateY(100%);
 }
 
-html.is-intro [data-hero-actions],
-html.is-intro [data-hero-stack] {
+html.is-intro [data-hero-actions] {
   opacity: 0;
   transform: translateY(calc(var(--spacing) * 5));
 }

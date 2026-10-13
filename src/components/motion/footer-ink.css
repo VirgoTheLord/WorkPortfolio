@@ -1,0 +1,26 @@
+/*
+ * The footer name's ink layer (motion/footer-ink.tsx): an SVG laid over the name,
+ * sized and placed by the island to the name's own box. It takes no pointer
+ * events. The blot is the footer field's ink and the letters in it its orange (the
+ * brand field is black on orange; this is that, inverted), both from the tokens.
+ */
+@reference '../../app/globals.css';
+
+.footer-ink {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.footer-ink svg {
+  display: block;
+  overflow: visible;
+}
+
+.footer-ink-fill {
+  fill: var(--color-fg);
+}
+
+.footer-ink-text {
+  fill: var(--color-bg);
+}

@@ -5,8 +5,7 @@ import './hero.css'
 
 /*
  * The opening composition, on one centre line: the name on one line, as wide
- * as the hero, a line under it and the action, centred in the screen; the stack row
- * along the bottom edge. Spacing, type and the entrance follow the good-fella.com
+ * as the hero, a line under it and the action, centred in the screen. Spacing, type and the entrance follow the good-fella.com
  * hero. The navbar (components/layout/site-header.tsx) floats over the top edge.
  *
  * Every element carries the hooks the intro animates (components/motion/
@@ -61,18 +60,6 @@ export function Hero() {
                 />
               </div>
             </div>
-
-            {/* Bottom edge: what this site is built with, in the reference's client row. */}
-            <ul
-              aria-label={hero.stack.label}
-              className="hero-stack font-label text-label text-fg-muted uppercase"
-            >
-              {hero.stack.items.map((item) => (
-                <li key={item} data-hero-stack>
-                  {item}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>

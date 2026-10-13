@@ -1,63 +1,80 @@
 /*
- * Selected Work, from the reference. A dark band on the hero's frame edge (16px,
- * 32px from lg), 64px of space above and below (128px from lg).
+ * Selected Work, on a dark band on the hero's frame edge (16px, 32px from lg).
  *
- * Below lg: one column, in the order headline and line, projects (32px apart),
- * action. From lg: 12 columns; the left three (headline, thumbnails, action) are
- * pinned for the height of the screen under the header, the projects fill columns
- * 5-12.
+ * Two layouts:
+ *
+ * - Pinned (from lg, and only for motion that is allowed to move; `.js` is added
+ *   by the inline script in the root layout): the track is the same rest for every
+ *   project and the same sweep for every change (--work-step, --work-dwell,
+ *   --work-sweep), and the camera inside it is stuck to the screen. 12 columns: the
+ *   left four hold the headline, the tabs, the current project's description and the
+ *   action; the projects' covers all sit in columns 5-12, one over another, and the
+ *   island (motion/work-stage.tsx) sweeps them with clip-path as the track scrolls
+ *   past. Until it has run, the first project shows.
+ *
+ * - Otherwise (below lg, reduced motion, no script): nothing is pinned, nothing
+ *   moves. The headline and line, then the projects as a row of cards to swipe
+ *   (native scrolling, snapping), then the action.
  */
 @reference '../../app/globals.css';
 
 .work {
   padding: calc(var(--spacing) * 16) calc(var(--spacing) * 4);
+  /* The covers' corners, from the reference's (about 2vw): the one place the site
+     rounds, because the soft edges are what make the curtain read as a sheet. */
+  --work-radius: clamp(1rem, 2.02vw, 2.5rem);
+  /* The scroll of the pinned stretch, in steps of --work-step (a screen's height
+     times this share): every project gets one equal rest with its cover fully in
+     (--work-dwell), at both ends too, and every change of project one equal sweep
+     (--work-sweep), so going from any project to the next costs the same scroll,
+     forward or back, and the stage is entered and left on the same rest. The
+     island reads these, so the two cannot disagree. */
+  --work-step: 56svh;
+  --work-dwell: 0.55;
+  --work-sweep: 0.8;
 }
 
 .work-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-/* Below lg the side column dissolves so its parts take their place in the order. */
-.work-side {
-  display: contents;
+  display: flex;
+  flex-direction: column;
 }
 
 .work-intro {
-  order: 1;
   margin-bottom: calc(var(--spacing) * 8);
 }
 
-.work-list {
-  order: 2;
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 8);
-}
-
-.work-cta {
-  order: 3;
-  margin-top: calc(var(--spacing) * 8);
-}
-
-.work-thumbs {
+.work-tabs {
   display: none;
 }
 
-/* ---- A project ------------------------------------------------------------ */
+/* A row of cards that runs to the screen's edges, one card in view and the next
+   showing past it. */
+.work-list {
+  display: flex;
+  gap: calc(var(--spacing) * 4);
+  margin-inline: calc(var(--spacing) * -4);
+  padding-inline: calc(var(--spacing) * 4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: calc(var(--spacing) * 4);
+  scrollbar-width: none;
+}
+
+.work-list::-webkit-scrollbar {
+  display: none;
+}
+
+.work-project {
+  flex: 0 0 min(85vw, 28rem);
+  scroll-snap-align: start;
+}
 
 .work-media {
   position: relative;
   display: block;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  view-timeline: --work-media block;
-}
-
-.work-drift,
-.work-zoom {
-  position: relative;
-  height: 100%;
+  border-radius: var(--work-radius);
 }
 
 .work-caption {
@@ -79,132 +96,220 @@
   gap: calc(var(--spacing) * 2);
 }
 
-/* Fine pointers only: a touch screen has no hover to leave the image zoomed. */
-@media (hover: hover) and (pointer: fine) {
-  .work-zoom {
-    transition: transform 600ms cubic-bezier(0.33, 1, 0.68, 1);
-  }
-
-  .work-media:hover .work-zoom {
-    transform: scale(1.075);
-  }
+.work-cta {
+  margin-top: calc(var(--spacing) * 8);
 }
-
-/* ---- Pinned (from lg) ------------------------------------------------------ */
 
 @media (min-width: 64rem) {
   .work {
     padding: calc(var(--spacing) * 32) calc(var(--spacing) * 8);
   }
 
-  .work-grid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: calc(var(--spacing) * 4);
+  .work-list {
+    margin-inline: calc(var(--spacing) * -8);
+    padding-inline: calc(var(--spacing) * 8);
+    scroll-padding-inline: calc(var(--spacing) * 8);
   }
 
-  .work-side {
+  .work-project {
+    flex-basis: clamp(20rem, 30vw, 28rem);
+  }
+}
+
+/* ---- Pinned (from lg) ------------------------------------------------------ */
+
+@media (min-width: 64rem) and (min-height: 38rem) and (prefers-reduced-motion: no-preference) {
+  .js .work {
+    padding-bottom: 0;
+  }
+
+  /* One step of scroll per change of project, then one screen for the camera to
+     scroll away over: it is stuck for all of the steps. */
+  .js .work-track {
+    height: calc(
+      (var(--work-count) * var(--work-dwell) + (var(--work-count) - 1) * var(--work-sweep)) *
+        var(--work-step) + 100svh
+    );
+  }
+
+  .js .work-camera {
     position: sticky;
-    top: var(--spacing-header);
-    display: flex;
-    height: calc(100svh - var(--spacing-header));
-    grid-column: 1 / span 3;
-    flex-direction: column;
-    justify-content: space-between;
-    align-self: start;
-    padding-block: calc(var(--spacing) * 8);
+    top: 0;
+    height: 100svh;
+    overflow: clip;
   }
 
-  .work-intro,
-  .work-cta {
+  .js .work-grid {
+    display: grid;
+    height: 100%;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    gap: calc(var(--spacing) * 6) calc(var(--spacing) * 4);
+    padding-top: calc(var(--spacing-header) + var(--spacing) * 4);
+    padding-bottom: calc(var(--spacing) * 4);
+  }
+
+  /* Between lg and xl the columns are narrow: the left takes four (the cover
+     starts one over) and the description steps down a size to fit. */
+  @media (max-width: 79.99rem) {
+    .js .work-intro,
+    .js .work-tabs,
+    .js .work-caption {
+      grid-column: 1 / span 4;
+    }
+
+    .js .work-media,
+    .js .work-cta {
+      grid-column: 5 / -1;
+    }
+
+    .js .work-title {
+      font-size: var(--text-lg);
+    }
+
+    .js .work-summary {
+      font-size: var(--text-sm);
+    }
+  }
+
+  /* A short screen has less to spare: tighter rows. */
+  @media (max-height: 50rem) {
+    .js .work-grid {
+      row-gap: calc(var(--spacing) * 3);
+      padding-top: calc(var(--spacing-header) + var(--spacing) * 4);
+      padding-bottom: calc(var(--spacing) * 4);
+    }
+
+    .js .work-intro h2 {
+      font-size: var(--text-2xl);
+    }
+
+    .js .work-intro p {
+      margin-top: calc(var(--spacing) * 2);
+    }
+
+    .js .work-tabs {
+      gap: calc(var(--spacing) * 2);
+      padding-bottom: calc(var(--spacing) * 3);
+    }
+
+    .js .work-caption {
+      gap: calc(var(--spacing) * 1.5);
+    }
+
+    .js .work-title {
+      font-size: var(--text-lg);
+    }
+
+    .js .work-summary {
+      font-size: var(--text-sm);
+    }
+  }
+
+  /* Under about 670px tall there is no room to spare at all. */
+  @media (max-height: 42rem) {
+    .js .work-grid {
+      row-gap: calc(var(--spacing) * 2);
+      padding-top: calc(var(--spacing-header) + var(--spacing) * 3);
+      padding-bottom: calc(var(--spacing) * 3);
+    }
+
+    .js .work-intro h2 {
+      font-size: var(--text-xl);
+    }
+  }
+
+  .js .work-intro {
+    grid-column: 1 / span 3;
+    grid-row: 1;
     margin: 0;
   }
 
-  .work-list {
-    grid-column: 5 / span 8;
-    gap: calc(var(--spacing) * 16);
-    padding-block: calc(var(--spacing) * 8);
-  }
-
-  .work-caption {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: calc(var(--spacing) * 4);
-  }
-
-  .work-title {
-    font-family: var(--font-label);
-    font-size: var(--text-base);
-    text-transform: uppercase;
-  }
-
-  .work-tags {
-    justify-content: flex-end;
-  }
-
-  /* Thumbnails: one per project, the others dimmed, a square beside the current
-     one. The island sets --marker-y and --marker-turn. */
-  .work-thumbs {
+  /* The tabs: one line per project, the others dimmed, an orange square beside the
+     current one (the island moves it and the dimming). */
+  .js .work-tabs {
     position: relative;
-    order: 2;
     display: flex;
+    grid-column: 1 / span 3;
+    grid-row: 3;
     flex-direction: column;
-    align-items: flex-start;
-    gap: calc(var(--spacing) * 2);
+    align-self: end;
+    gap: calc(var(--spacing) * 3);
+    padding-left: calc(var(--spacing) * 6);
+    padding-bottom: calc(var(--spacing) * 6);
+    border-bottom: 1px solid var(--color-rule-strong);
   }
 
-  .work-thumb {
-    position: relative;
-    display: block;
-    width: calc(var(--spacing) * 32);
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
+  .js .work-tab {
+    display: flex;
+    gap: calc(var(--spacing) * 3);
     opacity: 0.4;
-    transition: opacity 300ms ease;
   }
 
-  .work-thumb[data-active] {
+  .js .work-tab[aria-current] {
     opacity: 1;
   }
 
-  .work-marker {
+  .js .work-marker {
     position: absolute;
     top: 0;
-    left: calc(var(--spacing) * 35);
+    left: 0;
     width: calc(var(--spacing) * 2);
     height: calc(var(--spacing) * 2);
-    transform: translateY(var(--marker-y, 0)) rotate(var(--marker-turn, 0deg));
-    /* The reference's curve: a slight dip back and overshoot. */
-    transition: transform 800ms cubic-bezier(0.68, -0.3, 0.32, 1.1);
-  }
-}
-
-/* ---- Drift ------------------------------------------------------------------
- * From lg the picture is 30% larger than its frame and drifts from 15% above to
- * 15% below centre as the frame crosses the screen, so it moves slower than the
- * page. A scroll timeline on the frame, so no script runs on scroll.
- */
-@media (min-width: 64rem) {
-  .work-drift {
-    scale: 1.3;
   }
 
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .work-drift {
-        animation: work-drift linear both;
-        animation-timeline: --work-media;
-        animation-range: cover;
-      }
-    }
+  /* The list and its items dissolve: each cover goes to the stage and each
+     description to the left, all of one kind in the same cell, one over another. */
+  .js .work-list,
+  .js .work-project {
+    display: contents;
   }
-}
 
-@keyframes work-drift {
-  from {
-    translate: 0 -15%;
+  /* The cover fills the stage's height (the reference's frames run the height of
+     the screen), cropped to it from the top. */
+  .js .work-media {
+    grid-column: 4 / -1;
+    grid-row: 1 / -1;
+    align-self: stretch;
+    aspect-ratio: auto;
   }
-  to {
-    translate: 0 15%;
+
+  /* The later covers are swept in from nothing; the island takes over from here. */
+  .js .work-project:not(:first-child) .work-media {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  /* The tabs and the description are one group at the foot of the column (a
+     hairline under the tabs, which stays put while the descriptions change), the
+     headline alone at its head. */
+  .js .work-caption {
+    grid-column: 1 / span 3;
+    grid-row: 4;
+    margin: 0;
+  }
+
+  .js .work-title {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+  }
+
+  .js .work-project:not(:first-child) .work-caption {
+    opacity: 0;
+  }
+
+  /* The action sits in the projects' own area, in the stage's bottom-right corner
+     over the cover, on a light key (the band's two tones swapped) so it reads over
+     the screenshots. It is its own element, so it stays put as the covers change. */
+  .js .work-cta {
+    z-index: 2;
+    grid-column: 4 / -1;
+    grid-row: 1 / -1;
+    align-self: end;
+    justify-self: end;
+    margin: calc(var(--spacing) * 5);
+    --color-bg: var(--color-white);
+    --color-fg: var(--color-black);
+    --color-ink: var(--color-black);
+    color: var(--color-black);
   }
 }

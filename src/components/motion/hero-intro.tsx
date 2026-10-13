@@ -75,9 +75,8 @@ const COPY = 0.3
  *                   leave (0.45s each, power3.inOut; lines 0.15s apart), the
  *                   line switching on while it is covered; the line under it
  *                   rises from its mask at t+0.15 (0.8s, power3.out); the
- *                   actions lift in at t+0.3 (0.6s, power3.out), the stack row
- *                   from t+0.5 (0.5s, power3.out, 0.08s apart)
- *   Settle   ~8.6   the stack row, last, has landed
+ *                   actions lift in at t+0.3 (0.6s, power3.out)
+ *   Settle   ~8.6   everything has landed
  *
  * The hero entrance (from Enter) is the reference's own: durations and eases
  * from its code, the entry beats measured frame by frame against it. The loader
@@ -264,7 +263,6 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const lines = all('.hero-line', hero)
   const sentence = all('[data-hero-intro]', hero)
   const actions = all('[data-hero-actions]', hero)
-  const stack = all('[data-hero-stack]', hero)
 
   /* Every `from` below carries y: 0. The CSS starting states are percentage
      translates, which GSAP reads back as a pixel y; without the reset that y
@@ -576,8 +574,8 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     tl.to(accent, { scaleX: 0, ...cross }, at + 0.6)
   })
 
-  /* The line under the headline rises from its mask; the actions and the stack
-     row lift in behind it. */
+  /* The line under the headline rises from its mask; the actions lift in
+     behind it. */
   tl.fromTo(
     sentence,
     { yPercent: 100, y: 0 },
@@ -586,12 +584,6 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   )
   const lift = { opacity: 0, y: 20 }
   tl.fromTo(actions, lift, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, t + 0.3)
-  tl.fromTo(
-    stack,
-    lift,
-    { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08 },
-    t + 0.5,
-  )
 
   return tl
 }
