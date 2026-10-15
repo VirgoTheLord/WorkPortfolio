@@ -1,315 +1,437 @@
 /*
- * Selected Work, on a dark band on the hero's frame edge (16px, 32px from lg).
+ * Selected Work, after the "Featured Works" section of kushbothra.com, in this
+ * site's type, tokens and theme (the page's own, light or dark).
  *
- * Two layouts:
+ * The head: the section label (ui/section-label.tsx) and a large two-line headline, wiped in line by line the
+ * way the hero's name is (motion/work-stack.tsx).
  *
- * - Pinned (from lg, and only for motion that is allowed to move; `.js` is added
- *   by the inline script in the root layout): the track is the same rest for every
- *   project and the same sweep for every change (--work-step, --work-dwell,
- *   --work-sweep), and the camera inside it is stuck to the screen. 12 columns: the
- *   left four hold the headline, the tabs, the current project's description and the
- *   action; the projects' covers all sit in columns 5-12, one over another, and the
- *   island (motion/work-stage.tsx) sweeps them with clip-path as the track scrolls
- *   past. Until it has run, the first project shows.
+ * The projects: one card per project, each a folder with a numbered tab in its
+ * own tone (by position: accent, ink, soft accent, surface). From lg every card
+ * is sticky at the same top and the same height, so each slides up over the one
+ * before and rests on it, its tab one step further right, so the tabs read as a
+ * row of folders; the island fades a card's text as it is covered. Below lg, for
+ * reduced motion and on short screens, the cards are a plain column.
  *
- * - Otherwise (below lg, reduced motion, no script): nothing is pinned, nothing
- *   moves. The headline and line, then the projects as a row of cards to swipe
- *   (native scrolling, snapping), then the action.
+ * The action after the last card is the site's frame button
+ * (library/frame-button.tsx), first built here after the reference's "View all
+ * case studies".
  */
 @reference '../../app/globals.css';
 
 .work {
-  padding: calc(var(--spacing) * 16) calc(var(--spacing) * 4);
-  /* The covers' corners, from the reference's (about 2vw): the one place the site
-     rounds, because the soft edges are what make the curtain read as a sheet. */
-  --work-radius: clamp(1rem, 2.02vw, 2.5rem);
-  /* The scroll of the pinned stretch, in steps of --work-step (a screen's height
-     times this share): every project gets one equal rest with its cover fully in
-     (--work-dwell), at both ends too, and every change of project one equal sweep
-     (--work-sweep), so going from any project to the next costs the same scroll,
-     forward or back, and the stage is entered and left on the same rest. The
-     island reads these, so the two cannot disagree. */
-  --work-step: 56svh;
-  --work-dwell: 0.55;
-  --work-sweep: 0.8;
+  /* Half the usual section rhythm: the headline is already a large pause. */
+  padding: calc(var(--spacing-section-y) / 2) calc(var(--spacing) * 4);
+  /* The folder tone of the card, its tab and its border. */
+  --work-tone: var(--color-fg);
+  --work-tone-fg: var(--color-bg);
+  --work-tab: calc(var(--spacing) * 10);
 }
 
-.work-grid {
+/* ---- Head ------------------------------------------------------------------ */
+
+.work-head {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-.work-intro {
-  margin-bottom: calc(var(--spacing) * 8);
+/* Capitals, heavy and tight, two lines; 104px at 1440 (the reference's 150px,
+   brought down by request). */
+.work-heading {
+  margin-top: calc(var(--spacing) * 4);
+  font-size: clamp(2.5rem, 11vw, 6.5rem);
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
 }
 
-.work-tabs {
-  display: none;
+.work-heading-line {
+  display: block;
 }
 
-/* A row of cards that runs to the screen's edges, one card in view and the next
-   showing past it. */
+/* Each line is its own box, so the wipe blocks cover exactly one line, as the
+   hero's do (hero.css). The blocks overhang it a little and are only seen while
+   the wipe runs. */
+.work-line {
+  position: relative;
+  display: inline-block;
+}
+
+.work-block {
+  position: absolute;
+  inset: -0.1em;
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* ---- Cards ----------------------------------------------------------------- */
+
 .work-list {
   display: flex;
-  gap: calc(var(--spacing) * 4);
-  margin-inline: calc(var(--spacing) * -4);
-  padding-inline: calc(var(--spacing) * 4);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: calc(var(--spacing) * 4);
-  scrollbar-width: none;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 10);
+  max-width: 77.5rem;
+  margin: calc(var(--spacing) * 12) auto 0;
 }
 
-.work-list::-webkit-scrollbar {
-  display: none;
+.work-item:nth-child(4n + 1) {
+  --work-tone: var(--color-accent);
+  --work-tone-fg: var(--color-accent-fg);
 }
 
-.work-project {
-  flex: 0 0 min(85vw, 28rem);
-  scroll-snap-align: start;
+.work-item:nth-child(4n + 2) {
+  --work-tone: var(--color-fg);
+  --work-tone-fg: var(--color-bg);
 }
 
-.work-media {
+.work-item:nth-child(4n + 3) {
+  --work-tone: var(--color-accent-secondary);
+  --work-tone-fg: var(--color-accent-fg);
+}
+
+.work-item:nth-child(4n + 4) {
+  --work-tone: var(--color-surface);
+  --work-tone-fg: var(--color-fg);
+}
+
+/* The tab: a folder's tab, cut at 45 degrees, flush with the card's left edge. */
+.work-tab {
   position: relative;
-  display: block;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  border-radius: var(--work-radius);
+  display: flex;
+  width: min(65%, 15rem);
+  height: var(--work-tab);
+  align-items: center;
+  padding-inline: calc(var(--spacing) * 4);
+  background-color: var(--work-tone);
+  color: var(--work-tone-fg);
+  font-size: var(--text-sm);
+  clip-path: polygon(0 0, calc(100% - var(--work-tab)) 0, 100% 100%, 0 100%);
 }
 
-.work-caption {
+.work-tab-face {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+
+.work-tab-mark {
+  width: calc(var(--spacing) * 4);
+  height: calc(var(--spacing) * 4);
+  fill: currentColor;
+  shape-rendering: crispEdges;
+}
+
+.work-card {
+  border: 1px solid var(--work-tone);
+  background-color: var(--color-bg);
+}
+
+.work-card-inner {
   display: flex;
   flex-direction: column;
+  gap: calc(var(--spacing) * 6);
+  height: 100%;
+  padding: calc(var(--spacing) * 4);
+  color: var(--color-fg);
+}
+
+/* The tools follow the description directly (the reference pins them to the
+   card's foot; ours keep the column compact). */
+.work-text {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 6);
+}
+
+.work-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: calc(var(--spacing) * 2);
-  margin-top: calc(var(--spacing) * 4);
+}
+
+.work-date {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  font-size: var(--text-label);
+}
+
+.work-dot {
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
+  border-radius: 50%;
+  background-color: currentColor;
 }
 
 .work-title {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  line-height: 1.3;
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
+.work-summary {
+  max-width: 38ch;
+  font-size: var(--text-base);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+/* "View project": an underlined label with a corner arrow. On hover the label
+   steps right, the arrow turns from up-right to right and the rule draws on. */
+.work-view {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  margin-top: calc(var(--spacing) * 4);
+  padding-block: calc(var(--spacing) * 2);
+  font-size: var(--text-label);
+  transition: translate var(--duration-base) var(--ease-out);
+}
+
+.work-view::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: currentColor;
+  transform-origin: left;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.work-view-arrow {
+  width: calc(var(--spacing) * 4);
+  height: calc(var(--spacing) * 4);
+  fill: currentColor;
+  rotate: -45deg;
+  transition:
+    rotate var(--duration-base) var(--ease-out),
+    translate var(--duration-base) var(--ease-out);
+}
+
+.work-card-inner:is(:hover, :focus-visible) .work-view {
+  translate: calc(var(--spacing) * 2) 0;
+}
+
+.work-card-inner:is(:hover, :focus-visible) .work-view::after {
+  transform: scaleX(1.15);
+}
+
+.work-card-inner:is(:hover, :focus-visible) .work-view-arrow {
+  rotate: 0deg;
+}
+
+/* The tools, as folder labels: a dark label with a little tab on its top left. */
 .work-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(var(--spacing) * 2);
+  gap: calc(var(--spacing) * 4) calc(var(--spacing) * 4);
 }
 
-.work-cta {
-  margin-top: calc(var(--spacing) * 8);
+.work-tag {
+  position: relative;
+  margin-top: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 2);
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  font-size: var(--text-sm);
+  line-height: 1;
 }
+
+.work-tag::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 3);
+  background-color: inherit;
+  clip-path: polygon(0 0, 70% 0, 100% 100%, 0 100%);
+}
+
+/* The cover in a selected frame: a hairline with a square handle on each corner,
+   the category in its top right. */
+.work-media {
+  position: relative;
+}
+
+.work-frame {
+  position: relative;
+  aspect-ratio: var(--aspect-tall);
+  overflow: hidden;
+  border: 1px solid var(--color-fg);
+}
+
+.work-handle {
+  --handle: calc(var(--spacing) * 4);
+  position: absolute;
+  z-index: 1;
+  width: var(--handle);
+  height: var(--handle);
+  border: 1px solid var(--color-fg);
+  background-color: var(--color-bg);
+}
+
+.work-handle[data-corner^='t'] {
+  top: calc(var(--handle) / -2);
+}
+
+.work-handle[data-corner^='b'] {
+  bottom: calc(var(--handle) / -2);
+}
+
+.work-handle[data-corner$='l'] {
+  left: calc(var(--handle) / -2);
+}
+
+.work-handle[data-corner$='r'] {
+  right: calc(var(--handle) / -2);
+}
+
+.work-badge {
+  position: absolute;
+  top: calc(var(--spacing) * 4);
+  right: calc(var(--spacing) * 4);
+  padding: calc(var(--spacing) * 2);
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  font-size: var(--text-sm);
+  line-height: 1;
+}
+
+/* On hover the cover is struck through with fine diagonal lines over a light
+   wash, the way a design tool marks a selected frame (the reference's hover).
+   The lines are a hard-stop pattern, not a visible gradient. */
+.work-hatch {
+  position: absolute;
+  inset: 0;
+  background-color: color-mix(in srgb, var(--color-bg) 45%, transparent);
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-fg) 55%, transparent) 0 1px,
+    transparent 1px calc(var(--spacing) * 4.5)
+  );
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-in-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-card:hover .work-hatch {
+    opacity: 1;
+  }
+}
+
+.work-card-inner:focus-visible .work-hatch {
+  opacity: 1;
+}
+
+.work-card-inner:focus-visible {
+  outline-offset: calc(var(--spacing) * -2);
+}
+
+@media (min-width: 48rem) {
+  .work-frame {
+    aspect-ratio: var(--aspect-wide);
+  }
+
+  .work-title {
+    font-size: var(--text-3xl);
+  }
+}
+
+/* ---- The folders, from lg -------------------------------------------------- */
 
 @media (min-width: 64rem) {
   .work {
-    padding: calc(var(--spacing) * 32) calc(var(--spacing) * 8);
-  }
-
-  .work-list {
-    margin-inline: calc(var(--spacing) * -8);
     padding-inline: calc(var(--spacing) * 8);
-    scroll-padding-inline: calc(var(--spacing) * 8);
-  }
-
-  .work-project {
-    flex-basis: clamp(20rem, 30vw, 28rem);
-  }
-}
-
-/* ---- Pinned (from lg) ------------------------------------------------------ */
-
-@media (min-width: 64rem) and (min-height: 38rem) and (prefers-reduced-motion: no-preference) {
-  .js .work {
-    padding-bottom: 0;
-  }
-
-  /* One step of scroll per change of project, then one screen for the camera to
-     scroll away over: it is stuck for all of the steps. */
-  .js .work-track {
-    height: calc(
-      (var(--work-count) * var(--work-dwell) + (var(--work-count) - 1) * var(--work-sweep)) *
-        var(--work-step) + 100svh
+    /* The stack's measures: where a card rests (32px clear of the floating navbar), its
+       tab, the space under it, and the card's height, as tall as the screen allows
+       up to 496px (the reference's is 628px; ours is kept compact). */
+    --work-top: calc(var(--spacing-header) + var(--spacing) * 8);
+    --work-tab: calc(var(--spacing) * 14);
+    --work-gap: calc(var(--spacing) * 6);
+    --work-card: clamp(
+      26rem,
+      calc(100svh - var(--work-top) - var(--work-tab) - var(--work-gap)),
+      31rem
     );
   }
 
-  .js .work-camera {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: clip;
+  .work-list {
+    gap: 0;
+    margin-top: calc(var(--spacing) * 16);
   }
 
-  .js .work-grid {
-    display: grid;
-    height: 100%;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
-    gap: calc(var(--spacing) * 6) calc(var(--spacing) * 4);
-    padding-top: calc(var(--spacing-header) + var(--spacing) * 4);
-    padding-bottom: calc(var(--spacing) * 4);
-  }
-
-  /* Between lg and xl the columns are narrow: the left takes four (the cover
-     starts one over) and the description steps down a size to fit. */
-  @media (max-width: 79.99rem) {
-    .js .work-intro,
-    .js .work-tabs,
-    .js .work-caption {
-      grid-column: 1 / span 4;
-    }
-
-    .js .work-media,
-    .js .work-cta {
-      grid-column: 5 / -1;
-    }
-
-    .js .work-title {
-      font-size: var(--text-lg);
-    }
-
-    .js .work-summary {
-      font-size: var(--text-sm);
-    }
-  }
-
-  /* A short screen has less to spare: tighter rows. */
-  @media (max-height: 50rem) {
-    .js .work-grid {
-      row-gap: calc(var(--spacing) * 3);
-      padding-top: calc(var(--spacing-header) + var(--spacing) * 4);
-      padding-bottom: calc(var(--spacing) * 4);
-    }
-
-    .js .work-intro h2 {
-      font-size: var(--text-2xl);
-    }
-
-    .js .work-intro p {
-      margin-top: calc(var(--spacing) * 2);
-    }
-
-    .js .work-tabs {
-      gap: calc(var(--spacing) * 2);
-      padding-bottom: calc(var(--spacing) * 3);
-    }
-
-    .js .work-caption {
-      gap: calc(var(--spacing) * 1.5);
-    }
-
-    .js .work-title {
-      font-size: var(--text-lg);
-    }
-
-    .js .work-summary {
-      font-size: var(--text-sm);
-    }
-  }
-
-  /* Under about 670px tall there is no room to spare at all. */
-  @media (max-height: 42rem) {
-    .js .work-grid {
-      row-gap: calc(var(--spacing) * 2);
-      padding-top: calc(var(--spacing-header) + var(--spacing) * 3);
-      padding-bottom: calc(var(--spacing) * 3);
-    }
-
-    .js .work-intro h2 {
-      font-size: var(--text-xl);
-    }
-  }
-
-  .js .work-intro {
-    grid-column: 1 / span 3;
-    grid-row: 1;
-    margin: 0;
-  }
-
-  /* The tabs: one line per project, the others dimmed, an orange square beside the
-     current one (the island moves it and the dimming). */
-  .js .work-tabs {
+  .work-item {
     position: relative;
-    display: flex;
-    grid-column: 1 / span 3;
-    grid-row: 3;
-    flex-direction: column;
-    align-self: end;
-    gap: calc(var(--spacing) * 3);
-    padding-left: calc(var(--spacing) * 6);
-    padding-bottom: calc(var(--spacing) * 6);
-    border-bottom: 1px solid var(--color-rule-strong);
+    padding-top: var(--work-top);
+    padding-bottom: var(--work-gap);
   }
 
-  .js .work-tab {
-    display: flex;
-    gap: calc(var(--spacing) * 3);
-    opacity: 0.4;
+  /* The tabs step along the top of the card: each is 27% of its width with 45°
+     sides, one step (24%) right of the last, so neighbours share a foot. */
+  .work-tab {
+    width: 27%;
+    margin-left: calc(var(--i) * 24%);
+    justify-content: center;
+    font-size: var(--text-base);
+    clip-path: polygon(var(--work-tab) 0, calc(100% - var(--work-tab)) 0, 100% 100%, 0 100%);
   }
 
-  .js .work-tab[aria-current] {
-    opacity: 1;
+  /* The first sits flush with the card's edge, its label from the left. */
+  .work-item:first-child .work-tab {
+    justify-content: flex-start;
+    padding-left: calc(var(--spacing) * 9);
+    clip-path: polygon(0 0, calc(100% - var(--work-tab)) 0, 100% 100%, 0 100%);
   }
 
-  .js .work-marker {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: calc(var(--spacing) * 2);
-    height: calc(var(--spacing) * 2);
+  .work-card {
+    height: var(--work-card);
   }
 
-  /* The list and its items dissolve: each cover goes to the stage and each
-     description to the left, all of one kind in the same cell, one over another. */
-  .js .work-list,
-  .js .work-project {
-    display: contents;
+  .work-card-inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
   }
 
-  /* The cover fills the stage's height (the reference's frames run the height of
-     the screen), cropped to it from the top. */
-  .js .work-media {
-    grid-column: 4 / -1;
-    grid-row: 1 / -1;
-    align-self: stretch;
+  .work-text {
+    padding-top: calc(var(--spacing) * 4);
+    padding-right: calc(var(--spacing) * 8);
+  }
+
+  .work-title {
+    font-size: var(--text-3xl);
+  }
+
+  .work-summary {
+    max-width: 32ch;
+  }
+
+  .work-frame {
+    height: 100%;
     aspect-ratio: auto;
   }
+}
 
-  /* The later covers are swept in from nothing; the island takes over from here. */
-  .js .work-project:not(:first-child) .work-media {
-    clip-path: inset(100% 0 0 0);
+/* The stack itself: tall enough to hold a card, and motion allowed. */
+@media (min-width: 64rem) and (min-height: 40rem) and (prefers-reduced-motion: no-preference) {
+  .work-item {
+    position: sticky;
+    top: 0;
   }
+}
 
-  /* The tabs and the description are one group at the foot of the column (a
-     hairline under the tabs, which stays put while the descriptions change), the
-     headline alone at its head. */
-  .js .work-caption {
-    grid-column: 1 / span 3;
-    grid-row: 4;
-    margin: 0;
-  }
+/* ---- The action ------------------------------------------------------------ */
 
-  .js .work-title {
-    font-size: var(--text-xl);
-    line-height: 1.2;
-  }
-
-  .js .work-project:not(:first-child) .work-caption {
-    opacity: 0;
-  }
-
-  /* The action sits in the projects' own area, in the stage's bottom-right corner
-     over the cover, on a light key (the band's two tones swapped) so it reads over
-     the screenshots. It is its own element, so it stays put as the covers change. */
-  .js .work-cta {
-    z-index: 2;
-    grid-column: 4 / -1;
-    grid-row: 1 / -1;
-    align-self: end;
-    justify-self: end;
-    margin: calc(var(--spacing) * 5);
-    --color-bg: var(--color-white);
-    --color-fg: var(--color-black);
-    --color-ink: var(--color-black);
-    color: var(--color-black);
-  }
+.work-end {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(var(--spacing) * 16);
 }

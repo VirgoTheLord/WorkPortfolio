@@ -1,0 +1,453 @@
+/*
+ * The Skills page (/skills), on the reference's measured layout (studionamma.com
+ * /services, at 1440 / 768 / 390). The reference's 20px frame edge is ours (16px,
+ * 32px from lg); its extra-condensed capitals are Bricolage Grotesque at 600 with
+ * tight tracking, sized from the frame's width (cqi) so each headline keeps the
+ * reference's share of the screen. Sizes in brackets are the reference's at 1440.
+ *
+ * Entrances are motion/rise.tsx (rise.css): lines out of masks, labels growing
+ * from 90%, paragraphs fading up, screenshots opening from their centre line. The
+ * hero's lines rise on load in CSS here. Nothing moves for reduced motion.
+ */
+@reference '../../app/globals.css';
+
+.skills-hero,
+.skills-intro,
+.skills-groups,
+.skills-closing,
+.skills-cta {
+  container-type: inline-size;
+  padding-inline: calc(var(--spacing) * 4);
+}
+
+@media (min-width: 64rem) {
+  .skills-hero,
+  .skills-intro,
+  .skills-groups,
+  .skills-closing,
+  .skills-cta {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+}
+
+/* A line's mask: it rises out of this. A sliver of room under it keeps
+   descenders whole. */
+.skills-headline-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+/* The large capitals every headline here shares (208 / 160px on the reference). */
+.skills-hero-title,
+.skills-headline,
+.skills-statement {
+  font-weight: var(--font-weight-semibold);
+  font-variation-settings: 'opsz' var(--opsz-display);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--color-fg);
+}
+
+/* The reference's body copy: 22.4px on a tight 1.21 line. */
+.skills-lead {
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  max-width: 40rem;
+}
+
+/* ---- Hero ---------------------------------------------------------------- */
+
+.skills-hero {
+  position: relative;
+  display: flex;
+  min-height: calc(100svh - var(--spacing-header));
+  align-items: center;
+  justify-content: center;
+}
+
+.skills-hero-title {
+  font-size: 19cqi;
+  text-align: center;
+}
+
+.skills-hero-line {
+  display: block;
+}
+
+.skills-hero-cue {
+  position: absolute;
+  bottom: calc(var(--spacing) * 6);
+  left: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skills-hero-line {
+    animation: skills-rise var(--duration-media) var(--ease-cubic-out) both;
+    animation-delay: calc(150ms + var(--line) * 100ms);
+  }
+
+  .skills-hero-cue {
+    animation: skills-fade var(--duration-media) var(--ease-cubic-out) 600ms both;
+  }
+}
+
+@keyframes skills-rise {
+  from {
+    transform: translateY(118%);
+  }
+}
+
+@keyframes skills-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 48rem) {
+  .skills-hero-title {
+    font-size: 13cqi;
+  }
+}
+
+@media (min-width: 64rem) {
+  .skills-hero-title {
+    font-size: 11cqi;
+  }
+}
+
+/* ---- Intro and tools --------------------------------------------------------- */
+
+.skills-intro {
+  padding-block: calc(var(--spacing) * 6) calc(var(--spacing) * 24);
+}
+
+.skills-intro-grid {
+  display: grid;
+  gap: calc(var(--spacing) * 6);
+}
+
+/* Four 200 x 120 masks, 40px apart, centred (smaller on a phone). */
+.skills-tools {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, calc(var(--spacing) * 50)));
+  justify-content: center;
+  gap: calc(var(--spacing) * 4);
+  margin-top: calc(var(--spacing) * 24);
+  color: var(--color-fg);
+}
+
+.skills-tool {
+  display: flex;
+  aspect-ratio: 5 / 3;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.skills-tool-mark {
+  display: block;
+  width: 70%;
+}
+
+.skills-tool-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.skills-tool-ink {
+  fill: currentColor;
+}
+
+.skills-tool-cut {
+  fill: none;
+  stroke: var(--color-bg);
+  stroke-width: 7;
+}
+
+.skills-tool-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 5;
+}
+
+.skills-tool-axis {
+  stroke-width: 2;
+}
+
+.skills-tool-dot {
+  fill: var(--color-accent);
+  stroke: none;
+}
+
+.skills-tool-text {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  fill: var(--color-bg);
+}
+
+@media (min-width: 64rem) {
+  .skills-intro {
+    padding-block: 0 calc(var(--spacing) * 40);
+  }
+
+  .skills-intro-grid {
+    grid-template-columns: 54fr 46fr;
+    gap: 0;
+  }
+
+  .skills-tools {
+    gap: calc(var(--spacing) * 10);
+    margin-top: calc(var(--spacing) * 40);
+  }
+}
+
+/* ---- Headline with a screenshot set into a line ---------------------------- */
+
+.skills-headline {
+  font-size: 12cqi;
+}
+
+.skills-headline-line {
+  display: flex;
+  align-items: center;
+  gap: 0.08em;
+}
+
+.skills-headline-visual {
+  display: block;
+  height: 0.7em;
+  flex-shrink: 0;
+  aspect-ratio: 10 / 7;
+  overflow: hidden;
+}
+
+.skills-headline-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 64rem) {
+  .skills-headline {
+    font-size: 9.5cqi;
+  }
+}
+
+/* ---- Groups ----------------------------------------------------------------- */
+
+.skills-groups {
+  padding-block: calc(var(--spacing) * 8) calc(var(--spacing) * 24);
+}
+
+.skills-groups-grid {
+  display: grid;
+  gap: calc(var(--spacing) * 10);
+  margin-top: calc(var(--spacing) * 16);
+}
+
+.skills-groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 24);
+}
+
+.skills-group {
+  display: grid;
+  gap: calc(var(--spacing) * 10);
+}
+
+.skills-group-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--spacing) * 8);
+}
+
+/* (56px, 600, -2.4px) */
+.skills-group-name {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-semibold);
+  font-variation-settings: 'opsz' var(--opsz-title);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.skills-group-skills {
+  display: grid;
+  width: 100%;
+  gap: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+}
+
+.skills-group-visual {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.skills-group-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.skills-build {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding: calc(var(--spacing) * 6);
+}
+
+.skills-build pre {
+  white-space: pre;
+}
+
+@media (min-width: 48rem) {
+  .skills-group-skills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Two columns of four, filled down then across, as on the reference. */
+  .skills-group-skills {
+    grid-auto-flow: column;
+    grid-template-rows: repeat(4, auto);
+  }
+}
+
+@media (min-width: 64rem) {
+  .skills-groups {
+    padding-block: calc(var(--spacing) * 50) calc(var(--spacing) * 40);
+  }
+
+  /* (350 / 1050) */
+  .skills-groups-grid {
+    grid-template-columns: 1fr 3fr;
+    gap: 0;
+    margin-top: calc(var(--spacing) * 50);
+  }
+
+  .skills-groups-label {
+    position: relative;
+  }
+
+  .skills-groups-label > * {
+    position: sticky;
+    top: calc(var(--spacing-header) + var(--spacing) * 2);
+  }
+
+  .skills-groups-list {
+    gap: calc(var(--spacing) * 62);
+  }
+
+  /* (623 | 11% | 312) */
+  .skills-group {
+    grid-template-columns: 59fr 30fr;
+    column-gap: 11%;
+    align-items: start;
+  }
+
+  .skills-group-copy {
+    gap: calc(var(--spacing) * 12);
+  }
+}
+
+/* ---- Closing statement ---------------------------------------------------- */
+
+.skills-closing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: calc(var(--spacing) * 16) calc(var(--spacing) * 24);
+  text-align: center;
+}
+
+.skills-closing-label {
+  align-self: flex-start;
+  margin-bottom: calc(var(--spacing) * 10);
+}
+
+/* (288 x 340) */
+.skills-closing-visual {
+  width: 60%;
+  max-width: calc(var(--spacing) * 72);
+  aspect-ratio: 288 / 340;
+  overflow: hidden;
+}
+
+.skills-closing-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.skills-statement {
+  margin-top: calc(var(--spacing) * 16);
+  font-size: 8cqi;
+}
+
+.skills-closing-link {
+  margin-top: calc(var(--spacing) * 16);
+}
+
+@media (min-width: 64rem) {
+  .skills-closing {
+    padding-block: calc(var(--spacing) * 80) calc(var(--spacing) * 40);
+  }
+
+  .skills-closing-label {
+    position: absolute;
+    top: calc(var(--spacing) * 80);
+    left: calc(var(--spacing) * 8);
+    margin: 0;
+  }
+
+  .skills-closing-visual {
+    width: calc(100% * 288 / 1400);
+  }
+
+  .skills-statement {
+    margin-top: calc(var(--spacing) * 25);
+    font-size: 5.6cqi;
+  }
+
+  .skills-closing-link {
+    margin-top: calc(var(--spacing) * 24);
+  }
+}
+
+/* ---- Call to action ------------------------------------------------------- */
+
+.skills-cta {
+  display: grid;
+  gap: calc(var(--spacing) * 8);
+  padding-block: calc(var(--spacing) * 16) calc(var(--spacing) * 32);
+}
+
+.skills-cta-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--spacing) * 8);
+}
+
+@media (min-width: 64rem) {
+  /* (760 / 608, 32px apart) */
+  .skills-cta {
+    grid-template-columns: 55fr 45fr;
+    padding-block: calc(var(--spacing) * 32) calc(var(--spacing) * 40);
+  }
+
+  .skills-cta .skills-headline {
+    font-size: 8cqi;
+  }
+
+  .skills-cta-copy {
+    padding-top: calc(var(--spacing) * 2);
+  }
+}

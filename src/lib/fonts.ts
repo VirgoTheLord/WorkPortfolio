@@ -52,9 +52,22 @@ const archivoExpanded = localFont({
   fallback: ['sans-serif'],
 })
 
+/* The hero name's face, BabaPro Bold. One word at display size; preloaded,
+   because it is the first thing on the home page. Served as the TTF it came in
+   (36 KB). */
+const babaPro = localFont({
+  src: '../fonts/baba-pro-bold.ttf',
+  variable: '--font-hero-face',
+  weight: '700',
+  display: 'swap',
+  adjustFontFallback: false,
+  fallback: ['sans-serif'],
+})
+
 export const fontVariables = [
   bricolageGrotesque.variable,
   azeretMono.variable,
   deutschGothic.variable,
   archivoExpanded.variable,
+  babaPro.variable,
 ].join(' ')

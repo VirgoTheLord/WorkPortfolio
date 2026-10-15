@@ -47,7 +47,11 @@ const TRAIL = {
    that already follows the pointer (data-cursor-text, the "View project" pill)
    keeps it to itself. */
 const INTERACTIVE = 'a[href], button, [role="button"], summary, [data-cursor="lens"]'
-const SKIP = '[data-cursor="off"], [data-cursor-text]'
+const SKIP = '[data-cursor="off"], [data-cursor-text], [data-cursor-tag]'
+
+/* What turns the head into a tag carrying a word (the Skills "See all" and the
+   Skills page's "Say hello"; studionamma.com's own cursor does this). */
+const TAGGED = '[data-cursor-tag]'
 
 type Point = { x: number; y: number; age: number; color: string }
 
@@ -65,6 +69,10 @@ type Point = { x: number; y: number; age: number; color: string }
  *     orange text goes grey under the pointer. It is one element moved by
  *     transform; a single delegated listener finds the targets, so no element
  *     carries a listener of its own.
+ *   - a tag: over anything carrying data-cursor-tag the head becomes a small
+ *     orange label with that word, tilted 7 degrees and riding the head's own
+ *     trailing position (studionamma.com's cursor, measured: it grows in about
+ *     0.15s and is gone the moment the pointer leaves). No trail while it shows.
  *
  * Fine pointers only (hover and precision, not a screen width), never for reduced
  * motion, and held off while the intro plays and while the full-screen menu is
@@ -75,15 +83,17 @@ export function PointerFx() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const lensRef = useRef<HTMLDivElement>(null)
   const headRef = useRef<HTMLDivElement>(null)
+  const tagRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     const lens = lensRef.current
     const head = headRef.current
+    const tag = tagRef.current
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)')
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
     const root = document.documentElement
-    if (!canvas || !lens || !head) return
+    if (!canvas || !lens || !head || !tag) return
 
     let teardown: (() => void) | undefined
 
@@ -229,6 +239,7 @@ export function PointerFx() {
           const previous = points[points.length - 1]
           if (
             !reveal &&
+            tag.dataset.on !== 'true' &&
             (!previous || Math.hypot(chase.x - previous.x, chase.y - previous.y) > 0.5)
           ) {
             points.push({ x: chase.x, y: chase.y, age: 0, color: colour })
@@ -274,6 +285,9 @@ export function PointerFx() {
       }
       const lead = (x: number, y: number) => {
         head.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(var(--hs))`
+        // `translate`, not `transform`: the tag's own tilt (rotate) is applied before
+        // `transform`, and would turn its position with it.
+        tag.style.translate = `${x}px ${y}px`
       }
 
       const onMove = (event: PointerEvent) => {
@@ -312,8 +326,21 @@ export function PointerFx() {
       const lensOff = () => {
         lens.dataset.on = 'false'
       }
+      // The tag: on at once with its word, off at once, as the reference's.
+      const tagOff = () => {
+        tag.dataset.on = 'false'
+        head.dataset.tagged = 'false'
+      }
       const onOver = (event: PointerEvent) => {
         if (event.pointerType !== 'mouse') return
+        const tagged = (event.target as Element).closest?.(TAGGED)
+        if (tagged && !paused()) {
+          const word = tagged.getAttribute('data-cursor-tag') ?? ''
+          if (tag.textContent !== word) tag.textContent = word
+          tag.dataset.on = 'true'
+          head.dataset.tagged = 'true'
+          points.length = 0
+        } else tagOff()
         const target = (event.target as Element).closest?.(INTERACTIVE)
         if (!target || target.closest(SKIP) || paused()) return lensOff()
         place(event.clientX, event.clientY)
@@ -322,6 +349,7 @@ export function PointerFx() {
       // Off the page, or the window loses the pointer: nothing may stay behind.
       const onLeave = () => {
         lensOff()
+        tagOff()
         head.dataset.on = 'false'
         target.on = false
         points.length = 0
@@ -344,6 +372,7 @@ export function PointerFx() {
         points.length = 0
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         lensOff()
+        tagOff()
         teardown = undefined
       }
     }
@@ -368,6 +397,12 @@ export function PointerFx() {
       <canvas ref={canvasRef} aria-hidden="true" className="pointer-trail" />
       <div ref={lensRef} aria-hidden="true" data-on="false" className="pointer-lens" />
       <div ref={headRef} aria-hidden="true" data-on="false" className="pointer-head" />
+      <div
+        ref={tagRef}
+        aria-hidden="true"
+        data-on="false"
+        className="pointer-tag font-display text-accent-fg"
+      />
     </>
   )
 }

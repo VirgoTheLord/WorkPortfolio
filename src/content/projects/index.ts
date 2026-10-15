@@ -2,10 +2,11 @@ import type { ProjectMeta } from '@/types/content'
 import designSystemCover from './design-system/cover.png'
 import navigationCover from './navigation/cover.png'
 import portfolioCover from './portfolio/cover.png'
+import skillsPageCover from './skills-page/cover.png'
 
 /*
  * Selected work. The repo holds no client or personal projects yet, so these are
- * three real, shipped pieces of this portfolio, each shown with a genuine
+ * four real, shipped pieces of this portfolio, each shown with a genuine
  * screenshot of the running site (src/content/projects/<slug>/cover.png).
  * Everything stated is checkable in the repository; no outcomes, metrics or
  * employers are claimed. Replace or extend with real projects as they exist:
@@ -49,6 +50,19 @@ export const projects: readonly ProjectMeta[] = [
     cover: {
       image: navigationCover,
       alt: 'The open navbar: a panel with Home, About, Skills, Selected Work and Contact set large beside contact details and two project cards, over a dimmed page.',
+    },
+  },
+  {
+    slug: 'skills-page',
+    title: 'Skills page',
+    summary:
+      'A second static route with its own entrance language: headlines rise out of masks line by line as they reach the screen, and nothing moves for reduced motion.',
+    category: 'Page design',
+    year: '2026',
+    stack: ['Next.js', 'CSS', 'IntersectionObserver'],
+    cover: {
+      image: skillsPageCover,
+      alt: 'The Skills page opening: "Serious about the details." set in heavy black capitals across an off-white page, under the navbar.',
     },
   },
 ]

@@ -1,0 +1,39 @@
+/*
+ * The rise (motion/rise.tsx), on the reference's measured curve: a line travels up
+ * 118% of its own height out of its mask over 0.9s on a cubic ease-out, starting
+ * the frame it is armed to play. A label also grows from 90%, as the reference's
+ * monospace labels do; a block (`fade`) comes up a short way and fades in; a media
+ * box (`clip`) opens from its centre line. `--rise-delay` staggers a row.
+ *
+ * The hidden state exists only while an element is armed (`pending`), so it can
+ * never strand content: no script, no state.
+ */
+@reference '../../app/globals.css';
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-rise] {
+    transition:
+      transform var(--duration-media) var(--ease-cubic-out),
+      opacity var(--duration-media) var(--ease-cubic-out),
+      clip-path var(--duration-media) var(--ease-cubic-out);
+    transition-delay: var(--rise-delay, 0ms);
+  }
+
+  [data-rise='pending'] {
+    transform: translateY(118%);
+  }
+
+  [data-rise='pending'][data-rise-as='label'] {
+    transform: translateY(120%) scale(0.9);
+  }
+
+  [data-rise='pending'][data-rise-as='fade'] {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing) * 6));
+  }
+
+  [data-rise='pending'][data-rise-as='clip'] {
+    clip-path: inset(50% 0);
+    transform: none;
+  }
+}

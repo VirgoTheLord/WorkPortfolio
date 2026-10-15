@@ -1,5 +1,6 @@
+import { HeroCells } from '@/components/motion/hero-cells'
 import { HeroGrid } from '@/components/motion/hero-grid'
-import { WorkTogetherButton } from '@/components/interactive/work-together-button'
+import { FrameButton } from '@/components/library/frame-button'
 import { hero } from '@/content/site'
 import './hero.css'
 
@@ -23,7 +24,7 @@ export function Hero() {
         <div className="hero-frame">
           <div className="hero-copy">
             <div className="hero-main">
-              <h1 id="hero-heading" className="hero-title font-display text-hero font-normal">
+              <h1 id="hero-heading" className="hero-title font-hero">
                 {hero.title.map((line, i) => (
                   <span key={line}>
                     {i > 0 ? <br /> : null}
@@ -31,6 +32,7 @@ export function Hero() {
                       <span data-hero-text className="hero-line-text">
                         {line}
                       </span>
+                      <HeroCells />
                       <span
                         aria-hidden="true"
                         data-hero-block="lead"
@@ -46,20 +48,18 @@ export function Hero() {
                 ))}
               </h1>
 
-              <p className="hero-mask text-sm text-fg lg:text-base lg:text-fg-muted">
-                <span data-hero-intro className="block">
-                  {hero.intro}
-                </span>
-              </p>
-
               <div data-hero-actions className="flex flex-wrap items-center justify-center gap-4">
-                <WorkTogetherButton
-                  label={hero.action.label}
-                  href={hero.action.href}
-                  tone="accent"
-                />
+                <FrameButton label={hero.action.label} href={hero.action.href} />
               </div>
             </div>
+            <span
+              aria-hidden="true"
+              data-hero-cue
+              className="hero-cue font-label text-label uppercase"
+            >
+              <span>Scroll</span>
+              <span className="hero-cue-line" />
+            </span>
           </div>
         </div>
       </div>

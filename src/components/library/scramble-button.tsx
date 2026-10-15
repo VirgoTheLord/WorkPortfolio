@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, type PointerEvent } from 'react'
 import { NOISE } from '@/lib/motion/scramble'
-import './work-together-button.css'
+import './scramble-button.css'
 
-type WorkTogetherButtonProps = {
+type ScrambleButtonProps = {
   label: string
   href: string
   /** Which ground it sits on: `accent` is the orange fill, `ink` is black on a light ground (white on a dark one). */
@@ -21,17 +21,21 @@ const SCRAMBLE_MS = 600
 const FRAME_MS = 45
 
 /*
- * The call-to-action. A real link whose label scrambles into place, letter by
- * letter from the left, while the plus changes sides (work-together-button.css).
+ * Library: kept for reuse. This was the hero's and the navbar's call to action
+ * until the frame button (frame-button.tsx) became the primary CTA; it is not
+ * used on the site at the moment.
+ *
+ * A real link whose label scrambles into place, letter by
+ * letter from the left, while the plus changes sides (scramble-button.css).
  * The scramble is only a visual layer: the accessible name is the plain label,
  * and nothing runs for touch, keyboard-less pointers or reduced motion.
  */
-export function WorkTogetherButton({
+export function ScrambleButton({
   label,
   href,
   tone = 'accent',
   className = '',
-}: WorkTogetherButtonProps) {
+}: ScrambleButtonProps) {
   const textRef = useRef<HTMLSpanElement>(null)
   const frame = useRef(0)
 

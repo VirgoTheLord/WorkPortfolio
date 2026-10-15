@@ -19,8 +19,9 @@ const sizes = { default: '', compact: 'key-compact' } as const
  * as a key seen from above; it lifts off the block when hovered and presses into
  * it when pressed (key-link.css). It is a real link (a plain anchor in the page, next/link
  * to another route; lib/in-page-href.ts), so hash links and mailto: work as anywhere, without JavaScript, and the label is its accessible
- * name. Every CTA but the hero's and the navbar's uses this one component; only the label, destination and (in small
- * type) the size change.
+ * name. Used for the contact section's and the footer's calls to action (the
+ * site's main CTAs use the frame button, frame-button.tsx); only the label,
+ * destination and (in small type) the size change.
  */
 export function KeyLink({ label, size = 'default', className = '', ...props }: KeyLinkProps) {
   const classes = `key ${sizes[size]} ${className}`

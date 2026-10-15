@@ -6,7 +6,6 @@ import type {
   LoaderContent,
   MenuContent,
   SiteConfig,
-  SkillsContent,
   WorkContent,
 } from '@/types/content'
 
@@ -14,11 +13,10 @@ import type {
  * Hero copy. The title is the name, on one line across the hero. The line under it names the
  * three areas the Skills section is organised around (engineering, interaction,
  * craft), so it claims nothing the page does not already say. The stack row
- * lists tools this site is built with (see `skills`).
+ * lists tools this site is built with (see `content/skills`).
  */
 export const hero = {
-  title: ['Alwin Aby Mathew'],
-  intro: 'Code · Motion · Craft',
+  title: ['Alwin'],
   action: { label: 'See What I Build', href: '#work' },
   stack: { label: 'Built with', items: ['Next.js', 'React', 'TypeScript', 'GSAP'] },
 } satisfies HeroContent
@@ -39,47 +37,11 @@ export const about = {
   ],
 } satisfies AboutContent
 
-/*
- * Skills copy. PLACEHOLDER: every tool and practice listed is one this site is
- * actually built with (package.json and the repo's own implementation), and
- * nothing claims years, proficiency or employers. Extend or replace with real
- * experience before launch.
- */
-export const skills = {
-  label: 'Skills',
-  headline: 'How I build.',
-  groups: [
-    {
-      index: '01',
-      name: 'Engineering',
-      description:
-        'Typed, static-first interfaces with a small client footprint: server components by default, small islands where behavior needs them.',
-      tools: ['Next.js', 'React', 'TypeScript'],
-    },
-    {
-      index: '02',
-      name: 'Interaction',
-      description:
-        'Motion and state designed together: CSS first, GSAP for orchestration, and a considered reduced-motion path for every sequence.',
-      tools: ['GSAP', 'CSS motion', 'Focus management'],
-    },
-    {
-      index: '03',
-      name: 'Craft',
-      description:
-        'Type, spacing and color built as one token system, with accessibility and performance treated as part of the finish.',
-      tools: ['Tailwind CSS', 'Design tokens', 'Accessibility', 'Performance'],
-    },
-  ],
-} satisfies SkillsContent
-
 export const work = {
   label: 'Selected Work',
-  headline: ['Selected', 'work.'],
-  text: 'Three pieces of this site, shown as they run.',
+  headline: ['Selected', 'work'],
+  projectLabel: 'Project',
   action: { label: "Let's Talk", href: '/#contact' },
-  thumbsLabel: 'Projects',
-  goTo: 'Go to',
 } satisfies WorkContent
 
 /*
@@ -88,11 +50,14 @@ export const work = {
  * be replaced before launch. The statement makes no claim about availability.
  */
 export const contact = {
-  label: 'Contact',
-  headline: 'Get in touch.',
   statement: ['If something here caught your eye,', 'write to me.'],
-  emailLabel: 'Email',
   email: 'your-email@example.com',
+  board: {
+    copyLabel: 'Copy email address',
+    hint: 'Click to copy',
+    touchHint: 'Tap to copy',
+    done: 'Copied',
+  },
 } satisfies ContactContent
 
 /*

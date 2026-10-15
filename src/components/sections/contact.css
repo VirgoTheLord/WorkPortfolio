@@ -1,129 +1,196 @@
 /*
- * Contact, from the reference's final section. A light band on the hero's frame
- * edge (16px, 32px from lg), 64px of space above and below (128px from lg). One
- * column below lg; from lg the left six columns (headline, then a 16:9 panel 80px
- * below it) and columns 8-11 (lead, details, action, sign-off, spread over the
- * left column's height).
+ * Contact (contact.tsx): the dark field, one screen tall from md, one centred
+ * column: the invitation as a single quiet line (its second part, "write to
+ * me.", in the accent; two lines on a phone), the departures board large in the
+ * middle with its hint centred right under it, and the key below. The orange
+ * footer follows.
+ *
+ * The board (motion/contact-board.tsx): one tile per character, accent tiles
+ * with ink letters, an ink hairline across each tile's middle where its flaps
+ * meet; letters flash the light tone as they turn. Tiles share the width: in one
+ * row from md (--n tiles), in two rows broken at the @ below it (--m, the longer
+ * row), so a phone's tiles stay legible; never wider than 4.5rem. The board is a
+ * button: it copies the address (the hint under it says so).
  */
 @reference '../../app/globals.css';
 
 .contact {
-  padding: calc(var(--spacing) * 16) calc(var(--spacing) * 4);
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 10);
+  padding: calc(var(--spacing-header) + var(--spacing) * 10) calc(var(--spacing) * 4)
+    calc(var(--spacing) * 16);
+  text-align: center;
 }
 
-.contact-grid {
+/* ---- The board -------------------------------------------------------------- */
+
+.board-wrap {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 5);
+  container-type: inline-size;
+}
+
+.board {
+  --gap: calc(var(--spacing) * 1);
+  --tile: min(4.5rem, calc((100cqw - (var(--m) - 1) * var(--gap)) / var(--m)));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: copy;
+}
+
+.board:focus-visible {
+  outline-offset: calc(var(--spacing) * 3);
+}
+
+.board-row {
+  display: flex;
+  gap: var(--gap);
+}
+
+.board-tile {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: calc(var(--spacing) * 4);
+  width: var(--tile);
+  aspect-ratio: 3 / 4.2;
+  place-items: center;
+  background-color: var(--color-accent);
+  color: var(--color-black);
+  font-family: var(--font-label);
+  font-size: calc(var(--tile) * 0.62);
+  line-height: 1;
+  perspective: calc(var(--tile) * 6);
 }
 
-.contact-left {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 20);
+/* Where the two flaps meet. */
+.board-tile::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1px;
+  background-color: color-mix(in srgb, var(--color-black) 55%, transparent);
 }
 
-/* The lead may wrap: it breaks where the column ends, then wipes line by line. */
-.contact-right .headline-wipe-text {
-  white-space: normal;
+.board-face {
+  display: block;
+  white-space: pre;
+  transform-origin: 50% 50%;
 }
 
-.contact-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: calc(var(--spacing) * 4);
+/* A pointer over the board (or focus on it): each tile flips over on its middle,
+   one after another, catching the light tone as it turns, as the frame button's
+   letters do (library/frame-button.css). */
+@media (hover: hover) and (pointer: fine) {
+  .board:hover .board-face {
+    animation: board-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
+    animation-delay: calc(var(--i) * var(--stagger) * 0.56);
+  }
 }
 
-.contact-panel {
-  display: flex;
-  aspect-ratio: 16 / 9;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: calc(var(--spacing) * 4);
+.board:focus-visible .board-face {
+  animation: board-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
+  animation-delay: calc(var(--i) * var(--stagger) * 0.56);
 }
 
-/* The address is the panel's one action, set large; its underline is the site's link. */
-.contact-email {
-  align-self: flex-start;
-  max-width: 100%;
+@keyframes board-flap {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(-90deg);
+    color: var(--color-white);
+  }
+
+  51% {
+    transform: rotateX(90deg);
+    color: var(--color-white);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+/* Right under the board, centred: how to use it. */
+.board-hint {
+  align-self: center;
+  color: var(--color-fg-muted);
+}
+
+/* The hint names the gesture the device has. */
+.board-hint-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .board-hint-pointer {
+    display: none;
+  }
+
+  .board-hint-touch {
+    display: inline;
+  }
+}
+
+/* ---- The invitation ---------------------------------------------------------- */
+
+/* One quiet line: the invitation, its second part in the accent. On a phone the
+   two parts stack. */
+.contact-statement {
   font-size: var(--text-lg);
-  line-height: 1.2;
-  overflow-wrap: anywhere;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.contact-statement .headline-wipe-line:last-child {
+  color: var(--color-accent);
+}
+
+@media not all and (min-width: 48rem) {
+  .contact {
+    min-height: auto;
+  }
+}
+
+@media (min-width: 48rem) {
+  .board {
+    --tile: min(4.5rem, calc((100cqw - (var(--n) - 1) * var(--gap)) / var(--n)));
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .contact-statement .headline-wipe-line {
+    display: inline-block;
+  }
+
+  .contact-statement .headline-wipe-line + .headline-wipe-line {
+    margin-left: 0.3em;
+  }
+
+  .contact-statement {
+    font-size: var(--text-xl);
+  }
 }
 
 @media (min-width: 64rem) {
   .contact {
-    padding: calc(var(--spacing) * 32) calc(var(--spacing) * 8);
+    padding-inline: calc(var(--spacing) * 8);
   }
 
-  .contact-grid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: calc(var(--spacing) * 4);
-  }
-
-  .contact-left {
-    grid-column: 1 / span 6;
-  }
-
-  /* Columns 8-12 (the reference spans four): our face sets the lead wider, and it
-     must not overflow. */
-  .contact-right {
-    grid-column: 8 / span 5;
-    gap: calc(var(--spacing) * 4);
-  }
-
-  .contact-panel {
-    padding: calc(var(--spacing) * 8);
-  }
-
-  .contact-email {
+  .contact-statement {
     font-size: var(--text-2xl);
-  }
-}
-
-/* ---- Entrance --------------------------------------------------------------
- * Set by SectionReveal on the section:
- *   no attribute  fully visible (no JS, reduced motion, or already on screen)
- *   pending       the start state: the panel unseen, each line below its mask
- *   in            the panel fades in (0.7s) and the lines rise (0.8s, power3.out,
- *                 0.1s apart) once the two headlines have started to wipe
- */
-.contact-mask {
-  overflow: hidden;
-}
-
-/* The action's mask leaves room inside it for the 44px touch area; the negative
-   margin keeps the layout as it was. */
-.contact-hit {
-  padding: calc(var(--spacing) * 3);
-  margin: calc(var(--spacing) * -3);
-}
-
-[data-reveal='pending'] .contact-panel {
-  opacity: 0;
-}
-
-[data-reveal='pending'] .contact-rise {
-  display: block;
-  transform: translateY(110%);
-}
-
-[data-reveal='in'] .contact-panel {
-  transition: opacity 700ms ease-in-out 300ms;
-}
-
-[data-reveal='in'] .contact-rise {
-  display: block;
-  transition: transform 800ms cubic-bezier(0.215, 0.61, 0.355, 1);
-  transition-delay: calc(0.9s + var(--i, 0) * 0.1s);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] .contact-panel,
-  [data-reveal] .contact-rise {
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 }

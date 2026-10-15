@@ -1,37 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import { loadScrollTrigger } from '@/lib/motion/gsap'
-import { scrollZone } from '@/lib/motion/scroll-zone'
 
 /* How quickly the page catches up with the wheel: each frame closes this share of
    the gap. Lower is floatier; the references use 0.07 to 0.1. */
 const LERP = 0.09
-
-/* Around a pinned stretch (lib/motion/scroll-zone.ts) the scroller eases toward a
-   steadier feel, over this many screens on each side: the page moves a little less
-   per notch (ZONE_SPEED of the usual) and follows the wheel more loosely (ZONE_LERP;
-   numa.uprock.pro's own Lenis runs at 0.05; ours stops short of it to stay
-   responsive), so the pinned stretch is entered and
-   left by degrees, not at a step, where the page otherwise stops dead and then
-   runs at full speed. Full effect inside the stretch, none beyond the ramp. */
-const ZONE_RAMP = 1.2
-const ZONE_SPEED = 0.9
-const ZONE_LERP = 0.07
-const smoothstep = (t: number) => t * t * (3 - 2 * t)
-
-/* A pinned stretch also settles: when the scroll has slowed to under SNAP_VELOCITY
-   px a frame for SNAP_IDLE ms (Lenis's tail is long, so waiting for it to stop
-   would be a second late) between two of its rests (one per project), the page eases to the one it was
-   heading for (the next, once it is past SNAP_PAST of the way there; otherwise the
-   one behind), over SNAP_TIME seconds plus a little for the distance, on an ease-out
-   quint that arrives softly. The reference does not snap; this is ours. A wheel
-   turn during it takes over at once. */
-const SNAP_IDLE = 60
-const SNAP_VELOCITY = 5
-const SNAP_PAST = 0.2
-const SNAP_TIME = 0.7
-const easeOutQuint = (t: number) => 1 - (1 - t) ** 5
 
 /* How long a key holds its pressed state before the page moves (ms): long enough
    for the face to be seen going down, short enough to still feel immediate. */
@@ -70,7 +45,7 @@ const inOutQuart = (t: number) => (t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 
  *   - Links within the page scroll to their section instead of jumping (Lenis,
  *     or the browser's smooth scroll before it has loaded; at once for reduced
  *     motion), and the address and focus follow as they would natively. A key
- *     (components/ui/key-link.tsx) is held down for PRESS_MS first, so its press
+ *     (components/library/key-link.tsx) is held down for PRESS_MS first, so its press
  *     is seen even on a quick click, and only then does the page move (or the
  *     mail app open). A link followed from the full-screen menu scrolls as the menu
  *     clears (MENU_LEAD_MS). This listens from the document, after the page's own
@@ -79,6 +54,23 @@ const inOutQuart = (t: number) => (t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 
  *     native; Lenis follows it.
  */
 export function SmoothScroll() {
+  const pathname = usePathname()
+  const firstPath = useRef(pathname)
+
+  // The layout's scroll-linked islands (the footer) outlive a change of route,
+  // but their ranges were measured on the page before it. Measure again once the
+  // new page has laid out. Lenis follows the new height on its own (autoResize).
+  useEffect(() => {
+    if (pathname === firstPath.current) return
+    firstPath.current = ''
+    let frame = window.requestAnimationFrame(() => {
+      frame = window.requestAnimationFrame(() => {
+        void loadScrollTrigger().then(({ ScrollTrigger }) => ScrollTrigger.refresh())
+      })
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [pathname])
+
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
     const root = document.documentElement
@@ -98,76 +90,19 @@ export function SmoothScroll() {
       ])
       if (cancelled || teardown || reduced.matches) return
 
-      // Lenis reads wheelMultiplier once, when it is made, so the zone's lighter
-      // touch is applied to each wheel event as it arrives instead.
-      let zoneSpeed = 1
       const instance = new Lenis({
         lerp: LERP,
         autoRaf: false,
         syncTouch: false,
         prevent: locked,
-        virtualScroll: (data) => {
-          if (zoneSpeed !== 1) {
-            data.deltaX *= zoneSpeed
-            data.deltaY *= zoneSpeed
-          }
-          return true
-        },
       })
       lenis = instance
-      const tune = () => {
-        let share = 0
-        if (scrollZone.active) {
-          const y = instance.scroll
-          const ramp = window.innerHeight * ZONE_RAMP
-          const away = y < scrollZone.start ? scrollZone.start - y : Math.max(0, y - scrollZone.end)
-          share = away >= ramp ? 0 : smoothstep(1 - away / ramp)
-        }
-        instance.options.lerp = LERP - (LERP - ZONE_LERP) * share
-        zoneSpeed = 1 - (1 - ZONE_SPEED) * share
-      }
-      let direction = 0
-      let lastY = instance.scroll
-      let snapTimer = 0
-      const snap = () => {
-        const points = scrollZone.snaps
-        if (!scrollZone.active || points.length < 2 || locked()) return
-        const y = instance.scroll
-        const first = points[0]!
-        const last = points[points.length - 1]!
-        if (y < first - 1 || y > last + 1) return
-        const lower = Math.max(...points.filter((point) => point <= y + 0.5))
-        const upper = Math.min(...points.filter((point) => point >= y - 0.5))
-        const gap = upper - lower
-        if (!(gap > 2)) return
-        const share = (y - lower) / gap
-        const toward =
-          direction > 0 ? share > SNAP_PAST : direction < 0 ? share > 1 - SNAP_PAST : share > 0.5
-        const target = toward ? upper : lower
-        if (Math.abs(target - y) < 1) return
-        instance.scrollTo(target, {
-          duration: SNAP_TIME + (Math.abs(target - y) / gap) * 0.5,
-          easing: easeOutQuint,
-        })
-      }
-      instance.on('scroll', () => {
-        ScrollTrigger.update()
-        tune()
-        const y = instance.scroll
-        const moved = Math.abs(y - lastY)
-        if (moved > 0.5) direction = Math.sign(y - lastY)
-        lastY = y
-        window.clearTimeout(snapTimer)
-        if (moved < SNAP_VELOCITY) {
-          snapTimer = window.setTimeout(snap, SNAP_IDLE)
-        }
-      })
+      instance.on('scroll', () => ScrollTrigger.update())
       const step = (time: number) => instance.raf(time * 1000)
       gsap.ticker.add(step)
       gsap.ticker.lagSmoothing(0)
 
       teardown = () => {
-        window.clearTimeout(snapTimer)
         gsap.ticker.remove(step)
         gsap.ticker.lagSmoothing(500, 33)
         instance.destroy()

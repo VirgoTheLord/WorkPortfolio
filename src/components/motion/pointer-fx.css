@@ -73,8 +73,8 @@
   opacity: 0;
   will-change: transform, opacity;
   transition:
-    opacity 300ms cubic-bezier(0.16, 1, 0.3, 1),
-    --hs 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    --hs 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* It shrinks as it fades, so it dies away rather than blinking out. */
@@ -87,8 +87,58 @@
   background-color: var(--color-black);
 }
 
-/* The footer's reveal is this square grown (motion/footer-ink.tsx): while it is
-   open the square gives way to it, and comes back as it closes. */
+/* The footer's reveal (motion/footer-ink.tsx) takes over from this square: it gives
+   way as the first tile opens, and comes back as the last tile closes. */
 html[data-ink-reveal='true'] .pointer-head {
   opacity: 0;
+  /* It gives way almost at once (the first tile is at the pointer by then); it
+     comes back on the slower base transition as the last tile closes. */
+  transition: opacity 110ms ease-out;
+}
+
+/* The tag (studionamma.com's cursor over its "See all", measured at 1440: 48px
+   tall, 11px padding, tilted -7deg, growing from the pointer in 0.15s; gone at
+   once on leaving). Ours is square-cornered and orange with black capitals, the
+   site's own head square grown into a label. Its corner rides the head's
+   trailing position, offset down and right so it never covers what it names. */
+.pointer-tag {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 57;
+  display: flex;
+  height: calc(var(--spacing) * 12);
+  align-items: center;
+  padding-inline: calc(var(--spacing) * 2.75);
+  margin: calc(var(--spacing) * 5) 0 0 calc(var(--spacing) * 8);
+  background-color: var(--color-accent);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  font-variation-settings: 'opsz' var(--opsz-title);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  rotate: -7deg;
+  transform-origin: 0 0;
+  scale: 0.15;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: translate;
+}
+
+.pointer-tag[data-on='true'] {
+  scale: 1;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    scale 150ms var(--ease-out),
+    opacity 80ms linear;
+}
+
+/* While the tag shows, it is the cursor. */
+.pointer-head[data-tagged='true'] {
+  opacity: 0;
+  transition: opacity 80ms linear;
 }
