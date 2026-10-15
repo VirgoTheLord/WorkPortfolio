@@ -70,6 +70,8 @@
   --font-mark: var(--font-mark-face, serif);
   /* The preloader's counter only: Archivo Expanded, digits only (DESIGN.md §9.1). */
   --font-count: var(--font-count-face, sans-serif);
+  /* The hero name only: BabaPro Bold (DESIGN.md §9.1). */
+  --font-hero: var(--font-hero-face, sans-serif);
 
   /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
   --text-label: clamp(0.7812rem, 0.7604rem + 0.0926vw, 0.8438rem);
@@ -134,6 +136,9 @@
   --ease-emphasis: cubic-bezier(0.83, 0, 0.17, 1);
   /* The navbar's standard departure: quick start, long soft landing. */
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
+  /* GSAP's power3.out: the Skills pages' rise (motion/rise.css), measured on the
+     reference. */
+  --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   /* A rolling marker: dips back, overshoots, settles. */
   --ease-spring: cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
@@ -314,8 +319,37 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* The pressed-in grid (DESIGN.md §4), across the whole page: each line a groove
+     (a hairline in its shaded tone with a lit hairline beside it), a darker dot
+     where lines cross, centred on the page's centre line and hung from its top,
+     so it continues the hero's own (hero.css) without a seam. Hard-stop
+     backgrounds on the page itself: no image, no element, nothing animated.
+     Surfaces with their own field (the brand footer, panels, cards) cover it. */
+  :root {
+    --groove-grid:
+      radial-gradient(circle, var(--color-groove) 0 1px, transparent 1.5px),
+      linear-gradient(
+        to right,
+        var(--color-groove) 0 1px,
+        var(--color-groove-lit) 1px 2px,
+        transparent 2px
+      ),
+      linear-gradient(
+        to bottom,
+        var(--color-groove) 0 1px,
+        var(--color-groove-lit) 1px 2px,
+        transparent 2px
+      );
+    --groove-grid-position:
+      50% calc(var(--spacing-grid) / -2), calc(50% + var(--spacing-grid) / 2) 0,
+      calc(50% + var(--spacing-grid) / 2) 0;
+  }
+
   body {
     background-color: var(--color-bg);
+    background-image: var(--groove-grid);
+    background-size: var(--spacing-grid) var(--spacing-grid);
+    background-position: var(--groove-grid-position);
     color: var(--color-fg);
     font-family: var(--font-text);
     font-size: var(--text-base);

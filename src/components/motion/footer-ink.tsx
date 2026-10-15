@@ -3,18 +3,33 @@
 import { useEffect, useRef } from 'react'
 import './footer-ink.css'
 
-/* The reveal is a field of small tiles, as previewed and chosen. Over the bottom of
-   the footer a disc of them opens around the pointer, in a ripple from the pointer
-   outward, and through it the footer shows its inverse (the brand field's orange
-   letters on its black, the hairline and the credits too). It is an SVG mask of
-   small squares over a copy of the footer's bottom: no filter, and a frame touches
-   only the tiles near the pointer and those still closing. A tile belongs to the disc
-   or it does not; the disc has a fixed radius and follows the pointer exactly. */
+/* The reveal is a field of small tiles, as previewed and chosen: a disc of them
+   under the pointer, through which the footer shows its inverse (the brand field's
+   orange letters on its black, the hairline and the credits too). It is an SVG mask
+   of small squares over a copy of the footer's bottom: no filter, and a frame
+   touches only the tiles near the pointer and those still closing. A tile belongs to
+   the disc or it does not; the disc has a fixed radius and follows the pointer
+   exactly.
+
+   The interaction is one sequence, timed, not an easing toward a target:
+   - ENTER: the cursor's square gives way at once (html[data-ink-reveal], CSS) to a
+     first tile at the pointer, and a ripple runs outward from that point at WAVE.open
+     px a second, each tile popping in DUR.open seconds with a small overshoot, so the
+     whole disc is there in about a fifth of a second and the first tile is instant.
+   - STAY: tiles that join or leave the disc as it follows the pointer pop and close
+     at once (no wave), so the leading edge never lags the pointer.
+   - LEAVE: the disc collapses toward the point the pointer left from, outside in:
+     the outermost tiles close first, the innermost last, each in DUR.close seconds
+     on an ease-in-out, and the cursor's square returns as the last tile closes, so the
+     disc folds back into the cursor. */
 const RADIUS = 0.85 // of the name's height
-// How fast a tile answers (a rate per second): faster the nearer the pointer, so the
-// opening is a ripple outward; closing is a little slower the farther out.
-const POP = { near: 26, far: 12 }
-const FADE = { near: 16, far: 22 }
+const WAVE = { open: 1250, close: 850 } // px a second
+const DUR = { open: 0.19, close: 0.26 } // seconds a tile takes
+// A wave only starts the ripple for tiles that change within this long (ms) of the
+// pointer entering or leaving; later changes are the disc following the pointer.
+const RIPPLE_WINDOW = 90
+// The overshoot of a tile's pop (0 is none; 1.7 is the classic back-out).
+const OVERSHOOT = 0.55
 
 const NS = 'http://www.w3.org/2000/svg'
 const el = <K extends keyof SVGElementTagNameMap>(
@@ -25,9 +40,19 @@ const el = <K extends keyof SVGElementTagNameMap>(
   Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)))
   return node
 }
-const soft = (t: number) => t * t * (3 - 2 * t)
+const outBack = (t: number) => 1 + (OVERSHOOT + 1) * (t - 1) ** 3 + OVERSHOOT * (t - 1) ** 2
+// Soft at both ends: a tile eases into closing and eases out of it.
+const inOut = (t: number) => 0.5 - 0.5 * Math.cos(t * Math.PI)
 
-type Tile = { rect: SVGRectElement; cx: number; cy: number; v: number }
+type Tile = {
+  rect: SVGRectElement
+  cx: number
+  cy: number
+  v: number
+  want: 0 | 1
+  from: number
+  t0: number
+}
 
 /*
  * The whole bottom of the footer, answering the pointer. An SVG laid over it, from
@@ -123,7 +148,7 @@ export function FooterInk() {
           const cy = r * cell + cell / 2
           rect.setAttribute('transform', `translate(${cx} ${cy}) scale(0)`)
           mask.append(rect)
-          tiles.push({ rect, cx, cy, v: 0 })
+          tiles.push({ rect, cx, cy, v: 0, want: 0, from: 0, t0: 0 })
         }
       }
       defs.append(mask)
@@ -187,10 +212,14 @@ export function FooterInk() {
       // ---- Motion ---------------------------------------------------------------
       let pointer: { x: number; y: number } | null = null
       let inside = false
+      let wasInside = false
+      // Where the pointer was the last time it was inside: the closing wave's centre.
+      const lastIn = { x: 0, y: 0 }
       let px = 0
       let py = 0
       let raf = 0
-      let last = 0
+      // Where and when the pointer last entered or left the bottom, and which.
+      const wave = { x: 0, y: 0, t: -1e9, mode: 'open' as 'open' | 'close' }
       const live = new Set<number>()
 
       // Ready once the last letter and the last credit have stopped rising.
@@ -205,7 +234,7 @@ export function FooterInk() {
         document.querySelector('.menu')?.getAttribute('data-open') === 'true'
 
       const paint = (index: number, tile: Tile) => {
-        const s = tile.v < 0.004 ? 0 : soft(Math.min(1, tile.v))
+        const s = tile.v < 0.004 ? 0 : Math.min(tile.v, 1.1)
         tile.rect.setAttribute(
           'transform',
           `translate(${tile.cx} ${tile.cy}) scale(${s.toFixed(3)})`,
@@ -216,9 +245,6 @@ export function FooterInk() {
 
       const frame = (now: number) => {
         raf = 0
-        // The frame's timestamp can precede the clock it was seeded from: never negative.
-        const dt = Math.min(Math.max((now - last) / 1000, 0), 0.05)
-        last = now
         if (pointer) {
           const box = host.getBoundingClientRect()
           px = pointer.x - box.left
@@ -226,6 +252,25 @@ export function FooterInk() {
           const nowInside = px >= 0 && px <= width && py >= 0 && py <= height
           inside = nowInside && settled() && !held()
         }
+        // The pointer crossing the edge of the bottom starts a wave from where it
+        // crossed. Entering also hands the cursor's square over at once.
+        if (inside && !wasInside) {
+          wave.x = px
+          wave.y = py
+          wave.t = now
+          wave.mode = 'open'
+          root.dataset.inkReveal = 'true'
+        } else if (!inside && wasInside) {
+          wave.x = lastIn.x
+          wave.y = lastIn.y
+          wave.t = now
+          wave.mode = 'close'
+        }
+        if (inside) {
+          lastIn.x = px
+          lastIn.y = py
+        }
+        wasInside = inside
 
         // Tiles near the pointer are asked; the rest that are still open are let go.
         const near = new Set<number>()
@@ -242,30 +287,48 @@ export function FooterInk() {
           const tile = tiles[index]!
           const d = Math.hypot(tile.cx - px, tile.cy - py)
           const want = inside && d < radius ? 1 : 0
-          // The nearer a tile is, the sooner it answers: a ripple out, a ripple in.
-          const rate = want
-            ? POP.near - (POP.near - POP.far) * (d / radius)
-            : FADE.near + (FADE.far - FADE.near) * clamp01(d / (radius + 1))
-          const before = tile.v
-          tile.v += (want - tile.v) * (1 - Math.exp(-dt * rate))
-          if (Math.abs(tile.v - before) > 0.0015 || tile.v < 0.004) paint(index, tile)
-          if (Math.abs(want - tile.v) > 0.004) more = true
+          if (want !== tile.want) {
+            tile.want = want
+            tile.from = tile.v
+            // Within the ripple window of crossing the edge, the tile waits its turn
+            // in the wave; otherwise it answers at once.
+            let delay = 0
+            if (now - wave.t < RIPPLE_WINDOW) {
+              const w = Math.hypot(tile.cx - wave.x, tile.cy - wave.y)
+              if (want && wave.mode === 'open') delay = (w / WAVE.open) * 1000
+              if (!want && wave.mode === 'close')
+                delay = (Math.max(0, radius - w) / WAVE.close) * 1000
+            }
+            tile.t0 = now + delay
+          }
+          const span = (want ? DUR.open : DUR.close) * 1000
+          const t = Math.min(1, Math.max(0, (now - tile.t0) / span))
+          const v = want ? tile.from + (1 - tile.from) * outBack(t) : tile.from * (1 - inOut(t))
+          if (Math.abs(v - tile.v) > 0.0008 || v < 0.004) {
+            tile.v = v
+            paint(index, tile)
+          }
+          if (t < 1) more = true
         }
         near.forEach(visit)
         live.forEach((index) => {
           if (!near.has(index)) visit(index)
         })
 
-        // The page is told while any tile is open.
-        if (live.size > 0 || inside) root.dataset.inkReveal = 'true'
-        else delete root.dataset.inkReveal
+        // The cursor's square comes back as the last of the disc closes.
+        if (!inside) {
+          let open = 0
+          live.forEach((index) => {
+            if (tiles[index]!.v > 0.2) open += 1
+          })
+          if (open <= 2) delete root.dataset.inkReveal
+        }
 
         // The loop sleeps once every tile has settled; a pointer move wakes it.
         if (more) raf = requestAnimationFrame(frame)
       }
       const wake = () => {
         if (raf) return
-        last = performance.now()
         raf = requestAnimationFrame(frame)
       }
 
@@ -334,5 +397,3 @@ export function FooterInk() {
 
   return <div ref={hostRef} aria-hidden="true" className="footer-ink" />
 }
-
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value))

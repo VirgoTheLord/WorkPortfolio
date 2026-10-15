@@ -260,6 +260,11 @@ export function HeroGrid() {
     }
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return
+      // Over the name its cells take the pointer (hero-cells.tsx); the grid rests.
+      if (hero.dataset.cellsHover) {
+        settle()
+        return
+      }
       point(event)
       aim = 1
       window.clearTimeout(rest)

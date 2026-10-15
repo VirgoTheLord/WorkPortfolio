@@ -1,119 +1,142 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { KeyLink } from '@/components/ui/key-link'
-import { CursorLabel } from '@/components/motion/cursor-label'
-import { HeadlineWipe } from '@/components/motion/headline-wipe'
-import { WorkStage } from '@/components/motion/work-stage'
+import { FrameButton } from '@/components/library/frame-button'
+import { WorkStack } from '@/components/motion/work-stack'
+import { SectionLabel } from '@/components/ui/section-label'
 import { projects } from '@/content/projects'
 import { work } from '@/content/site'
 import './work.css'
 
+const index = (i: number) => String(i + 1).padStart(2, '0')
+
+/* The tab's mark: a three-step stair, drawn on a 16px grid. */
+function StairMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" className="work-tab-mark">
+      <path d="M11 1h4v14H1v-4h5V6h5z" />
+    </svg>
+  )
+}
+
 /*
- * Selected Work, on a dark band. The choreography is recreated from the pinned
- * "Wear it easily, trust it daily" section of numa.uprock.pro (measured in a
- * browser, not guessed): from lg the section is one screen tall per project, a
- * stage stays stuck to the screen for all but the last, and scrolling sweeps one
- * project's cover away and the next one in as a rising curtain, the description
- * and the marker beside the tabs changing with it (motion/work-stage.tsx).
- * Everything is in the HTML in reading order. Below lg, and for reduced motion,
- * nothing is pinned: the projects are a row of cards to swipe. A project links
- * out only when it has an `href`.
+ * Selected Work, recreated from the "Featured Works" section of kushbothra.com
+ * (measured in a browser, not guessed): an oversized two-line headline, wiped in
+ * line by line as the hero's is, and a small line over it; then one card per project, each a folder with a numbered tab. From lg the cards
+ * are all `position: sticky` at the same top, so each one slides up over the one
+ * before and comes to rest on it, its tab beside the earlier tabs, and the covered
+ * card's text fades as it is covered (motion/work-stack.tsx). Pure CSS stacking:
+ * nothing is pinned by script. Below lg, and for reduced motion, the cards are
+ * simply in a column. A card is a link only when its project has an `href`.
  */
 export function SelectedWork() {
-  const linked = projects.some((project) => project.href)
-
   return (
     <section
       id="work"
       aria-labelledby="work-heading"
-      data-theme="dark"
-      className="work scroll-mt-header bg-bg text-fg"
+      className="work scroll-mt-header text-fg"
       style={{ '--work-count': projects.length } as CSSProperties}
     >
-      <WorkStage>
-        <div className="work-track">
-          <div className="work-camera">
-            <div className="work-grid">
-              <div className="work-intro">
-                <h2 id="work-heading" className="font-display text-3xl font-normal text-fg">
-                  <HeadlineWipe lines={work.headline} />
-                </h2>
-                <p className="mt-6 text-base text-fg-muted">{work.text}</p>
-              </div>
+      <WorkStack>
+        <header className="work-head">
+          <SectionLabel name={work.label} />
+          <h2 id="work-heading" className="work-heading font-display">
+            {work.headline.map((line) => (
+              <span key={line} className="work-heading-line">
+                <span className="work-line">
+                  <span data-work-line-text>{line}</span>
+                  <span
+                    aria-hidden="true"
+                    data-work-block="lead"
+                    className="work-block bg-accent"
+                  />
+                  <span aria-hidden="true" data-work-block="trail" className="work-block bg-fg" />
+                </span>
+              </span>
+            ))}
+          </h2>
+        </header>
 
-              <nav aria-label={work.thumbsLabel} className="work-tabs">
-                <span aria-hidden="true" data-work-marker className="work-marker bg-accent" />
-                {projects.map((project, i) => (
-                  <a
-                    key={project.slug}
-                    href={`#work-${project.slug}`}
-                    data-work-tab={i}
-                    aria-current={i === 0 ? 'true' : undefined}
-                    aria-label={`${work.goTo} ${project.title}`}
-                    className="work-tab font-label text-sm uppercase"
-                  >
-                    <span aria-hidden="true" className="text-fg-muted">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    {project.title}
-                  </a>
-                ))}
-              </nav>
+        <ol className="work-list" data-work-list>
+          {projects.map((project, i) => {
+            const Card = project.href ? Link : 'div'
+            const cardProps = project.href ? { href: project.href } : {}
+            return (
+              <li
+                key={project.slug}
+                id={`work-${project.slug}`}
+                className="work-item"
+                style={{ '--i': i } as CSSProperties}
+              >
+                <p className="work-tab font-label uppercase">
+                  <span className="work-tab-face">
+                    <StairMark />
+                    {work.projectLabel} {index(i)}
+                  </span>
+                </p>
 
-              <ol className="work-list">
-                {projects.map((project) => {
-                  const Media = project.href ? Link : 'div'
-                  const mediaProps = project.href
-                    ? { href: project.href, 'data-cursor-text': 'View project' }
-                    : {}
-                  return (
-                    <li
-                      key={project.slug}
-                      id={`work-${project.slug}`}
-                      data-work-project
-                      className="work-project"
-                    >
-                      <Media
-                        {...(mediaProps as { href: string })}
-                        data-work-media
-                        className="work-media"
-                      >
+                <article aria-labelledby={`work-${project.slug}-title`} className="work-card">
+                  <Card {...(cardProps as { href: string })} className="work-card-inner">
+                    <div className="work-text">
+                      <div data-work-body className="work-body">
+                        <p className="work-date font-label uppercase">
+                          <span aria-hidden="true" className="work-dot" />
+                          {project.year}
+                        </p>
+                        <h3 id={`work-${project.slug}-title`} className="work-title font-display">
+                          {project.title}
+                        </h3>
+                        <p className="work-summary">{project.summary}</p>
+                        {project.href ? (
+                          <span className="work-view font-label uppercase">
+                            View project
+                            <svg aria-hidden="true" viewBox="0 0 16 16" className="work-view-arrow">
+                              <path d="M2 7.25h10.2L8 3.06l1.06-1.06L15.06 8l-6 6L8 12.94l4.2-4.19H2z" />
+                            </svg>
+                          </span>
+                        ) : null}
+                      </div>
+                      <ul className="work-tags" aria-label="Built with">
+                        {project.stack.map((item) => (
+                          <li key={item} className="work-tag font-label uppercase">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="work-media">
+                      <div className="work-frame">
                         <Image
                           src={project.cover.image}
                           alt={project.cover.alt}
                           fill
                           placeholder="blur"
-                          sizes="(min-width: 64rem) 65vw, 85vw"
+                          sizes="(min-width: 64rem) 45vw, 90vw"
                           className="object-cover object-top"
                         />
-                      </Media>
-
-                      <div data-work-caption className="work-caption">
-                        <h3 className="work-title">{project.title}</h3>
-                        <p className="work-summary text-base text-fg-muted">{project.summary}</p>
-                        <p className="work-tags font-label text-label text-fg-muted uppercase">
-                          <span>[{project.category}]</span>
-                          <span aria-hidden="true">—</span>
-                          <span>[{project.year}]</span>
-                        </p>
-                        <p className="work-stack font-label text-label text-fg-muted uppercase">
-                          {project.stack.join(' · ')}
-                        </p>
+                        <span aria-hidden="true" className="work-hatch" />
+                        {/* Always ink on paper: it sits on the screenshot, not the page. */}
+                        <span data-theme="light" className="work-badge font-label uppercase">
+                          {project.category}
+                        </span>
                       </div>
-                    </li>
-                  )
-                })}
-              </ol>
+                      <span aria-hidden="true" className="work-handle" data-corner="tl" />
+                      <span aria-hidden="true" className="work-handle" data-corner="tr" />
+                      <span aria-hidden="true" className="work-handle" data-corner="br" />
+                      <span aria-hidden="true" className="work-handle" data-corner="bl" />
+                    </div>
+                  </Card>
+                </article>
+              </li>
+            )
+          })}
+        </ol>
 
-              <div className="work-cta">
-                <KeyLink label={work.action.label} href={work.action.href} size="compact" />
-              </div>
-            </div>
-          </div>
+        <div className="work-end">
+          <FrameButton label={work.action.label} href={work.action.href} />
         </div>
-      </WorkStage>
-      {linked ? <CursorLabel /> : null}
+      </WorkStack>
     </section>
   )
 }

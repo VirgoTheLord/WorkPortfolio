@@ -1,0 +1,41 @@
+/*
+ * The arrow link. The arrow steps right on hover and focus and back on leaving,
+ * on the reference's measured timing (about 150ms, easing out).
+ */
+.arrow-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  color: var(--color-fg);
+}
+
+.arrow-link-arrow {
+  width: calc(var(--spacing) * 3.5);
+  height: calc(var(--spacing) * 2);
+  fill: currentColor;
+  shape-rendering: crispEdges;
+  translate: 0 calc(var(--spacing) * -0.5);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.arrow-link:hover .arrow-link-arrow,
+.arrow-link:focus-visible .arrow-link-arrow {
+  transform: translateX(calc(var(--spacing) * 1));
+}
+
+/* A touch screen gets a 44px target without a bigger link. */
+@media (pointer: coarse) {
+  .arrow-link::after {
+    content: '';
+    position: absolute;
+    inset-inline: calc(var(--spacing) * -2);
+    inset-block: calc(var(--spacing) * -3.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow-link-arrow {
+    transition: none;
+  }
+}

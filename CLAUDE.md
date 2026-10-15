@@ -33,7 +33,7 @@ pnpm format         # prettier --write . (Markdown is excluded on purpose)
 
 ## Non-negotiable rules
 
-1. **Server Components by default.** `'use client'` is allowed only in `src/components/motion/` and `src/components/interactive/`, and only for leaf islands.
+1. **Server Components by default.** `'use client'` is allowed only in `src/components/motion/`, `src/components/interactive/` and `src/components/library/`, and only for leaf islands.
 2. **No new dependencies** unless they are listed in ARCHITECTURE.md §9. To add one, update §9 with a justification first and ask the user.
 3. **No raw values in components:** no hex colors, px font sizes or Tailwind arbitrary values. Use tokens from `globals.css` `@theme`.
 4. **Every route is static.** `next build` must show no dynamic routes. No API routes, middleware/proxy, or runtime data fetching.
@@ -47,6 +47,7 @@ pnpm format         # prettier --write . (Markdown is excluded on purpose)
 ## Code conventions
 
 - Files kebab-case, named exports, one component per file, no barrel files, `@/` alias → `src/`.
+- `src/components/library/` holds the reusable UI pieces kept for a future UI library (the buttons today: the frame button, the key, the scramble button). A piece there may be in use on the site or kept for later; each file says which.
 - Prefer explicit props over configurable "variant soup". Use simple object maps for variants and `lib/cn.ts` for joining classes.
 - Avoid `useEffect` except for DOM side effects. No client state libraries.
 - Types for content live in `src/types/content.ts`. Use `satisfies` for content objects.

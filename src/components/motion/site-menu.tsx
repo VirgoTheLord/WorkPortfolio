@@ -466,7 +466,7 @@ export function SiteMenu({
       onClick={onClick}
       className="menu relative"
     >
-      <div className="menu-frame mx-auto w-full max-w-content pt-4">
+      <div className="menu-frame w-full pt-4">
         <div className="menu-bar pointer-events-auto relative">
           <div aria-hidden="true" className="menu-surface absolute inset-0 bg-surface" />
           <div className="menu-bar-row relative grid h-full grid-cols-2 items-center lg:grid-cols-3">
@@ -516,7 +516,7 @@ export function SiteMenu({
       >
         <div aria-hidden="true" data-menu-frost className="menu-frost absolute inset-0" />
         <div data-lenis-prevent className="menu-field-inner relative size-full text-ink">
-          <div className="menu-field-frame mx-auto h-full w-full max-w-content">{children}</div>
+          <div className="menu-field-frame h-full w-full">{children}</div>
         </div>
       </div>
     </div>

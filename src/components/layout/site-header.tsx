@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { WorkTogetherButton } from '@/components/interactive/work-together-button'
+import { FrameButton } from '@/components/library/frame-button'
 import { SiteMenu } from '@/components/motion/site-menu'
 import { SiteBrand } from '@/components/layout/site-brand'
 import { SiteNav } from '@/components/layout/site-nav'
@@ -24,9 +24,7 @@ export function SiteHeader() {
       <header data-hero-nav className="site-header pointer-events-none fixed inset-x-0 top-0 z-40">
         <SiteMenu
           brand={<SiteBrand />}
-          action={
-            <WorkTogetherButton label={menu.action.label} href={menu.action.href} tone="ink" />
-          }
+          action={<FrameButton label={menu.action.label} href={menu.action.href} size="compact" />}
         >
           <SiteNav />
         </SiteMenu>

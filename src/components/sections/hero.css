@@ -15,13 +15,11 @@
   --hero-top: calc(var(--spacing) * 13);
   --hero-bottom: calc(var(--spacing) * 8);
   /* The grid's mask, shared with its canvas (motion/hero-grid.tsx). */
-  --hero-grid-mask:
-    linear-gradient(to bottom, black 0 45%, transparent 100%),
-    radial-gradient(
-      ellipse 60% 55% at 50% 45%,
-      color-mix(in srgb, black 60%, transparent) 0%,
-      black 100%
-    );
+  --hero-grid-mask: radial-gradient(
+    ellipse 60% 55% at 50% 45%,
+    color-mix(in srgb, black 60%, transparent) 0%,
+    black 100%
+  );
   min-height: 100svh;
   view-timeline: --hero block;
 }
@@ -37,38 +35,20 @@
  * script, nothing that moves or repaints on scroll (it sits on the hero, not on
  * the drifting contents). It is centred on the hero's centre line (a vertical
  * groove runs through the middle of the headline) and hangs from the hero's top
- * edge. The mask calms it behind the copy (down to 40%, rising gently, so it
- * never looks spotlit) and lets it go before the hero ends, so there is no edge
- * where the next section begins. Colours are tokens, set per theme in
+ * edge. The mask calms it behind the copy (down to 60%, rising gently, so it
+ * never looks spotlit) and is whole at the hero's edges, where the page's own
+ * grid (globals.css, the same lines in the same place) carries on below it. Colours are tokens, set per theme in
  * globals.css (--color-groove, --color-groove-lit); the cell is --spacing-grid.
  */
 .hero::before {
-  --cell: var(--spacing-grid);
-  --at-x: calc(50% + var(--cell) / 2);
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image:
-    radial-gradient(circle, var(--color-groove) 0 1px, transparent 1.5px),
-    linear-gradient(
-      to right,
-      var(--color-groove) 0 1px,
-      var(--color-groove-lit) 1px 2px,
-      transparent 2px
-    ),
-    linear-gradient(
-      to bottom,
-      var(--color-groove) 0 1px,
-      var(--color-groove-lit) 1px 2px,
-      transparent 2px
-    );
-  background-size: var(--cell) var(--cell);
-  background-position:
-    50% calc(var(--cell) / -2),
-    var(--at-x) 0,
-    var(--at-x) 0;
+  background-image: var(--groove-grid);
+  background-size: var(--spacing-grid) var(--spacing-grid);
+  background-position: var(--groove-grid-position);
   mask-image: var(--hero-grid-mask);
   mask-composite: intersect;
 }
@@ -123,13 +103,15 @@
 
 /* ---- Headline ----------------------------------------------------------- */
 
-/* The name on one line, as wide as the frame: 100cqw is the frame's width (the
-   copy is the query container) and --fit is the name's measured width in em, in
-   this face, weight and tracking. Revisit it if the name or its setting change. */
+/* The name in BabaPro Bold, as wide as the frame: 100cqw is the copy's width (the
+   query container) and --fit is the name's width in em in this face (3.50), plus a
+   hair so it never touches the edges. Revisit it if the name or face change. */
 .hero-title {
-  --fit: 7.36;
+  --fit: 3.6;
   font-size: calc(100cqw / var(--fit));
+  font-weight: 700;
   line-height: 1;
+  letter-spacing: 0;
 }
 
 /* Each line is its own box, so the wipe blocks cover exactly one line. */
@@ -143,6 +125,23 @@
   white-space: nowrap;
 }
 
+/* The name in cells (motion/hero-cells.tsx): a canvas over the line draws the
+   name as squares on the hero's grid; once it has drawn, the heading's own
+   glyphs go transparent (still text: read, selected, found). Without script the
+   plain name shows. */
+.hero-cells {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-line[data-cells='on'] .hero-line-text {
+  color: transparent;
+}
+
 /* The wipe blocks overhang the line a little on every side. They are only seen
    while the intro runs. */
 .hero-block {
@@ -153,9 +152,52 @@
   pointer-events: none;
 }
 
-/* The line under the headline rises from a mask. */
-.hero-mask {
-  overflow: hidden;
+/* ---- The scroll cue ----------------------------------------------------- */
+
+/* The word, and a thin line below it that draws down and then away, slowly. Near
+   the bottom edge, centred; the line is still for reduced motion. */
+.hero-cue {
+  position: absolute;
+  bottom: calc(var(--spacing) * 6);
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  translate: -50% 0;
+  color: var(--color-fg-muted);
+}
+
+.hero-cue-line {
+  display: block;
+  width: 1px;
+  height: calc(var(--spacing) * 10);
+  background-color: currentColor;
+  transform-origin: top;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-cue-line {
+    animation: hero-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+}
+
+@keyframes hero-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
 }
 
 /* ---- Scroll ------------------------------------------------------------- */
@@ -204,11 +246,8 @@ html.is-intro [data-hero-text] {
   opacity: 0;
 }
 
-html.is-intro [data-hero-intro] {
-  transform: translateY(100%);
-}
-
-html.is-intro [data-hero-actions] {
+html.is-intro [data-hero-actions],
+html.is-intro [data-hero-cue] {
   opacity: 0;
   transform: translateY(calc(var(--spacing) * 5));
 }

@@ -261,7 +261,7 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   // The navbar lives in the header, outside the hero.
   const nav = all('[data-hero-nav]', document.body)
   const lines = all('.hero-line', hero)
-  const sentence = all('[data-hero-intro]', hero)
+  const cue = all('[data-hero-cue]', hero)
   const actions = all('[data-hero-actions]', hero)
 
   /* Every `from` below carries y: 0. The CSS starting states are percentage
@@ -574,16 +574,10 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     tl.to(accent, { scaleX: 0, ...cross }, at + 0.6)
   })
 
-  /* The line under the headline rises from its mask; the actions lift in
-     behind it. */
-  tl.fromTo(
-    sentence,
-    { yPercent: 100, y: 0 },
-    { yPercent: 0, duration: 0.8, ease: 'power3.out' },
-    t + 0.15,
-  )
+  /* The action lifts in behind the headline, and the scroll cue after it. */
   const lift = { opacity: 0, y: 20 }
   tl.fromTo(actions, lift, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, t + 0.3)
+  tl.fromTo(cue, lift, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, t + 0.6)
 
   return tl
 }

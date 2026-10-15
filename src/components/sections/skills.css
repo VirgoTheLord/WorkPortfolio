@@ -1,186 +1,169 @@
 /*
- * Skills: the reference's process section. Two layouts.
+ * Skills, on the reference's measured layout (studionamma.com at 1440: label,
+ * a centred stack of 128px capitals at 0.84 line height, the link), with the
+ * space around it tightened by request: nothing above (the section before has its
+ * own), 64px below, 64px inside (32px on a phone, as on the reference).
+ * The reference sets an extra-condensed face; ours is Bricolage Grotesque at 600
+ * with tight tracking (the shipped file has no width axis), sized from the
+ * frame's width so the longest row keeps the reference's proportion.
  *
- * Stacked (below lg, reduced motion, or without JavaScript): headline, label,
- * then each step (square, number, name, description) followed by its panel.
- *
- * Pinned (from lg, motion allowed, scripting on): the section is 320vh tall and
- * its content sticks to the screen, centred, on columns 3-10 of the 12-column
- * frame. Steps on the left, the panel strip on the right; the island marks one
- * step current and sets --active, --marker-y and --marker-turn.
+ * Hover (fine pointer, from lg): the other rows fall to 15% in 200ms, the row's
+ * detail rises in 38px after the word, and its screenshot opens from its centre
+ * line at the frame's left edge, 384/1400 of the frame wide at 4:3, in about
+ * 280ms (all measured). Touch: the row chosen by motion/skills-rows.tsx stays at
+ * full strength and the others dim the same way; details and screenshots stay
+ * hidden, as on the reference's phone layout.
  */
 @reference '../../app/globals.css';
 
-.skills-sticky {
-  padding: calc(var(--spacing) * 16) calc(var(--spacing) * 4);
+.skills {
+  container-type: inline-size;
+  padding: 0 calc(var(--spacing) * 4) calc(var(--spacing) * 12);
 }
 
-.skills-head {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 4);
-  margin-bottom: calc(var(--spacing) * 8);
+/* A line's mask: it rises out of this (motion/rise.css). */
+.skills-mask {
+  display: block;
+  overflow: hidden;
 }
 
-.skills-steps {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 12);
+.skills-rows {
+  margin-block: calc(var(--spacing) * 8);
+  text-align: center;
 }
 
-.skills-step {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: calc(var(--spacing) * 4);
+.skills-row {
+  position: relative;
+  isolation: isolate;
+  transition: opacity 200ms var(--ease-out);
 }
 
-.skills-step-mark {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--spacing) * 3);
-  padding-top: calc(var(--spacing) * 1);
+.skills-row-word {
+  position: relative;
+  display: inline-block;
 }
 
-.skills-step-square {
-  width: calc(var(--spacing) * 3);
-  height: calc(var(--spacing) * 3);
-  margin-top: calc(var(--spacing) * 1);
+.skills-row-name {
+  display: block;
+  font-size: 12.5cqi;
+  font-weight: var(--font-weight-semibold);
+  font-variation-settings: 'opsz' var(--opsz-display);
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  /* The mask clips at the line box; caps need a sliver of room under them. */
+  padding-bottom: 0.04em;
 }
 
-.skills-step .skills-panel {
-  grid-column: 1 / -1;
-  aspect-ratio: 4 / 5;
-}
-
-.skills-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: calc(var(--spacing) * 6);
-}
-
-.skills-marker,
-.skills-window {
+.skills-row-detail,
+.skills-row-visual {
   display: none;
 }
 
+.skills-more {
+  text-align: center;
+}
+
+/* As on the reference, the link's arrow follows its words in: it fades in slowly,
+   starting once they are most of the way up. */
+@media (prefers-reduced-motion: no-preference) {
+  .skills-more [data-rise] .arrow-link-arrow {
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      opacity var(--duration-intro) var(--ease-cubic-out) 450ms;
+  }
+
+  .skills-more [data-rise='pending'] .arrow-link-arrow {
+    opacity: 0;
+  }
+}
+
+.skills-rows[data-active] .skills-row:not([data-current]) {
+  opacity: 0.15;
+}
+
 @media (min-width: 48rem) {
-  .skills-step .skills-panel {
-    max-width: 24rem;
+  .skills-rows {
+    margin-block: calc(var(--spacing) * 12);
+  }
+
+  .skills-row-name {
+    font-size: 8.5cqi;
   }
 }
 
 @media (min-width: 64rem) {
-  .skills-sticky {
-    padding: calc(var(--spacing) * 32) calc(var(--spacing) * 8);
+  .skills {
+    padding: 0 calc(var(--spacing) * 8) calc(var(--spacing) * 16);
   }
 
-  /* Columns 3-10 of the 12-column, 16px-gap frame, pinned or not. */
-  .skills-frame {
-    width: calc((100% - var(--spacing) * 44) / 12 * 8 + var(--spacing) * 28);
-    margin-inline: auto;
+  .skills-rows {
+    margin-block: calc(var(--spacing) * 16);
   }
 
-  .skills-head {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
-
-  .skills-panel {
-    padding: calc(var(--spacing) * 8);
+  .skills-row-name {
+    font-size: 6.8cqi;
   }
 }
 
-/* ---- Pinned --------------------------------------------------------------- */
-
-@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
-  .js .skills {
-    min-height: 320vh;
-    padding-block: calc(var(--spacing) * 32);
+@media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+  .skills-rows:has(.skills-row:hover) .skills-row:not(:hover) {
+    opacity: 0.15;
   }
 
-  .js .skills-sticky {
-    position: sticky;
-    top: 0;
-    display: flex;
-    height: 100vh;
-    align-items: center;
-    padding: 0 calc(var(--spacing) * 8);
-  }
-
-  .js .skills-head {
-    margin-bottom: calc(var(--spacing) * 16);
-  }
-
-  .js .skills-body {
-    display: flex;
-  }
-
-  .js .skills-list {
-    position: relative;
-    display: flex;
-    flex: 1.1;
-    flex-direction: column;
-    justify-content: center;
-    padding-right: 10%;
-  }
-
-  .js .skills-window {
-    position: relative;
-    display: block;
-    flex: 1;
-    overflow: hidden;
-    aspect-ratio: 4 / 5;
-  }
-
-  .js .skills-strip {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    transform: translateY(calc(var(--active, 0) * -100%));
-    transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .js .skills-strip > .skills-panel {
-    height: 100%;
-    flex-shrink: 0;
-  }
-
-  /* Steps: number then copy, the panel lives in the strip. The current one is at
-     full strength and steps over for the marker; the rest wait at 40%. */
-  .js .skills-step {
-    display: flex;
-    align-items: flex-start;
-    padding-left: calc(var(--spacing) * 4);
-    cursor: pointer;
-    opacity: 0.4;
-    transition:
-      opacity 0.8s cubic-bezier(0.76, 0, 0.24, 1),
-      transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .js .skills-step[data-current] {
-    opacity: 1;
-    transform: translateX(calc(var(--spacing) * 12));
-  }
-
-  .js .skills-step-square,
-  .js .skills-step .skills-panel {
-    display: none;
-  }
-
-  /* One square travels to the current step, turning a quarter each move with a
-     slight dip and overshoot. */
-  .js .skills-marker {
+  /* The detail: 38px after the word, centred on the row. On the reference it is
+     simply there on hover (fully in within 50ms) and gone on leaving. */
+  .skills-row-detail {
     position: absolute;
-    top: calc(var(--spacing) * 2);
-    left: calc(var(--spacing) * 7);
-    z-index: 1;
+    top: 50%;
+    left: 100%;
     display: block;
-    width: calc(var(--spacing) * 3);
-    height: calc(var(--spacing) * 3);
-    transform: translateY(var(--marker-y, 0)) rotate(var(--marker-turn, 0deg));
-    transition: transform 0.8s cubic-bezier(0.68, -0.3, 0.32, 1.1);
+    margin-left: calc(var(--spacing) * 9.5);
+    color: var(--color-fg);
+    white-space: nowrap;
+    translate: 0 -50%;
+    opacity: 0;
+    transition: opacity 50ms linear;
+  }
+
+  .skills-row-visual {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: -1;
+    display: block;
+    width: calc(100% * 384 / 1400);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    translate: 0 -50%;
+    clip-path: inset(50% 0);
+    transition:
+      clip-path 280ms var(--ease-out),
+      opacity 200ms var(--ease-out);
+  }
+
+  .skills-row-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .skills-row:hover .skills-row-detail {
+    opacity: 1;
+  }
+
+  .skills-row:hover .skills-row-visual {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skills-row,
+  .skills-row-detail,
+  .skills-row-visual {
+    transition: none;
   }
 }

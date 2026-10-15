@@ -1,0 +1,237 @@
+/*
+ * The frame button (frame-button.tsx): an ink plate with an accent square
+ * holding three chevrons. On hover or focus it turns into a selected frame: the
+ * plate goes to the page's tone with a hairline and grows a touch (1.5% across,
+ * 7% down, standing in for the reference's 2px a side) and square handles come
+ * out 6px at its corners, on --duration-base, easing out. At rest the square
+ * is the accent with ink chevrons; on hover it goes to ink with accent chevrons,
+ * and the three chevrons light up to the page tone one after another (a chase,
+ * 120ms apart), while each letter of the label flips over on its middle like a
+ * departures board, one after another (28ms apart), catching the accent as it
+ * turns. Its colours are the theme's, so it inverts in dark mode.
+ */
+@reference '../../app/globals.css';
+
+.frame-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 4.5) calc(var(--spacing) * 1.5)
+    calc(var(--spacing) * 1.5);
+  color: var(--color-bg);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.frame-button-plate {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-fg);
+  background-color: var(--color-fg);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.frame-button-handle {
+  position: absolute;
+  z-index: 1;
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 2);
+  border: 1px solid var(--color-fg);
+  background-color: var(--color-bg);
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    translate var(--duration-base) var(--ease-out);
+}
+
+.frame-button-handle[data-corner^='t'] {
+  top: 0;
+}
+
+.frame-button-handle[data-corner^='b'] {
+  bottom: 0;
+}
+
+.frame-button-handle[data-corner$='l'] {
+  left: 0;
+}
+
+.frame-button-handle[data-corner$='r'] {
+  right: 0;
+}
+
+.frame-button-icon {
+  position: relative;
+  display: grid;
+  width: calc(var(--spacing) * 9);
+  height: calc(var(--spacing) * 9);
+  place-items: center;
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+}
+
+.frame-button-chevrons {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 4);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: square;
+}
+
+.frame-button-label {
+  position: relative;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+/* The letters flip in place, each on its own middle, so they need depth. */
+.frame-button-letters {
+  display: inline-flex;
+  perspective: calc(var(--spacing) * 30);
+}
+
+.frame-button-char {
+  display: inline-block;
+  white-space: pre;
+  transform-origin: 50% 55%;
+}
+
+/* Compact: a 40px row (the navbar), smaller square and label. */
+.frame-button-compact {
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 4) calc(var(--spacing) * 1)
+    calc(var(--spacing) * 1);
+}
+
+.frame-button-compact .frame-button-icon {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
+}
+
+.frame-button-compact .frame-button-chevrons {
+  width: calc(var(--spacing) * 4.5);
+  height: calc(var(--spacing) * 3.5);
+}
+
+.frame-button-compact .frame-button-label {
+  font-size: var(--text-label);
+}
+
+.frame-button:is(:hover, :focus-visible) {
+  color: var(--color-fg);
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-plate {
+  background-color: var(--color-bg);
+  transform: scale(1.015, 1.07);
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-handle {
+  opacity: 1;
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-handle[data-corner='tl'] {
+  translate: calc(var(--spacing) * -1.5) calc(var(--spacing) * -1.5);
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-handle[data-corner='tr'] {
+  translate: calc(var(--spacing) * 1.5) calc(var(--spacing) * -1.5);
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-handle[data-corner='br'] {
+  translate: calc(var(--spacing) * 1.5) calc(var(--spacing) * 1.5);
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-handle[data-corner='bl'] {
+  translate: calc(var(--spacing) * -1.5) calc(var(--spacing) * 1.5);
+}
+
+.frame-button:is(:hover, :focus-visible) .frame-button-icon {
+  background-color: var(--color-fg);
+  color: var(--color-accent);
+}
+
+/* The chase: each chevron lights to the page tone and back, in turn. */
+.frame-button:is(:hover, :focus-visible) .frame-button-chevrons path {
+  animation: frame-button-chase var(--duration-media) var(--ease-out) both;
+  animation-delay: calc(var(--n) * var(--stagger) * 2.4);
+}
+
+@keyframes frame-button-chase {
+  0%,
+  100% {
+    stroke: currentColor;
+  }
+
+  20%,
+  45% {
+    stroke: var(--color-bg);
+  }
+}
+
+/* The split-flap: each letter turns down to its edge and over, catching the
+   accent at the turn. */
+.frame-button:is(:hover, :focus-visible) .frame-button-char {
+  animation: frame-button-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
+  animation-delay: calc(var(--i) * var(--stagger) * 0.56);
+}
+
+@keyframes frame-button-flap {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(-90deg);
+    color: var(--color-accent);
+  }
+
+  51% {
+    transform: rotateX(90deg);
+    color: var(--color-accent);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+/* Below md every frame button takes the compact metrics (a 40px row): a phone's
+   hero and sections have less room than the desktop's. */
+@media not all and (min-width: 48rem) {
+  .frame-button {
+    gap: calc(var(--spacing) * 3);
+    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 4) calc(var(--spacing) * 1)
+      calc(var(--spacing) * 1);
+  }
+
+  .frame-button-icon {
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+  }
+
+  .frame-button-chevrons {
+    width: calc(var(--spacing) * 4.5);
+    height: calc(var(--spacing) * 3.5);
+  }
+
+  .frame-button-label {
+    font-size: var(--text-label);
+  }
+}
+
+/* A touch screen gets a 44px target even from the compact size. */
+@media (pointer: coarse) {
+  .frame-button-compact::after,
+  .frame-button::after {
+    content: '';
+    position: absolute;
+    inset: calc(var(--spacing) * -1) 0;
+  }
+}

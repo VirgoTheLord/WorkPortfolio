@@ -245,6 +245,56 @@ html:has(.menu[data-open='true']) {
   transform: rotate(-45deg);
 }
 
+/* Below lg the trigger is two hairlines, not the word: right-aligned, the lower
+   one shorter, like a typographic rule. On hover they even out; while open they
+   cross into a thin X. The word stays its accessible name (aria-label). */
+@media not all and (min-width: 64rem) {
+  .menu-roll-label {
+    display: none;
+  }
+
+  .menu-trigger {
+    justify-content: flex-end;
+  }
+
+  .menu-icon {
+    width: calc(var(--spacing) * 6);
+    height: calc(var(--spacing) * 3);
+  }
+
+  .menu-icon > span {
+    left: auto;
+    right: 0;
+    height: 1.5px;
+    transition:
+      transform 800ms var(--menu-ease),
+      width 400ms var(--ease-out);
+  }
+
+  .menu-icon > span:first-child {
+    width: 100%;
+    transform: translateY(-4px);
+  }
+
+  .menu-icon > span:last-child {
+    width: 62%;
+    transform: translateY(4px);
+  }
+
+  .menu-trigger:hover .menu-icon > span:last-child,
+  .menu[data-open='true'] .menu-icon > span:last-child {
+    width: 100%;
+  }
+
+  .menu[data-open='true'] .menu-icon > span:first-child {
+    transform: rotate(45deg);
+  }
+
+  .menu[data-open='true'] .menu-icon > span:last-child {
+    transform: rotate(-45deg);
+  }
+}
+
 /* ---- Destinations ------------------------------------------------------- */
 
 /* Each destination's row: room around it as padding rather than gaps, so the
