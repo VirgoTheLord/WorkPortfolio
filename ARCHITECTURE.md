@@ -33,6 +33,9 @@ TypeScript and ESLint follow the majors that `create-next-app` targets for our N
 ```
 /                     Home: positioning, selected work, short about, experience, contact
 /skills               Skills in full: the destination of the home Skills section's "See all"
+/compact              The compact site: one quiet screen of the same person (who, what, live
+                      interface pieces to play with, work, contact) for a visitor who wants it
+                      short. Static. Linked from a dismissible notice on the full site.
 /work/[slug]          Case study (3–5 total, statically generated, dynamicParams = false)
 /about                Longer bio, principles, how I work, résumé link
 /colophon             How this site is built: stack, perf budget, decisions. It proves the engineering claims.
@@ -56,8 +59,13 @@ TypeScript and ESLint follow the majors that `create-next-app` targets for our N
 ```
 src/
   app/
-    layout.tsx                 root shell: fonts, <html lang>, skip link, header/footer
-    page.tsx                   home
+    layout.tsx                 root shell: fonts, <html lang>, the head script, skip link
+    (full)/                    route group (no URL segment): the full site
+      layout.tsx               its frame: SiteHeader, <main>, SiteFooter, smooth scroll, pointer effects
+      page.tsx                 home
+      skills/page.tsx
+      color-test/page.tsx
+    (compact)/compact/page.tsx the compact site (/compact): its own <main>, none of the full frame
     about/page.tsx
     colophon/page.tsx
     work/[slug]/page.tsx
@@ -271,5 +279,7 @@ Adding anything else requires a one-line justification in this section first.
 | **5. Quality gates** | Metadata, OG, JSON-LD, sitemap; Playwright + axe; Lighthouse CI budgets | All budgets in §5 met in CI |
 | **6. Motion** | Hero intro, reveals, micro-interactions | Budgets still met, reduced-motion and no-JS verified |
 | **7. Launch** | Domain, Vercel, final manual a11y/perf pass | Production URL live |
+
+**Scoped iteration (after the Phase 2 checkpoint): the compact site.** `/compact`, in the `(compact)` route group so it has none of the full site's frame (navbar, footer, preloader, smooth scroll, pointer effects); built step by step: skeleton and route groups (C1), intro (C2), the shelf of live library pieces (C3), work list (C4), contact (C5), the notice on the full site that links to it (C6), verification (C7). Static, no new dependencies, same tokens and content.
 
 Motion comes after the static site is complete and fast on purpose: animation decorates a finished page and must never prop up an unfinished one.

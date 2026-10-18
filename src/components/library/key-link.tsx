@@ -21,10 +21,11 @@ const sizes = { default: '', compact: 'key-compact' } as const
  * to another route; lib/in-page-href.ts), so hash links and mailto: work as anywhere, without JavaScript, and the label is its accessible
  * name. Only the label, destination and (in small type) the size change.
  *
- * Not on the site: kept for the UI library. It was the contact section's and the
- * footer's call to action until the site settled on one button design, the frame
- * button (frame-button.tsx). The press hold it relies on still lives in
- * motion/smooth-scroll.tsx (any `a.key`).
+ * Kept for the UI library, and shown live on the compact site's shelf (/compact,
+ * "Write to me"); not on the full site, which settled on one button design, the
+ * frame button (frame-button.tsx). The press hold it relies on lives in
+ * motion/smooth-scroll.tsx (any `a.key`), which runs on the full site only, so
+ * on /compact a click navigates at once.
  */
 export function KeyLink({ label, size = 'default', className = '', ...props }: KeyLinkProps) {
   const classes = `key ${sizes[size]} ${className}`

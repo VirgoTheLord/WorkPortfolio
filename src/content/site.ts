@@ -1,5 +1,6 @@
 import type {
   AboutContent,
+  CompactNoticeContent,
   ContactContent,
   FooterContent,
   HeroContent,
@@ -123,3 +124,14 @@ export const menu = {
   action: { label: "Let's Talk", href: '/#contact' },
   status: [site.role, `Portfolio ${site.year}`],
 } satisfies MenuContent
+
+/*
+ * The notice at the top of the home page that offers the compact site (/compact)
+ * to a visitor who wants it short (interactive/compact-notice.tsx).
+ */
+export const compactNotice = {
+  text: 'Prefer it short?',
+  link: { label: 'Compact version', href: '/compact' },
+  dismiss: 'Dismiss',
+  label: 'Compact version',
+} satisfies CompactNoticeContent

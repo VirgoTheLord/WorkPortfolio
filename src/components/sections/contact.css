@@ -5,15 +5,7 @@
  * middle with its hint centred right under it, and the frame button ("Write an email") below. The orange
  * footer follows.
  *
- * The board (motion/contact-board.tsx): the address in lowercase, one cell per
- * character in the label face (monospace, so the cells are its own advance and
- * the address reads as one word), the field's text colour with the @ in the
- * accent; letters catch the accent as they turn. Cells share the width: in
- * one row from md (--n cells), in two rows broken at the @ below it (--m, the
- * longer row), so a phone's letters stay large; never wider than 3rem. It was a
- * row of orange uppercase tiles, which made the one thing this section is for
- * the hardest thing on the page to read. The board is a button: it copies the
- * address (the hint under it says so).
+ * The board's own styles are motion/contact-board.css.
  */
 @reference '../../app/globals.css';
 
@@ -27,122 +19,6 @@
   padding: calc(var(--spacing-header) + var(--spacing) * 10) calc(var(--spacing) * 4)
     calc(var(--spacing) * 16);
   text-align: center;
-}
-
-/* ---- The board -------------------------------------------------------------- */
-
-.board-wrap {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 5);
-  container-type: inline-size;
-}
-
-.board {
-  /* Azeret Mono's advance width, in em. */
-  --board-advance: 0.65;
-  --gap: 0px;
-  --tile: min(3rem, calc(100cqw / var(--m)));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--gap);
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: copy;
-}
-
-.board:focus-visible {
-  outline-offset: calc(var(--spacing) * 3);
-}
-
-.board-row {
-  display: flex;
-  gap: var(--gap);
-}
-
-.board-tile {
-  display: grid;
-  width: var(--tile);
-  place-items: center;
-  color: var(--color-fg);
-  font-family: var(--font-label);
-  /* The cell is the mono's own advance (--board-advance em), so the letters sit
-     at their natural spacing. */
-  font-size: calc(var(--tile) / var(--board-advance));
-  font-weight: 400;
-  line-height: 1.2;
-  perspective: calc(var(--tile) * 6);
-}
-
-.board-face {
-  display: block;
-  white-space: pre;
-  transform-origin: 50% 50%;
-}
-
-.board-face[data-at] {
-  color: var(--color-accent);
-}
-
-/* A pointer over the board (or focus on it): each letter flips over on its middle,
-   one after another, catching the accent as it turns (the letters are already the
-   light tone), as the frame button's
-   letters do (library/frame-button.css). */
-@media (hover: hover) and (pointer: fine) {
-  .board:hover .board-face {
-    animation: board-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
-    animation-delay: calc(var(--i) * var(--stagger) * 0.56);
-  }
-}
-
-.board:focus-visible .board-face {
-  animation: board-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
-  animation-delay: calc(var(--i) * var(--stagger) * 0.56);
-}
-
-@keyframes board-flap {
-  0% {
-    transform: rotateX(0deg);
-  }
-
-  50% {
-    transform: rotateX(-90deg);
-    color: var(--color-accent);
-  }
-
-  51% {
-    transform: rotateX(90deg);
-    color: var(--color-accent);
-  }
-
-  100% {
-    transform: rotateX(0deg);
-  }
-}
-
-/* Right under the board, centred: how to use it. */
-.board-hint {
-  align-self: center;
-  color: var(--color-fg-muted);
-}
-
-/* The hint names the gesture the device has. */
-.board-hint-touch {
-  display: none;
-}
-
-@media (hover: none) {
-  .board-hint-pointer {
-    display: none;
-  }
-
-  .board-hint-touch {
-    display: inline;
-  }
 }
 
 /* ---- The invitation ---------------------------------------------------------- */
@@ -167,12 +43,6 @@
 }
 
 @media (min-width: 48rem) {
-  .board {
-    --tile: min(3rem, calc(100cqw / var(--n)));
-    flex-direction: row;
-    justify-content: center;
-  }
-
   .contact-statement .headline-wipe-line {
     display: inline-block;
   }

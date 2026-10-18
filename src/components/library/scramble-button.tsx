@@ -21,9 +21,9 @@ const SCRAMBLE_MS = 600
 const FRAME_MS = 45
 
 /*
- * Library: kept for reuse. This was the hero's and the navbar's call to action
- * until the frame button (frame-button.tsx) became the primary CTA; it is not
- * used on the site at the moment.
+ * Library: kept for reuse, and shown live on the compact site's shelf (/compact,
+ * "LinkedIn"). It was the full site's hero and navbar call to action until the
+ * frame button (frame-button.tsx) became the primary CTA.
  *
  * A real link whose label scrambles into place, letter by
  * letter from the left, while the plus changes sides (scramble-button.css).

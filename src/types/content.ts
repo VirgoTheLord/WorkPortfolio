@@ -148,3 +148,42 @@ export type SiteConfig = {
   year: string
   nav: readonly NavItem[]
 }
+
+/**
+ * A word in the compact site's intro that answers hover, focus and tap with one
+ * small, true detail, shown in the readout under the paragraph. `place` adds a
+ * marker; `cells` also redraws the word in the hero's pixel cells while active.
+ */
+export type CompactDetail = { text: string; detail: string; kind?: 'place' | 'cells' }
+
+/** One live piece on the compact site's shelf; links go somewhere real. */
+export type CompactPiece =
+  | { kind: 'frame' | 'key' | 'scramble'; label: string; href: string }
+  | { kind: 'board' }
+  | { kind: 'pad'; label: string }
+
+/** A row of the shelf: index, name, the live piece, and one line on what it does. */
+export type CompactShelfItem = { index: string; name: string; note: string; piece: CompactPiece }
+
+/** The compact site (/compact): its metadata, the way back, and the intro. */
+export type CompactContent = {
+  meta: { title: string; description: string }
+  back: NavItem
+  /** The intro paragraph: plain runs of text and the words that answer. */
+  intro: readonly (string | CompactDetail)[]
+  /** The readout under the intro at rest, for a pointer and for touch. */
+  readoutHint: { pointer: string; touch: string }
+  /** The shelf: this site's interface pieces, live, each doing something real. */
+  shelf: { label: string; items: readonly CompactShelfItem[] }
+  /** The work index's label (the projects themselves are `content/projects`). */
+  work: { label: string }
+}
+
+/** The notice on the full site's home page that offers the compact site. */
+export type CompactNoticeContent = {
+  text: string
+  link: NavItem
+  dismiss: string
+  /** Its accessible name, for the landmark. */
+  label: string
+}

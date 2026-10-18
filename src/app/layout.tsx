@@ -1,8 +1,4 @@
 import type { Metadata } from 'next'
-import { SiteFooter } from '@/components/layout/site-footer'
-import { SiteHeader } from '@/components/layout/site-header'
-import { PointerFx } from '@/components/motion/pointer-fx'
-import { SmoothScroll } from '@/components/motion/smooth-scroll'
 import { fontVariables } from '@/lib/fonts'
 import './globals.css'
 
@@ -41,15 +37,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         >
           Skip to content
         </a>
-        <SiteHeader />
-        {/* tabIndex lets the skip link move focus into <main> in every browser; main is
-            not interactive, so it gets no focus ring of its own. */}
-        <main id="main" tabIndex={-1} className="flex-1 pt-header focus:outline-none">
-          {children}
-        </main>
-        <SiteFooter />
-        <SmoothScroll />
-        <PointerFx />
+        {/* Each route group brings its own frame and its own <main id="main">:
+            (full) the navbar, footer and pointer effects; (compact) none of them. */}
+        {children}
       </body>
     </html>
   )

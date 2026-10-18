@@ -232,6 +232,8 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
   /* Lay the cells: sample the name once, cell by cell. */
   const build = () => {
     const box = text.getBoundingClientRect()
+    // Nothing to sample in an empty box (the hero leaving the page).
+    if (!box.width || !box.height) return
     const heroBox = hero.getBoundingClientRect()
     const style = getComputedStyle(text)
     const root = getComputedStyle(document.documentElement)
@@ -534,6 +536,12 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
   }
 
   const resize = new ResizeObserver(() => {
+    // A canvas set up before hydration (a reload) has no React cleanup: when the
+    // hero leaves the page (a link to another route), it tears itself down.
+    if (!canvas.isConnected) {
+      teardown()
+      return
+    }
     if (!cells.length) return
     build()
     draw(performance.now())
@@ -558,7 +566,7 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
   }
   scheme.addEventListener('change', recolour)
 
-  return () => {
+  const teardown = () => {
     cancelled = true
     watch.disconnect()
     resize.disconnect()
@@ -569,4 +577,5 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
     delete line.dataset.cells
     delete hero.dataset.cellsHover
   }
+  return teardown
 }
