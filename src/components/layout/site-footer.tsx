@@ -1,6 +1,5 @@
 import { FooterInk } from '@/components/motion/footer-ink'
 import { FooterScene } from '@/components/motion/footer-scene'
-import { KeyLink } from '@/components/library/key-link'
 import { TextLink } from '@/components/ui/text-link'
 import { contact, footer, hero, menu, site } from '@/content/site'
 import './site-footer.css'
@@ -68,12 +67,16 @@ export function SiteFooter() {
                 <h2 className="footer-heading">{footer.contactLabel}</h2>
                 <ul className="footer-links">
                   <li>
-                    <KeyLink
-                      label={menu.action.label}
-                      href={`mailto:${contact.email}`}
-                      size="compact"
-                    />
+                    <TextLink href={`mailto:${contact.email}`}>{footer.email}</TextLink>
                   </li>
+                  {site.profiles.map((profile) => (
+                    <li key={profile.href}>
+                      {/* External: marked with an arrow, its own tab is the visitor's choice. */}
+                      <TextLink href={profile.href} rel="noreferrer">
+                        {profile.label} <span aria-hidden="true">↗</span>
+                      </TextLink>
+                    </li>
+                  ))}
                   <li>
                     <TextLink href="#main">{footer.toTop}</TextLink>
                   </li>

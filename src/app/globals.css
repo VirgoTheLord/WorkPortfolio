@@ -70,7 +70,7 @@
   --font-mark: var(--font-mark-face, serif);
   /* The preloader's counter only: Archivo Expanded, digits only (DESIGN.md §9.1). */
   --font-count: var(--font-count-face, sans-serif);
-  /* The hero name only: BabaPro Bold (DESIGN.md §9.1). */
+  /* The hero name only: Archivo Expanded Black, capitals (DESIGN.md §9.3). */
   --font-hero: var(--font-hero-face, sans-serif);
 
   /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
@@ -105,6 +105,9 @@
   --text-hero: clamp(2rem, 0.7757rem + 5.2245vw, 6rem);
   --text-hero--line-height: 1.1;
   --text-hero--letter-spacing: -0.025em;
+  /* Large uppercase Bricolage (the Skills lists and /skills headlines). The display
+     tracking: at -0.04em the 600 capitals touched (N-T, T-A, A-B). */
+  --tracking-caps: -0.025em;
 
   /* Space & layout. --spacing (4px base) is Tailwind's default. */
   --spacing-gutter: clamp(1rem, 0.6667rem + 1.4815vw, 2rem);
@@ -319,12 +322,11 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* The pressed-in grid (DESIGN.md §4), across the whole page: each line a groove
-     (a hairline in its shaded tone with a lit hairline beside it), a darker dot
-     where lines cross, centred on the page's centre line and hung from its top,
-     so it continues the hero's own (hero.css) without a seam. Hard-stop
-     backgrounds on the page itself: no image, no element, nothing animated.
-     Surfaces with their own field (the brand footer, panels, cards) cover it. */
+  /* The pressed-in grid (DESIGN.md §4), drawn by the hero alone (hero.css): each
+     line a groove (a hairline in its shaded tone with a lit hairline beside it),
+     a darker dot where lines cross, centred on the centre line and hung from the
+     top. Hard-stop backgrounds: no image, no element, nothing animated. Kept off
+     the rest of the page so it stays the hero's surface, not graph paper. */
   :root {
     --groove-grid:
       radial-gradient(circle, var(--color-groove) 0 1px, transparent 1.5px),
@@ -347,9 +349,6 @@
 
   body {
     background-color: var(--color-bg);
-    background-image: var(--groove-grid);
-    background-size: var(--spacing-grid) var(--spacing-grid);
-    background-position: var(--groove-grid-position);
     color: var(--color-fg);
     font-family: var(--font-text);
     font-size: var(--text-base);

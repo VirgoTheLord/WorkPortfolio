@@ -49,7 +49,7 @@
   font-weight: var(--font-weight-semibold);
   font-variation-settings: 'opsz' var(--opsz-display);
   line-height: 0.84;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
   /* The mask clips at the line box; caps need a sliver of room under them. */
   padding-bottom: 0.04em;
@@ -78,8 +78,11 @@
   }
 }
 
+/* On a touch screen one row is highlighted as the list passes; the others stay
+   readable (35%; the reference's 15% left six of seven rows unreadable at any
+   moment). The hover dim from lg stays at 15%: there it is a passing state. */
 .skills-rows[data-active] .skills-row:not([data-current]) {
-  opacity: 0.15;
+  opacity: 0.35;
 }
 
 @media (min-width: 48rem) {

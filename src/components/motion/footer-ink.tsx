@@ -116,7 +116,9 @@ export function FooterInk() {
       host.style.height = `${height}px`
 
       // The tile size and the disc are sized from the name they mostly play over.
-      const cell = Math.max(18, Math.round(markBox.height / 8))
+      // A sixteenth of it (about 10px at 1440): at an eighth the disc read as a
+      // blocky blob, like a rendering fault, rather than a fine pixel lens.
+      const cell = Math.max(10, Math.round(markBox.height / 16))
       const radius = markBox.height * RADIUS
       const id = `footer-ink-${Math.random().toString(36).slice(2, 7)}`
 

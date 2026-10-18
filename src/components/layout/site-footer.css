@@ -1,6 +1,9 @@
 /*
- * The footer, from neuemontreal.com's: a solid brand field in the ordinary flow, on
- * the hero's frame edge (16px, 24px from md), capped at the content width. Its
+ * The footer, from neuemontreal.com's: a solid brand field in the ordinary flow,
+ * across the full width on the navbar's own edges (16px, 24px from md, 32px from
+ * lg), so the two line up on any desktop, not only a 1440px one (no content-width
+ * cap: on wider screens the capped footer floated in the middle under a
+ * full-width bar). Its
  * pieces, top to bottom: the logo mark and four columns (a heading over a
  * hairline, the links beside a vertical hairline), a hairline, the name as wide
  * as the frame, a hairline, the credits. From md the mark sits to the left of
@@ -28,8 +31,6 @@
   flex-direction: column;
   justify-content: space-between;
   gap: calc(var(--spacing) * 16);
-  margin-inline: auto;
-  max-width: var(--container-content);
   padding: calc(var(--spacing) * 5) calc(var(--spacing) * 4)
     max(calc(var(--spacing) * 3), env(safe-area-inset-bottom));
 }
@@ -53,8 +54,8 @@
 }
 
 /* Below md, two by two, sharing the width; the right-hand column (Built with,
-   Contact) is never narrower than its widest item, so on the narrowest phones the
-   contact key still fits its column. */
+   Contact) is never narrower than its widest item, so on the narrowest phones
+   nothing in it wraps. */
 .footer-columns {
   display: grid;
   flex: 1;
@@ -117,6 +118,10 @@
 
 /* Four across only where each column is wide enough for its longest line. */
 @media (min-width: 64rem) {
+  .footer-frame {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+
   .footer-columns {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: calc(var(--spacing) * 4);
@@ -174,10 +179,12 @@
   transform-origin: left center;
 }
 
+/* On a phone the credits stack right under the name's hairline: 12px of room so
+   they are not jammed against it; 4px from md, where they sit in one row. */
 .footer-credits {
   display: flex;
   flex-direction: column;
-  padding-top: calc(var(--spacing) * 1);
+  padding-top: calc(var(--spacing) * 3);
 }
 
 .footer-credit-mask {
@@ -192,6 +199,7 @@
   .footer-credits {
     flex-direction: row;
     justify-content: space-between;
+    padding-top: calc(var(--spacing) * 1);
   }
 }
 

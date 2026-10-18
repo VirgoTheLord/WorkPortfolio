@@ -2,15 +2,10 @@
  * Contact (contact.tsx): the dark field, one screen tall from md, one centred
  * column: the invitation as a single quiet line (its second part, "write to
  * me.", in the accent; two lines on a phone), the departures board large in the
- * middle with its hint centred right under it, and the key below. The orange
+ * middle with its hint centred right under it, and the frame button ("Write an email") below. The orange
  * footer follows.
  *
- * The board (motion/contact-board.tsx): one tile per character, accent tiles
- * with ink letters, an ink hairline across each tile's middle where its flaps
- * meet; letters flash the light tone as they turn. Tiles share the width: in one
- * row from md (--n tiles), in two rows broken at the @ below it (--m, the longer
- * row), so a phone's tiles stay legible; never wider than 4.5rem. The board is a
- * button: it copies the address (the hint under it says so).
+ * The board's own styles are motion/contact-board.css.
  */
 @reference '../../app/globals.css';
 
@@ -24,124 +19,6 @@
   padding: calc(var(--spacing-header) + var(--spacing) * 10) calc(var(--spacing) * 4)
     calc(var(--spacing) * 16);
   text-align: center;
-}
-
-/* ---- The board -------------------------------------------------------------- */
-
-.board-wrap {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 5);
-  container-type: inline-size;
-}
-
-.board {
-  --gap: calc(var(--spacing) * 1);
-  --tile: min(4.5rem, calc((100cqw - (var(--m) - 1) * var(--gap)) / var(--m)));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--gap);
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: copy;
-}
-
-.board:focus-visible {
-  outline-offset: calc(var(--spacing) * 3);
-}
-
-.board-row {
-  display: flex;
-  gap: var(--gap);
-}
-
-.board-tile {
-  position: relative;
-  display: grid;
-  width: var(--tile);
-  aspect-ratio: 3 / 4.2;
-  place-items: center;
-  background-color: var(--color-accent);
-  color: var(--color-black);
-  font-family: var(--font-label);
-  font-size: calc(var(--tile) * 0.62);
-  line-height: 1;
-  perspective: calc(var(--tile) * 6);
-}
-
-/* Where the two flaps meet. */
-.board-tile::after {
-  content: '';
-  position: absolute;
-  inset: 50% 0 auto;
-  height: 1px;
-  background-color: color-mix(in srgb, var(--color-black) 55%, transparent);
-}
-
-.board-face {
-  display: block;
-  white-space: pre;
-  transform-origin: 50% 50%;
-}
-
-/* A pointer over the board (or focus on it): each tile flips over on its middle,
-   one after another, catching the light tone as it turns, as the frame button's
-   letters do (library/frame-button.css). */
-@media (hover: hover) and (pointer: fine) {
-  .board:hover .board-face {
-    animation: board-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
-    animation-delay: calc(var(--i) * var(--stagger) * 0.56);
-  }
-}
-
-.board:focus-visible .board-face {
-  animation: board-flap calc(var(--duration-slow) * 0.7) var(--ease-in-out) both;
-  animation-delay: calc(var(--i) * var(--stagger) * 0.56);
-}
-
-@keyframes board-flap {
-  0% {
-    transform: rotateX(0deg);
-  }
-
-  50% {
-    transform: rotateX(-90deg);
-    color: var(--color-white);
-  }
-
-  51% {
-    transform: rotateX(90deg);
-    color: var(--color-white);
-  }
-
-  100% {
-    transform: rotateX(0deg);
-  }
-}
-
-/* Right under the board, centred: how to use it. */
-.board-hint {
-  align-self: center;
-  color: var(--color-fg-muted);
-}
-
-/* The hint names the gesture the device has. */
-.board-hint-touch {
-  display: none;
-}
-
-@media (hover: none) {
-  .board-hint-pointer {
-    display: none;
-  }
-
-  .board-hint-touch {
-    display: inline;
-  }
 }
 
 /* ---- The invitation ---------------------------------------------------------- */
@@ -166,12 +43,6 @@
 }
 
 @media (min-width: 48rem) {
-  .board {
-    --tile: min(4.5rem, calc((100cqw - (var(--n) - 1) * var(--gap)) / var(--n)));
-    flex-direction: row;
-    justify-content: center;
-  }
-
   .contact-statement .headline-wipe-line {
     display: inline-block;
   }
@@ -185,9 +56,14 @@
   }
 }
 
+/* From lg the section is as tall as its content with generous room (128px above
+   the header's clearance and below): forced to a full screen, the centred column
+   left about 300px of empty dark field above it and below it. */
 @media (min-width: 64rem) {
   .contact {
-    padding-inline: calc(var(--spacing) * 8);
+    min-height: auto;
+    padding: calc(var(--spacing-header) + var(--spacing) * 32) calc(var(--spacing) * 8)
+      calc(var(--spacing) * 32);
   }
 
   .contact-statement {

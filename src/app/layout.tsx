@@ -1,8 +1,4 @@
 import type { Metadata } from 'next'
-import { SiteFooter } from '@/components/layout/site-footer'
-import { SiteHeader } from '@/components/layout/site-header'
-import { PointerFx } from '@/components/motion/pointer-fx'
-import { SmoothScroll } from '@/components/motion/smooth-scroll'
 import { fontVariables } from '@/lib/fonts'
 import './globals.css'
 
@@ -21,13 +17,16 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             to the mode they once picked. On the home page it also
             marks the intro as playing before first paint, so the overlay
             covers the hero from the start. Skipped for reduced motion, for deep
-            links (a hash), and for every route but the home page. If the intro
+            links (a hash) and for every route but the home page. Once this tab
+            has seen it (sessionStorage 'intro-seen', set by hero-intro.tsx) a
+            reload marks .is-enter instead: the hero's entrance alone, no
+            preloader, with the same starting states before first paint. If the intro
             island has not picked it up within 4s (scripts failed or are very
             slow), the page is released in its final state. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;d.classList.add('js');try{localStorage.removeItem('theme')}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('is-intro');history.scrollRestoration='manual';setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro')},4000)}}catch(e){}",
+              "try{var d=document.documentElement;d.classList.add('js');try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}}catch(e){}",
           }}
         />
       </head>
@@ -38,15 +37,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         >
           Skip to content
         </a>
-        <SiteHeader />
-        {/* tabIndex lets the skip link move focus into <main> in every browser; main is
-            not interactive, so it gets no focus ring of its own. */}
-        <main id="main" tabIndex={-1} className="flex-1 pt-header focus:outline-none">
-          {children}
-        </main>
-        <SiteFooter />
-        <SmoothScroll />
-        <PointerFx />
+        {/* Each route group brings its own frame and its own <main id="main">:
+            (full) the navbar, footer and pointer effects; (compact) none of them. */}
+        {children}
       </body>
     </html>
   )

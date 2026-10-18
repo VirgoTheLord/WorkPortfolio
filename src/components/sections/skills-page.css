@@ -46,7 +46,7 @@
   font-weight: var(--font-weight-semibold);
   font-variation-settings: 'opsz' var(--opsz-display);
   line-height: 0.86;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
   color: var(--color-fg);
 }
@@ -276,7 +276,7 @@
   font-weight: var(--font-weight-semibold);
   font-variation-settings: 'opsz' var(--opsz-title);
   line-height: 0.95;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-caps);
 }
 
 .skills-group-skills {
@@ -389,6 +389,13 @@
 .skills-statement {
   margin-top: calc(var(--spacing) * 16);
   font-size: 8cqi;
+}
+
+/* Five lines of capitals at 0.86 nearly touch on a phone; a little more room. */
+@media not all and (min-width: 48rem) {
+  .skills-statement {
+    line-height: 0.95;
+  }
 }
 
 .skills-closing-link {

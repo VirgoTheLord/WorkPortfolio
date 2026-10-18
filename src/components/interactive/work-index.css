@@ -1,0 +1,131 @@
+/*
+ * The work index (work-index.tsx). Rows: the number and the meta in the label
+ * face, the title in the text face, on one baseline, between hairlines; hover or
+ * focus darkens the number to ink and steps the title 4px right. The slot (from
+ * 80rem, where there is room right of the column): 22rem at 16:10, a hairline
+ * frame, empty at rest, the active cover crossfading in (fast in, slower out).
+ * Below that, and on touch, each row carries its cover as a small thumbnail.
+ */
+@reference '../../app/globals.css';
+
+.work-index {
+  position: relative;
+}
+
+.work-index-list {
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.work-index-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: calc(var(--spacing) * 3);
+  row-gap: calc(var(--spacing) * 1);
+  padding-block: calc(var(--spacing) * 4);
+  border-top: 1px solid var(--color-rule-strong);
+  color: var(--color-fg);
+}
+
+.work-index-num {
+  color: var(--color-fg-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.work-index-title {
+  font-size: var(--text-base);
+  transition: translate var(--duration-base) var(--ease-out);
+}
+
+.work-index-meta {
+  color: var(--color-fg-muted);
+  text-align: right;
+}
+
+.work-index-row[data-active] .work-index-num {
+  color: var(--color-fg);
+  transition-duration: var(--duration-fast);
+}
+
+.work-index-row[data-active] .work-index-title {
+  translate: calc(var(--spacing) * 1) 0;
+  transition-duration: var(--duration-fast);
+}
+
+.work-index-row:active .work-index-title {
+  translate: calc(var(--spacing) * 1) 1px;
+}
+
+/* On a phone the meta goes under the title, so the title keeps its line. */
+@media not all and (min-width: 48rem) {
+  .work-index-row {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .work-index-meta {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+/* The thumbnail: shown wherever the slot is not. */
+.work-index-thumb {
+  position: relative;
+  grid-column: 2 / -1;
+  width: 6rem;
+  aspect-ratio: 16 / 10;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-rule);
+  background-color: var(--color-surface-2);
+}
+
+.work-index-slot {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 80rem) {
+  .work-index-thumb {
+    display: none;
+  }
+
+  .work-index-slot {
+    position: absolute;
+    top: 0;
+    left: calc(100% + var(--spacing) * 16);
+    display: block;
+    width: 22rem;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--color-rule-strong);
+    background-color: var(--color-surface-2);
+    /* Unseen at rest (an empty frame read as a missing image); it comes in with
+       the first preview and goes with the last. */
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+
+  .work-index:has([data-active]) .work-index-slot {
+    opacity: 1;
+    transition-duration: var(--duration-fast);
+  }
+
+  .work-index-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+
+  .work-index-slide[data-active] {
+    opacity: 1;
+    transition-duration: var(--duration-fast);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-index-title,
+  .work-index-row:active .work-index-title {
+    translate: none;
+  }
+}

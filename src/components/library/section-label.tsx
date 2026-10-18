@@ -6,9 +6,12 @@ type SectionLabelProps = Omit<ComponentProps<'p'>, 'children'> & {
 }
 
 /*
- * How a home section is named (today only Selected Work carries one): a small
- * accent square and its name, in the label face, centred over a short double
- * rule. The square is decoration; the name is what is read.
+ * How a section is named: a small accent square and its name, in the label face,
+ * centred over a short double rule. The square is decoration; the name is what is
+ * read.
+ *
+ * Not on the site: kept for the UI library. It sat above Selected Work's
+ * headline, which said the same words larger, so the section named itself twice.
  */
 export function SectionLabel({ name, className = '', ...props }: SectionLabelProps) {
   return (

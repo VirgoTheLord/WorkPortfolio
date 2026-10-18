@@ -1,0 +1,129 @@
+/*
+ * The notice (compact-notice.tsx): an ink plate centred just under the navbar,
+ * in the label face, square-cornered like the frame button, its link's arrow in
+ * the accent, a hairline before the dismiss button (a 40px target). Hidden it is
+ * a little higher and invisible; shown it drops into place (fast in, slower out).
+ * It sits under the navbar's layer and goes while the menu is open.
+ */
+@reference '../../app/globals.css';
+
+.compact-notice {
+  position: fixed;
+  top: calc(var(--spacing-header) + var(--spacing) * 2);
+  left: 50%;
+  z-index: 30;
+  display: flex;
+  max-width: calc(100% - var(--spacing) * 8);
+  align-items: stretch;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  translate: -50% calc(var(--spacing) * -2);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    translate var(--duration-base) var(--ease-out),
+    visibility 0s linear var(--duration-base);
+}
+
+.compact-notice[data-shown] {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    translate var(--duration-slow) var(--ease-out),
+    visibility 0s;
+}
+
+html:has(.menu[data-open='true']) .compact-notice {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.compact-notice-text {
+  display: flex;
+  align-items: center;
+  padding-left: calc(var(--spacing) * 4);
+  color: color-mix(in srgb, var(--color-bg) 70%, transparent);
+}
+
+.compact-notice-link {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1.5);
+  padding-inline: calc(var(--spacing) * 2.5) calc(var(--spacing) * 4);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color var(--duration-base) var(--ease-out);
+}
+
+.compact-notice-link > span {
+  color: var(--color-accent);
+  transition: translate var(--duration-base) var(--ease-out);
+}
+
+.compact-notice-link:hover,
+.compact-notice-link:focus-visible {
+  text-decoration-color: currentColor;
+  transition-duration: var(--duration-fast);
+}
+
+.compact-notice-link:hover > span,
+.compact-notice-link:focus-visible > span {
+  translate: calc(var(--spacing) * 0.5) 0;
+  transition-duration: var(--duration-fast);
+}
+
+.compact-notice-close {
+  display: grid;
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+  flex: none;
+  place-items: center;
+  border-left: 1px solid color-mix(in srgb, var(--color-bg) 20%, transparent);
+  color: inherit;
+}
+
+.compact-notice-x {
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: rotate var(--duration-base) var(--ease-out);
+}
+
+.compact-notice-close:hover .compact-notice-x,
+.compact-notice-close:focus-visible .compact-notice-x {
+  rotate: 90deg;
+  transition-duration: var(--duration-fast);
+}
+
+.compact-notice :focus-visible {
+  outline-color: var(--color-accent);
+  outline-offset: -3px;
+}
+
+/* On a phone the question goes; the link says it. */
+@media not all and (min-width: 30rem) {
+  .compact-notice-text {
+    display: none;
+  }
+
+  .compact-notice-link {
+    padding-left: calc(var(--spacing) * 4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compact-notice,
+  .compact-notice[data-shown] {
+    translate: -50% 0;
+  }
+
+  .compact-notice-x {
+    rotate: none !important;
+  }
+}

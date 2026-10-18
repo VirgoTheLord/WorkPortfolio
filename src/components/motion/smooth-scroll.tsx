@@ -9,7 +9,9 @@ import { loadScrollTrigger } from '@/lib/motion/gsap'
 const LERP = 0.09
 
 /* How long a key holds its pressed state before the page moves (ms): long enough
-   for the face to be seen going down, short enough to still feel immediate. */
+   for the face to be seen going down, short enough to still feel immediate. The
+   key (library/key-link.tsx) is kept for the UI library and is not on the site
+   today; this stays so it works wherever it is used. */
 const PRESS_MS = 220
 
 /* From the full-screen menu, the page starts moving this long after the menu
