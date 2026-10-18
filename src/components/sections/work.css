@@ -2,8 +2,9 @@
  * Selected Work, after the "Featured Works" section of kushbothra.com, in this
  * site's type, tokens and theme (the page's own, light or dark).
  *
- * The head: the section label (ui/section-label.tsx) and a large two-line headline, wiped in line by line the
- * way the hero's name is (motion/work-stack.tsx).
+ * The head: a large two-line headline, wiped in line by line the way the hero's
+ * name is (motion/work-stack.tsx). A small label above it said the same words,
+ * so it went (kept for the UI library, library/section-label.tsx).
  *
  * The projects: one card per project, each a folder with a numbered tab in its
  * own tone (by position: accent, ink, soft accent, surface). From lg every card
@@ -12,9 +13,10 @@
  * row of folders; the island fades a card's text as it is covered. Below lg, for
  * reduced motion and on short screens, the cards are a plain column.
  *
- * The action after the last card is the site's frame button
- * (library/frame-button.tsx), first built here after the reference's "View all
- * case studies".
+ * The section ends with the last card: the contact section follows directly, so
+ * the "Let's Talk" that once closed it only pointed at the next section. (The
+ * site's frame button, library/frame-button.tsx, was first built here after the
+ * reference's "View all case studies".)
  */
 @reference '../../app/globals.css';
 
@@ -39,7 +41,6 @@
 /* Capitals, heavy and tight, two lines; 104px at 1440 (the reference's 150px,
    brought down by request). */
 .work-heading {
-  margin-top: calc(var(--spacing) * 4);
   font-size: clamp(2.5rem, 11vw, 6.5rem);
   font-weight: 600;
   line-height: 0.8;
@@ -350,22 +351,29 @@
 @media (min-width: 64rem) {
   .work {
     padding-inline: calc(var(--spacing) * 8);
-    /* The stack's measures: where a card rests (32px clear of the floating navbar), its
-       tab, the space under it, and the card's height, as tall as the screen allows
-       up to 496px (the reference's is 628px; ours is kept compact). */
-    --work-top: calc(var(--spacing-header) + var(--spacing) * 8);
+    /* The stack's measures: the least room above a resting card (32px clear of the
+       floating navbar), its tab, the space under it, and the card's height, as tall
+       as the screen allows up to 496px (the reference's is 628px; ours is kept
+       compact). A card rests centred on the screen (tab and card together), never
+       higher than that clearance: on a tall screen it sits in the middle instead
+       of under the bar with the screen's spare height below it. */
+    --work-clear: calc(var(--spacing-header) + var(--spacing) * 8);
     --work-tab: calc(var(--spacing) * 14);
     --work-gap: calc(var(--spacing) * 6);
     --work-card: clamp(
       26rem,
-      calc(100svh - var(--work-top) - var(--work-tab) - var(--work-gap)),
+      calc(100svh - var(--work-clear) - var(--work-tab) - var(--work-gap)),
       31rem
     );
+    --work-top: max(var(--work-clear), calc((100svh - var(--work-tab) - var(--work-card)) / 2));
   }
 
+  /* Every card reserves its resting place (--work-top) above it, so the first
+     card sat that far plus 64px under the headline: a dead band of about 240px.
+     The list is pulled up by the reserve; the stack rests exactly where it did. */
   .work-list {
     gap: 0;
-    margin-top: calc(var(--spacing) * 16);
+    margin-top: calc(var(--spacing) * 16 - var(--work-top));
   }
 
   .work-item {
@@ -426,12 +434,4 @@
     position: sticky;
     top: 0;
   }
-}
-
-/* ---- The action ------------------------------------------------------------ */
-
-.work-end {
-  display: flex;
-  justify-content: center;
-  margin-top: calc(var(--spacing) * 16);
 }

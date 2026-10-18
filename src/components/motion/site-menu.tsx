@@ -30,6 +30,12 @@ const PAGE = ':scope > main, :scope > footer, :scope > a'
 /* The theme the bar takes while the menu is open: the field's own. */
 const OPEN_THEME = 'dark'
 
+/* Scrolling down hides the bar once the page is this far down (px); nearer the
+   top it always shows. A move shorter than the tolerance (px) changes nothing, so
+   a trackpad's settle or a slow drift does not flicker it. */
+const HIDE_AFTER = 120
+const HIDE_TOLERANCE = 8
+
 /* Measures where each letter sits in the real, kerned word. */
 function measure(word: Word, text: Node) {
   const range = document.createRange()
@@ -95,6 +101,8 @@ function arrange(words: Word[]) {
  *               lock, the page's inertness and whether the field takes the pointer.
  *   data-scrolled  the page has left its top (50px): the closed bar becomes a
  *               card with its contents inset.
+ *   data-hidden the closed bar has slid away: while the page scrolls down, and
+ *               over the footer.
  *   data-shown  the field is there to be seen: on from the open until the
  *               closing sequence has run all the way back.
  *
@@ -374,26 +382,59 @@ export function SiteMenu({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- applyTheme only touches refs and the DOM
   }, [])
 
-  // The bar slides away once the footer reaches the top of the screen (it would
-  // sit over the footer's first row) and comes back as the footer leaves.
-  // Keyboard focus inside the bar brings it back at once.
+  // The bar slides away while the page scrolls down, so it never sits over what
+  // is being read, and any scroll up brings it back; near the top it always
+  // shows. It also stays away while the footer is at the top of the screen (it
+  // would sit over the footer's first row). Keyboard focus inside the bar brings
+  // it back at once. Scroll is read once a frame; Lenis scrolls the window, so its
+  // smoothed scroll arrives here as ordinary scroll events.
   useEffect(() => {
-    const footer = document.querySelector('footer')
     const el = root()
-    if (!footer || !el) return
+    if (!el) return
+    const footer = document.querySelector('footer')
+    let overFooter = false
+    let down = false
+    let lastY = window.scrollY
+    let frame = 0
+    const update = () => {
+      el.dataset.hidden = String(overFooter || down)
+    }
+    const read = () => {
+      frame = 0
+      const y = window.scrollY
+      if (y <= HIDE_AFTER) {
+        down = false
+        lastY = y
+        update()
+        return
+      }
+      const delta = y - lastY
+      if (Math.abs(delta) < HIDE_TOLERANCE) return
+      down = delta > 0
+      lastY = y
+      update()
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(read)
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
-        el.dataset.hidden = String(Boolean(entry?.isIntersecting))
+        overFooter = Boolean(entry?.isIntersecting)
+        update()
       },
       // The top tenth of the screen: the footer is there once its top has passed it.
       { rootMargin: '0px 0px -90% 0px' },
     )
-    observer.observe(footer)
+    if (footer) observer.observe(footer)
     const reveal = () => {
+      down = false
       el.dataset.hidden = 'false'
     }
+    window.addEventListener('scroll', onScroll, { passive: true })
     el.addEventListener('focusin', reveal)
     return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.cancelAnimationFrame(frame)
       observer.disconnect()
       el.removeEventListener('focusin', reveal)
     }
@@ -468,7 +509,7 @@ export function SiteMenu({
     >
       <div className="menu-frame w-full pt-4">
         <div className="menu-bar pointer-events-auto relative">
-          <div aria-hidden="true" className="menu-surface absolute inset-0 bg-surface" />
+          <div aria-hidden="true" className="menu-surface absolute inset-0" />
           <div className="menu-bar-row relative grid h-full grid-cols-2 items-center lg:grid-cols-3">
             <div className="menu-brand justify-self-start">{brand}</div>
             <div className="menu-cell justify-self-end lg:justify-self-center">

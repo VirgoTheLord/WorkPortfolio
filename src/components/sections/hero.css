@@ -14,12 +14,16 @@
   --hero-edge: calc(var(--spacing) * 4);
   --hero-top: calc(var(--spacing) * 13);
   --hero-bottom: calc(var(--spacing) * 8);
-  /* The grid's mask, shared with its canvas (motion/hero-grid.tsx). */
-  --hero-grid-mask: radial-gradient(
-    ellipse 60% 55% at 50% 45%,
-    color-mix(in srgb, black 60%, transparent) 0%,
-    black 100%
-  );
+  /* The grid's mask, shared with its canvas (motion/hero-grid.tsx). The second
+     layer fades it out over the hero's last quarter: the grid is the hero's alone,
+     so it dissolves into the plain page below rather than ending on a hard line. */
+  --hero-grid-mask:
+    radial-gradient(
+      ellipse 60% 55% at 50% 45%,
+      color-mix(in srgb, black 60%, transparent) 0%,
+      black 100%
+    ),
+    linear-gradient(to bottom, black 75%, transparent 100%);
   min-height: 100svh;
   view-timeline: --hero block;
 }
@@ -103,15 +107,18 @@
 
 /* ---- Headline ----------------------------------------------------------- */
 
-/* The name in BabaPro Bold, as wide as the frame: 100cqw is the copy's width (the
-   query container) and --fit is the name's width in em in this face (3.50), plus a
-   hair so it never touches the edges. Revisit it if the name or face change. */
+/* The name in capitals, in Archivo Expanded Black (the preloader counter's
+   family), as wide as the frame: 100cqw is the copy's width (the query
+   container) and --fit is the name's width in em in this face, plus a hair so it
+   never touches the edges. Held to 42% of the screen's height so the button and
+   the scroll cue always fit under it. Revisit --fit if the name or face change. */
 .hero-title {
-  --fit: 3.6;
-  font-size: calc(100cqw / var(--fit));
-  font-weight: 700;
+  --fit: 4.35;
+  font-size: min(calc(100cqw / var(--fit)), 42svh);
+  font-weight: 900;
   line-height: 1;
   letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 /* Each line is its own box, so the wipe blocks cover exactly one line. */
@@ -142,6 +149,23 @@
   color: transparent;
 }
 
+/* With script, the plain name waits for the cells, so the entrance is one print
+   rather than the solid name showing, vanishing and printing back in (what a
+   reload without the intro did). If the cells have not taken over in 1.5s the
+   plain name shows after all; without script it is simply there. Set on the line,
+   which the text inherits from, so it never competes with the text's own
+   entrance animation (it did, and restarted it). */
+.js .hero-line:not([data-cells='on']) {
+  color: transparent;
+  animation: hero-name-fallback 0s 1.5s forwards;
+}
+
+@keyframes hero-name-fallback {
+  to {
+    color: var(--color-fg);
+  }
+}
+
 /* The wipe blocks overhang the line a little on every side. They are only seen
    while the intro runs. */
 .hero-block {
@@ -166,6 +190,83 @@
   gap: calc(var(--spacing) * 2);
   translate: -50% 0;
   color: var(--color-fg-muted);
+}
+
+/* ---- Drawing on the grid (touch screens; motion/hero-draw.tsx) ----------- */
+
+/* The trail: over the grid, under the copy, still with the page (it does not
+   drift with the copy on scroll). */
+.hero-draw {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The hint, in the empty space between the action and the scroll cue. Shown
+   only where the island runs (data-draw), after the intro, and gone after the
+   first stroke. */
+.hero-draw-hint {
+  position: absolute;
+  bottom: calc(var(--spacing) * 40);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  translate: -50% 0;
+  color: var(--color-fg-muted);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+[data-draw='on'] .hero-draw-hint {
+  opacity: 1;
+  transition-delay: 1.2s;
+}
+
+/* Three ink cells lighting up in turn, the same chase as the frame button's
+   chevrons (library/frame-button.css): the grid is something to touch. */
+.hero-draw-cells {
+  display: flex;
+  gap: calc(var(--spacing) * 0.5);
+}
+
+.hero-draw-cells > span {
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
+  background-color: var(--color-fg);
+  opacity: 0.2;
+  animation: hero-draw-chase 1.2s var(--ease-in-out) infinite;
+}
+
+.hero-draw-cells > span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.hero-draw-cells > span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+@keyframes hero-draw-chase {
+  0%,
+  60%,
+  100% {
+    opacity: 0.2;
+  }
+
+  20% {
+    opacity: 1;
+  }
+}
+
+.is-intro .hero-draw-hint,
+[data-drawn='on'] .hero-draw-hint {
+  opacity: 0;
+  transition-delay: 0s;
 }
 
 .hero-cue-line {
@@ -237,17 +338,154 @@ html.is-intro {
 
 /* The navbar waits above the screen until the page enters; the bar slides down
    and fades in as one piece (logo, menu and action together). */
-html.is-intro [data-hero-nav] {
+html:is(.is-intro, .is-enter) [data-hero-nav] {
   opacity: 0;
   transform: translateY(-100%);
 }
 
-html.is-intro [data-hero-text] {
+html:is(.is-intro, .is-enter) [data-hero-text] {
   opacity: 0;
 }
 
-html.is-intro [data-hero-actions],
-html.is-intro [data-hero-cue] {
+html:is(.is-intro, .is-enter) [data-hero-actions],
+html:is(.is-intro, .is-enter) [data-hero-cue] {
   opacity: 0;
   transform: translateY(calc(var(--spacing) * 5));
+}
+
+/* ---- The entrance on a reload (`html.is-enter`) -------------------------
+ * A reload in a tab that has seen the intro plays the hero's entrance alone, in
+ * CSS, so it starts on the first frame the browser paints (the head script in
+ * layout.tsx sets the class before that). Waiting for script cost about 0.9s
+ * of empty grid in development and 0.3s in production. Same beats and curves as
+ * the intro's entrance (motion/hero-intro.tsx, entrance()): the accent block
+ * covers the line in 0.4s accelerating (power2.in) and carries straight on out
+ * from 0.56s in 0.42s decelerating (power2.out); the ink block does the same
+ * 0.08s behind it, leaving the moment it has covered the line (0.48s), which is
+ * when the line turns on and the cells start printing (hero-cells.tsx reads this
+ * animation's start). The navbar slides down at once, the action lifts in at
+ * 0.3s and the scroll cue at 0.6s. motion/hero-intro.tsx drops the class when
+ * it is done (or on any input), leaving the final state. */
+/* Longhands throughout: the CSS build misread `animation: 0.98s linear both`
+   (the duration came out as auto, and nothing played). */
+html.is-enter .hero-block {
+  animation-duration: 0.98s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-delay: calc(var(--line, 0) * 0.15s);
+}
+
+html.is-enter .hero-block[data-hero-block='lead'] {
+  animation-name: hero-enter-lead;
+}
+
+html.is-enter .hero-block[data-hero-block='trail'] {
+  animation-name: hero-enter-trail;
+}
+
+html.is-enter [data-hero-text] {
+  animation-name: hero-enter-on;
+  animation-duration: 0.48s;
+  animation-timing-function: step-end;
+  animation-fill-mode: both;
+  animation-delay: calc(var(--line, 0) * 0.15s);
+}
+
+html.is-enter [data-hero-nav] {
+  animation-name: hero-enter-nav;
+  animation-duration: 0.9s;
+  animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  animation-fill-mode: both;
+}
+
+html.is-enter [data-hero-actions],
+html.is-enter [data-hero-cue] {
+  animation-name: hero-enter-lift;
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  animation-fill-mode: both;
+  animation-delay: 0.3s;
+}
+
+html.is-enter [data-hero-cue] {
+  animation-delay: 0.6s;
+}
+
+/* 0.4s of 0.98 is 40.8%; 0.56s is 57.1%. Transform only, from a fixed left
+   origin, so the browser can run it on the compositor, smooth while the page is
+   still starting up: leaving to the right is sliding right while shrinking
+   (translateX(100%) scaleX(0) is the block shrunk onto its right edge). A
+   version that switched transform-origin mid-animation was held on the main
+   thread and visibly stalled about a third of the way across (owner's note). */
+@keyframes hero-enter-lead {
+  0% {
+    transform: translateX(0) scaleX(0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  40.8%,
+  57.1% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  57.1% {
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  100% {
+    transform: translateX(100%) scaleX(0);
+  }
+}
+
+/* The same 0.08s later: covering 8.2%–49%, leaving 49%–91.8%. */
+@keyframes hero-enter-trail {
+  0%,
+  8.2% {
+    transform: translateX(0) scaleX(0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+
+  49% {
+    transform: translateX(0) scaleX(1);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  91.8%,
+  100% {
+    transform: translateX(100%) scaleX(0);
+  }
+}
+
+@keyframes hero-enter-on {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-enter-nav {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-enter-lift {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing) * 5));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

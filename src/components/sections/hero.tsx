@@ -1,4 +1,6 @@
+import type { CSSProperties } from 'react'
 import { HeroCells } from '@/components/motion/hero-cells'
+import { HeroDraw } from '@/components/motion/hero-draw'
 import { HeroGrid } from '@/components/motion/hero-grid'
 import { FrameButton } from '@/components/library/frame-button'
 import { hero } from '@/content/site'
@@ -11,6 +13,8 @@ import './hero.css'
  *
  * Every element carries the hooks the intro animates (components/motion/
  * hero-intro.tsx). Without the intro they are inert and this is the final state.
+ * On a reload the entrance is CSS (hero.css, `html.is-enter`), from the first
+ * paint.
  */
 export function Hero() {
   return (
@@ -20,6 +24,7 @@ export function Hero() {
       className="hero relative isolate overflow-hidden bg-canvas text-fg"
     >
       <HeroGrid />
+      <HeroDraw />
       <div className="hero-push">
         <div className="hero-frame">
           <div className="hero-copy">
@@ -28,7 +33,12 @@ export function Hero() {
                 {hero.title.map((line, i) => (
                   <span key={line}>
                     {i > 0 ? <br /> : null}
-                    <span className="hero-line">
+                    <span
+                      className="hero-line"
+                      style={{ '--line': i } as CSSProperties}
+                      // On a reload the cells may mark this line before React hydrates.
+                      suppressHydrationWarning
+                    >
                       <span data-hero-text className="hero-line-text">
                         {line}
                       </span>
@@ -52,6 +62,14 @@ export function Hero() {
                 <FrameButton label={hero.action.label} href={hero.action.href} />
               </div>
             </div>
+            <span aria-hidden="true" className="hero-draw-hint font-label text-label uppercase">
+              <span className="hero-draw-cells">
+                <span />
+                <span />
+                <span />
+              </span>
+              {hero.drawHint}
+            </span>
             <span
               aria-hidden="true"
               data-hero-cue

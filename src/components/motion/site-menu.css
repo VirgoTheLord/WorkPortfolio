@@ -51,7 +51,8 @@ html:has(.menu[data-open='true']) {
   padding-inline: var(--menu-edge);
 }
 
-/* Over the footer the bar slides away (0.4s). */
+/* Scrolling down, and over the footer, the bar slides away (0.4s); scrolling up
+   brings it back (site-menu.tsx, data-hidden). */
 .menu-frame {
   transition: transform 400ms var(--menu-ease);
 }
@@ -77,8 +78,13 @@ html:has(.menu[data-open='true']) {
 /* ---- Bar layers ---------------------------------------------------------- */
 
 /* The card behind the bar: there once the page has scrolled. Opening dissolves
-   it, so the bar sits straight on the frost. */
+   it, so the bar sits straight on the frost. The page's own tone, slightly
+   translucent, with a hairline edge: it reads as part of the page rather than a
+   grey toolbar over it (it was an opaque `surface` slab). It follows the theme
+   the bar takes, so over the dark contact section it is dark. */
 .menu-surface {
+  background-color: color-mix(in srgb, var(--color-bg) 92%, transparent);
+  border: 1px solid var(--color-rule-strong);
   opacity: 0;
   transition: opacity var(--duration-bar) var(--ease-standard);
 }
@@ -151,11 +157,13 @@ html:has(.menu[data-open='true']) {
 /* The frost: the page stays where it is and goes soft and dark beneath it.
    Translucent black over a backdrop blur, as in the reference. The blur is
    wider than the reference's 20px, which leaves the shapes of large type on a
-   light page; at 40px the page dissolves into soft light. A little darker than
-   the reference, so the small labels keep AA over a light page. Where backdrop
-   blur is not supported it is plain black. The island fades it in (autoAlpha). */
+   light page; at 40px the page dissolves into soft light. Darker than the
+   reference: at 62% black a light page came through as a muddy mid-grey with the
+   hero's large type smeared across it; at 88% it is a dark frosted field with the
+   page a faint shadow beneath. Where backdrop blur is not supported it is plain
+   black. The island fades it in (autoAlpha). */
 .menu-frost {
-  background-color: color-mix(in srgb, var(--color-black) 62%, transparent);
+  background-color: color-mix(in srgb, var(--color-black) 88%, transparent);
   -webkit-backdrop-filter: blur(40px);
   backdrop-filter: blur(40px);
 }

@@ -7,6 +7,8 @@ export type HeroContent = {
   action: { label: string; href: string }
   /** The tools this site is built with, listed in the footer. */
   stack: { label: string; items: readonly string[] }
+  /** The prompt to draw on the grid, shown on touch screens only. */
+  drawHint: string
 }
 
 export type AboutContent = {
@@ -87,13 +89,10 @@ export type ProjectMeta = {
 }
 
 export type WorkContent = {
-  label: string
   /** The headline, one entry per line. */
   headline: readonly string[]
   /** The word on each project's tab, before its number ("Project 01"). */
   projectLabel: string
-  /** The call to action after the last project. */
-  action: { label: string; href: string }
 }
 
 export type ContactContent = {
@@ -102,6 +101,8 @@ export type ContactContent = {
   email: string
   /** The departures board: what clicking it does, how to, and the confirmation. */
   board: { copyLabel: string; hint: string; touchHint: string; done: string }
+  /** The button under the board that opens the mail app. */
+  write: string
 }
 
 export type FooterContent = {
@@ -112,6 +113,8 @@ export type FooterContent = {
   contactLabel: string
   /** The two typefaces the site is actually set in. */
   typefaces: readonly string[]
+  /** The contact column's mail link. */
+  email: string
   toTop: string
 }
 
@@ -139,6 +142,8 @@ export type SiteConfig = {
   name: string
   /** The logo: a short mark set in the mark face (Deutsch Gothic). */
   mark: string
+  /** Profiles elsewhere (LinkedIn), each a label and its address. */
+  profiles: readonly NavItem[]
   role: string
   year: string
   nav: readonly NavItem[]

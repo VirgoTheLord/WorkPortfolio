@@ -14,28 +14,27 @@ type ContactBoardProps = {
   done: string
 }
 
-/* Each tile runs through a few characters before it lands (more for later
-   tiles, a little more for every fifth), one tile after another. */
-const CHARS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@.-'
+/* On a copy each cell runs through a few characters before it lands (a little
+   more for every fifth), one cell after another. Lowercase: it is an address. */
+const CHARS = ' abcdefghijklmnopqrstuvwxyz0123456789@.-'
 const FLIP_MS = 120
-const STAGGER_MS = 45
 const QUICK_STAGGER_MS = 25
 /* How long COPIED stays up before the address flips back. */
 const HOLD_MS = 1800
 
 /*
- * The contact section's departures board (contact.css): the email address as a
- * row of split-flap tiles, and a real button. Clicking or tapping it copies the
+ * The contact section's departures board (contact.css): the email address, one
+ * monospace cell per character, and a real button. Clicking or tapping it copies the
  * address, the board flipping to COPIED and back; the hint under it says how and
  * then confirms, and a polite live region says so to a screen reader. The
  * button's accessible name is the action and the address, so it is clear what it
  * does without the picture. Writing (the mail app) is the section's own link
  * beside it, not this.
  *
- * The tiles are rendered with the address on the server, so without script, with
- * reduced motion, or when the section is already on screen, the address is
- * simply there. The tiles flip in once, as the section arrives. On a phone the
- * board breaks at the @ into two rows (contact.css), so every tile stays legible.
+ * The address is rendered on the server and never hidden: there is no entrance,
+ * because the address is the one thing the section exists for and must be
+ * readable the moment it is on screen. On a phone the board breaks at the @ into
+ * two rows (contact.css), so the letters stay large.
  */
 export function ContactBoard({ email, copyLabel, hint, touchHint, done }: ContactBoardProps) {
   const ref = useRef<HTMLButtonElement>(null)
@@ -44,7 +43,7 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
 
   const at = email.indexOf('@')
   const rows = at > 0 ? [email.slice(0, at), email.slice(at)] : [email]
-  const chars = Array.from(email.toUpperCase())
+  const chars = Array.from(email)
   const longest = Math.max(...rows.map((row) => row.length))
 
   const later = (fn: () => void, ms: number) => {
@@ -58,13 +57,14 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
   const faces = () =>
     Array.from(ref.current?.querySelectorAll<HTMLElement>('[data-board-face]') ?? [])
 
-  /* Flip every tile to `text` (one character per tile), each a little after the last. */
+  /* Flip every cell to `text` (one character per cell), each a little after the last. */
   const flipTo = (text: string[], stagger: number) => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     faces().forEach((face, i) => {
       const target = text[i] ?? ' '
       if (reduced) {
         face.textContent = target
+        face.toggleAttribute('data-at', target === '@')
         return
       }
       const steps = 3 + (i % 5)
@@ -81,14 +81,17 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
           ],
           { duration: FLIP_MS, easing: 'linear' },
         )
-        later(() => (face.textContent = char), FLIP_MS / 2)
+        later(() => {
+          face.textContent = char
+          face.toggleAttribute('data-at', char === '@')
+        }, FLIP_MS / 2)
         if (k++ < steps) later(flip, FLIP_MS)
       }
       later(flip, i * stagger)
     })
   }
 
-  /* A message across the tiles: centred in the longer row when the board is in
+  /* A message across the cells: centred in the longer row when the board is in
      two rows (a phone), across the whole board otherwise. */
   const message = (word: string) => {
     const stacked = window.matchMedia('not all and (min-width: 48rem)').matches
@@ -105,32 +108,10 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
     return text
   }
 
-  // The entrance: only when the board is still below the screen at mount.
+  // Pending flips must not fire after the section unmounts.
   useEffect(() => {
-    const board = ref.current
     const pending = timers.current
-    if (!board || !('IntersectionObserver' in window)) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (board.getBoundingClientRect().top < window.innerHeight) return
-    faces().forEach((face) => (face.textContent = ' '))
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return
-        observer.disconnect()
-        flipTo(chars, STAGGER_MS)
-      },
-      // Once most of the board is on screen (it sits at the section's foot).
-      { threshold: 0.6 },
-    )
-    observer.observe(board)
-    return () => {
-      observer.disconnect()
-      pending.forEach((id) => window.clearTimeout(id))
-      pending.clear()
-      faces().forEach((face, i) => (face.textContent = chars[i] ?? ' '))
-    }
-    // The address is fixed for the life of the page.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => pending.forEach((id) => window.clearTimeout(id))
   }, [])
 
   const copy = async () => {
@@ -154,7 +135,7 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
     timers.current.forEach((id) => window.clearTimeout(id))
     timers.current.clear()
     setCopied(true)
-    flipTo(message(done.toUpperCase()), QUICK_STAGGER_MS)
+    flipTo(message(done.toLowerCase()), QUICK_STAGGER_MS)
     later(() => {
       setCopied(false)
       flipTo(chars, QUICK_STAGGER_MS)
@@ -174,12 +155,13 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
       >
         {rows.map((row) => (
           <span key={row} aria-hidden="true" className="board-row">
-            {Array.from(row.toUpperCase()).map((char) => {
+            {Array.from(row).map((char) => {
               const i = index++
               return (
                 <span key={i} className="board-tile">
                   <span
                     data-board-face
+                    data-at={char === '@' ? '' : undefined}
                     className="board-face"
                     style={{ '--i': i } as CSSProperties}
                   >

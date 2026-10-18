@@ -1,7 +1,7 @@
 import { ContactBoard } from '@/components/motion/contact-board'
 import { HeadlineWipe } from '@/components/motion/headline-wipe'
-import { KeyLink } from '@/components/library/key-link'
-import { contact, menu } from '@/content/site'
+import { FrameButton } from '@/components/library/frame-button'
+import { contact } from '@/content/site'
 import './contact.css'
 
 /*
@@ -10,7 +10,7 @@ import './contact.css'
  * One column, centred, read top to bottom the way a visitor uses it: the
  * invitation, one quiet line (the heading); the address, set large as a board
  * that copies itself when clicked, with the hint right under it
- * (motion/contact-board.tsx); then the key that opens their mail app. Copying
+ * (motion/contact-board.tsx); then the frame button that opens their mail app. Copying
  * and writing are two clearly separate actions. Nothing else: the footer,
  * directly below, carries the name and the rest.
  */
@@ -34,7 +34,7 @@ export function Contact() {
         done={contact.board.done}
       />
 
-      <KeyLink label={menu.action.label} href={`mailto:${contact.email}`} />
+      <FrameButton label={contact.write} href={`mailto:${contact.email}`} />
     </section>
   )
 }

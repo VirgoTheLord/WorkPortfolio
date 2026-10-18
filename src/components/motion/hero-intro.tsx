@@ -21,15 +21,29 @@ const DISC_GAP = 0.06
    The count is an odometer: every column slides up continuously, the units
    through every number, the tens in proportion, on one in-out curve, and the
    ring's comet runs on the same curve, closing into the ring as 100 lands. */
-const COUNT = 3.9
+const COUNT = 2.6
 /* 100 has landed and holds for a beat, then the ring contracts onto the middle
    zero. */
-const CONTRACT = COUNT + 0.35
-const CONTRACT_DURATION = 0.85
+const CONTRACT = COUNT + 0.3
+const CONTRACT_DURATION = 0.75
 /* The reveal is one growth, from a point at the zero's centre to past the
    corners, on one curve; it starts just before the ring lands, so the ring
    never stops. */
-const REVEAL_DURATION = 1.7
+const REVEAL_DURATION = 1.4
+/* Each status line stays up at least this long (s): as many of the loader's
+   lines are shown as fit the count, picked evenly from first to last. */
+const STATUS_HOLD = 0.5
+/* Once a tab has seen the intro, reloads and returns skip it (layout.tsx reads
+   this key before first paint); the hero's own entrance still plays. */
+const SEEN_KEY = 'intro-seen'
+
+const statusLines = (() => {
+  const all = loader.status
+  const fit = Math.max(1, Math.min(all.length, Math.floor(COUNT / STATUS_HOLD)))
+  if (fit >= all.length) return all
+  if (fit === 1) return [all[0]!]
+  return Array.from({ length: fit }, (_, i) => all[Math.round((i * (all.length - 1)) / (fit - 1))]!)
+})()
 
 /* From 768px the navbar and the copy wait 0.35s more (the reference's lead). */
 const ART_LEAD = 0.35
@@ -40,7 +54,7 @@ const COPY = 0.3
  * Preloader, page reveal and hero entrance as ONE timeline.
  *
  *   Count    0.00   the counter in the ring runs from 01 to 100 as an odometer
- *                   (3.9s, power3.inOut): each column is a strip of figures
+ *                   (2.6s, power3.inOut): each column is a strip of figures
  *                   sliding up behind its slot, the units through every
  *                   number, the tens in proportion, so digits leave over the
  *                   top as the next rise from below; the 1 of 100 rises with
@@ -48,41 +62,45 @@ const COPY = 0.3
  *                   faint track of itself: a bright arc orbits (two turns,
  *                   faster as it goes) with a tail growing from 50 degrees to
  *                   the whole circle, so it catches its own tail as 100 lands
- *   (0.3 on)        a status line under the counter rises in; its line rolls
- *                   up at even stretches of the count and lands on a greeting
- *                   as 100 does; it leaves just before the ring moves
- *   (0.4 on)        the AW logo rises in right above the ring, a letter at a
- *                   time (0.9s each, power3.out, 0.25s apart, from a mask), and
+ *   (0.15 on)       a status line under the counter rises in; its line rolls
+ *                   up at even stretches of the count (as many of the loader's
+ *                   lines as stay up 0.5s each) and lands on a greeting as 100
+ *                   does; it leaves just before the ring moves
+ *   (0.15 on)       the AW logo rises in right above the ring, a letter at a
+ *                   time (0.6s each, power3.out, 0.15s apart, from a mask), and
  *                   stays until the growing window covers it
- *   Contract 4.25   100 has held for 0.35s; the ring contracts onto the middle
- *                   zero's outline (0.85s, power3.inOut), its corners tightening
+ *   Contract 2.90   100 has held for 0.3s; the ring contracts onto the middle
+ *                   zero's outline (0.75s, power3.inOut), its corners tightening
  *                   from a circle to the zero's; the digits never move
- *   Exit     4.25   as the ring starts to shrink the letters drop back down
- *                   behind their masks, A then W (0.6s, power3.in, 0.12s apart),
+ *   Exit     2.90   as the ring starts to shrink the letters drop back down
+ *                   behind their masks, A then W (0.4s, power3.in, 0.08s apart),
  *                   the entry in reverse; gone before the ring lands
- *   Reveal   4.90   one growth begins (1.7s,
+ *   Reveal   3.55   one growth begins (1.4s,
  *                   power4.inOut): a window onto the hero opens from a point at
  *                   the zero's centre, grows out through the zero (taking its
  *                   ink with it) to the ring, and from there the ring and the
  *                   window carry on together, past the farthest corner. One
  *                   curve, so it never stops or changes gear at the zero
- *   Enter    6.60   the hero is fully revealed and the page enters
+ *   Enter    4.95   the hero is fully revealed and the page enters
  *            +0.35  (from 768px; at once below) the navbar slides down and fades
  *                   in as one piece (0.9s, power3.out): logo, menu and action
  *                   arrive together
  *            +0.65  the copy (`t` below): each headline line is wiped by an
  *                   accent block and a text-coloured block that cross it and
- *                   leave (0.45s each, power3.inOut; lines 0.15s apart), the
+ *                   leave in one continuous pass (0.4s in on power2.in, 0.42s out on
+ *                   power2.out, no hold; lines 0.15s apart), the
  *                   line switching on while it is covered; the line under it
  *                   rises from its mask at t+0.15 (0.8s, power3.out); the
  *                   actions lift in at t+0.3 (0.6s, power3.out)
- *   Settle   ~8.6   everything has landed
+ *   Settle   ~7.0   everything has landed
  *
  * The hero entrance (from Enter) is the reference's own: durations and eases
  * from its code, the entry beats measured frame by frame against it. The loader
  * is this site's own.
  *
- * Runs only when <html> has .is-intro (inline script in layout.tsx). Any input
+ * Runs only when <html> has .is-intro (inline script in layout.tsx): once per
+ * tab, so a reload or a return to the home page goes straight to the hero's own
+ * entrance (it was 6.6s to the hero on every load). Any input
  * (wheel, touch, key) fast-forwards it. If anything fails, the page is simply
  * shown in its final state.
  */
@@ -93,7 +111,14 @@ export function HeroIntro() {
     const root = document.documentElement
     const overlay = overlayRef.current
     const hero = document.querySelector<HTMLElement>('[data-hero]')
-    if (!overlay || !root.classList.contains('is-intro')) return
+    if (!overlay) return
+    // A reload in a tab that has seen the intro: the hero's entrance alone,
+    // normally already started when this module ran.
+    if (root.classList.contains('is-enter')) {
+      startEnter()
+      return
+    }
+    if (!root.classList.contains('is-intro')) return
     if (!hero) {
       root.classList.remove('is-intro')
       return
@@ -146,6 +171,11 @@ export function HeroIntro() {
       .then(([gsap]) => {
         if (cancelled || !root.classList.contains('is-intro')) return
         window.clearTimeout(giveUp)
+        try {
+          sessionStorage.setItem(SEEN_KEY, '1')
+        } catch {
+          // Storage blocked: the intro simply plays again next time.
+        }
         const ctx = gsap.context(() => {
           timeline = build(gsap, overlay, hero, finish)
         })
@@ -193,7 +223,7 @@ export function HeroIntro() {
         <p data-intro-status className="intro-status">
           <span className="intro-status-window">
             <span data-intro-status-strip className="intro-status-strip">
-              {[...loader.status, loader.done].map((line) => (
+              {[...statusLines, loader.done].map((line) => (
                 <span key={line} className="intro-status-line">
                   {line}
                 </span>
@@ -211,6 +241,40 @@ export function HeroIntro() {
       <div data-intro-ring className="intro-ring" />
     </div>
   )
+}
+
+/* The entrance alone (`is-enter`) is CSS (hero.css): it starts on the first
+   paint, where waiting for script left about 0.9s of empty grid in development
+   (measured in the owner's browser). This only ends it: the class comes off when
+   the last piece has landed, or at once on any input, leaving the final state.
+   Runs once per page load, outside React's lifecycle. */
+const ENTER_MS = 1300
+let entering = false
+function startEnter() {
+  const root = document.documentElement
+  if (entering || !root.classList.contains('is-enter')) return
+  entering = true
+  root.classList.add('intro-live')
+  const lines = document.querySelectorAll('[data-hero] .hero-line').length
+  const finish = () => {
+    window.clearTimeout(timer)
+    inputs.forEach((type) => window.removeEventListener(type, finish))
+    root.classList.remove('is-enter', 'intro-live')
+  }
+  const inputs = ['wheel', 'touchmove', 'keydown'] as const
+  inputs.forEach((type) => window.addEventListener(type, finish, { passive: true }))
+  const timer = window.setTimeout(finish, ENTER_MS + Math.max(0, lines - 1) * 150)
+}
+
+if (typeof window !== 'undefined') {
+  const early = () => {
+    startEnter()
+    // The full intro waits for its overlay to mount, but GSAP can come now.
+    if (document.documentElement.classList.contains('is-intro')) void loadGsap().catch(() => {})
+  }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', early, { once: true })
+  else early()
 }
 
 /* The counter: each slot holds a strip of digits (the island adds the rest of
@@ -257,12 +321,6 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   const statusEl = all('[data-intro-status]', overlay)[0]
   const glyphs = all('[data-intro-letter] > span', overlay)
   const statusStrip = all('[data-intro-status-strip]', overlay)[0]
-
-  // The navbar lives in the header, outside the hero.
-  const nav = all('[data-hero-nav]', document.body)
-  const lines = all('.hero-line', hero)
-  const cue = all('[data-hero-cue]', hero)
-  const actions = all('[data-hero-actions]', hero)
 
   /* Every `from` below carries y: 0. The CSS starting states are percentage
      translates, which GSAP reads back as a pixel y; without the reset that y
@@ -364,12 +422,12 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     tl.fromTo(
       statusEl,
       { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
-      0.3,
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
+      0.15,
     )
   }
   if (statusEl) {
-    tl.to(statusEl, { opacity: 0, y: -6, duration: 0.35, ease: 'power2.in' }, CONTRACT - 0.1)
+    tl.to(statusEl, { opacity: 0, y: -6, duration: 0.25, ease: 'power2.in' }, CONTRACT - 0.1)
   }
 
   /* The corner brackets draw out of their corners as the count starts. */
@@ -378,8 +436,8 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
     tl.fromTo(
       corners,
       { scale: 0 },
-      { scale: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08 },
-      0.2,
+      { scale: 1, duration: 0.6, ease: 'power3.out', stagger: 0.05 },
+      0.1,
     )
   }
 
@@ -387,13 +445,13 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   tl.fromTo(
     glyphs,
     { yPercent: 160, y: 0, opacity: 1 },
-    { yPercent: 0, duration: 0.9, ease: 'power3.out', stagger: 0.25 },
-    0.4,
+    { yPercent: 0, duration: 0.6, ease: 'power3.out', stagger: 0.15 },
+    0.15,
   )
 
   /* The exit mirrors the entry: as the ring starts to shrink, each letter drops
      back down behind its mask, A then W, so the mark is gone before the ring lands. */
-  tl.to(glyphs, { yPercent: 160, duration: 0.6, ease: 'power3.in', stagger: 0.12 }, CONTRACT)
+  tl.to(glyphs, { yPercent: 160, duration: 0.4, ease: 'power3.in', stagger: 0.08 }, CONTRACT)
 
   const steps = statusStrip?.children.length ?? 0
   if (statusStrip && steps > 1) {
@@ -413,7 +471,7 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
       const at = i === steps - 1 ? COUNT : timeAt(1 + (i * 99) / (steps - 1))
       tl.to(
         statusStrip,
-        { yPercent: (-100 * i) / steps, duration: 0.5, ease: 'power3.out' },
+        { yPercent: (-100 * i) / steps, duration: 0.35, ease: 'power3.out' },
         Math.min(at, COUNT),
       )
     }
@@ -546,9 +604,35 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   )
   tl.set(overlay, { autoAlpha: 0 }, enter)
 
+  entrance(gsap, tl, hero, enter, true)
+
+  return tl
+}
+
+/*
+ * The hero's entrance, shared by the full intro (after the reveal) and by a
+ * reload (`is-enter`: no preloader, the entrance alone, at once): the navbar
+ * slides down, each headline line is wiped by an accent block and a
+ * text-coloured block (the cells print in behind them, hero-cells.tsx), the
+ * action and the scroll cue lift in. `lead` is the reference's hold-back from
+ * 768px, only after the reveal; a reload starts the wipe at once.
+ */
+function entrance(
+  gsap: Gsap,
+  tl: ReturnType<Gsap['timeline']>,
+  hero: HTMLElement,
+  enter: number,
+  afterReveal: boolean,
+) {
+  const all = (selector: string, scope: ParentNode) =>
+    Array.from(scope.querySelectorAll<HTMLElement>(selector))
+  const nav = all('[data-hero-nav]', document.body)
+  const lines = all('.hero-line', hero)
+  const cue = all('[data-hero-cue]', hero)
+  const actions = all('[data-hero-actions]', hero)
   /* Enter. From 768px the navbar and the copy hold back a little longer, as the
      reference's do. */
-  const lead = window.matchMedia('(min-width: 48rem)').matches ? ART_LEAD : 0
+  const lead = afterReveal && window.matchMedia('(min-width: 48rem)').matches ? ART_LEAD : 0
   tl.fromTo(
     nav,
     { yPercent: -100, y: 0, opacity: 0 },
@@ -559,25 +643,32 @@ function build(gsap: Gsap, overlay: HTMLElement, hero: HTMLElement, onDone: () =
   /* Headline. Per line, an accent block runs across it and a text-coloured block
      follows 0.1s behind; the line switches on under them, and they leave to the
      right in the same order. */
-  const t = enter + lead + COPY
-  const cross = { duration: 0.45, ease: 'power3.inOut' }
+  const t = enter + lead + (afterReveal ? COPY : 0)
+  // One continuous pass, like a bar sweeping through: each block accelerates as it
+  // covers the line and carries straight on, decelerating as it leaves, with no
+  // hold between. In-out eases on both halves stopped the blocks dead, held the
+  // line fully covered for about 120ms and restarted them slowly: it read as a
+  // stall about a third of the way in (owner's note).
+  const cover = { duration: 0.4, ease: 'power2.in' }
+  const clear = { duration: 0.42, ease: 'power2.out' }
   lines.forEach((line, i) => {
     const text = all('[data-hero-text]', line)
     const accent = all('[data-hero-block="lead"]', line)
     const ink = all('[data-hero-block="trail"]', line)
     const at = t + i * 0.15
-    tl.fromTo(accent, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, ...cross }, at)
-    tl.fromTo(ink, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, ...cross }, at + 0.1)
-    tl.set(text, { opacity: 1 }, at + 0.5)
-    tl.set([...accent, ...ink], { transformOrigin: '100% 50%' }, at + 0.5)
-    tl.to(ink, { scaleX: 0, ...cross }, at + 0.5)
-    tl.to(accent, { scaleX: 0, ...cross }, at + 0.6)
+    tl.fromTo(accent, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, ...cover }, at)
+    tl.fromTo(ink, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, ...cover }, at + 0.08)
+    // The line turns on the instant the ink block has covered it.
+    tl.set(text, { opacity: 1 }, at + 0.48)
+    // When the line turned on, for cells that mount late (hero-cells.tsx).
+    tl.call(() => (line.dataset.onAt = String(performance.now())), undefined, at + 0.48)
+    tl.set([...accent, ...ink], { transformOrigin: '100% 50%' }, at + 0.48)
+    tl.to(ink, { scaleX: 0, ...clear }, at + 0.48)
+    tl.to(accent, { scaleX: 0, ...clear }, at + 0.56)
   })
 
   /* The action lifts in behind the headline, and the scroll cue after it. */
   const lift = { opacity: 0, y: 20 }
   tl.fromTo(actions, lift, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, t + 0.3)
   tl.fromTo(cue, lift, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, t + 0.6)
-
-  return tl
 }

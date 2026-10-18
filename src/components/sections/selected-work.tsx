@@ -1,9 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { FrameButton } from '@/components/library/frame-button'
 import { WorkStack } from '@/components/motion/work-stack'
-import { SectionLabel } from '@/components/ui/section-label'
 import { projects } from '@/content/projects'
 import { work } from '@/content/site'
 import './work.css'
@@ -39,7 +37,6 @@ export function SelectedWork() {
     >
       <WorkStack>
         <header className="work-head">
-          <SectionLabel name={work.label} />
           <h2 id="work-heading" className="work-heading font-display">
             {work.headline.map((line) => (
               <span key={line} className="work-heading-line">
@@ -132,10 +129,6 @@ export function SelectedWork() {
             )
           })}
         </ol>
-
-        <div className="work-end">
-          <FrameButton label={work.action.label} href={work.action.href} />
-        </div>
       </WorkStack>
     </section>
   )

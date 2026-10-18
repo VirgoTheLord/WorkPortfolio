@@ -52,16 +52,18 @@ const archivoExpanded = localFont({
   fallback: ['sans-serif'],
 })
 
-/* The hero name's face, BabaPro Bold. One word at display size; preloaded,
-   because it is the first thing on the home page. Served as the TTF it came in
-   (36 KB). */
-const babaPro = localFont({
-  src: '../fonts/baba-pro-bold.ttf',
+/* The hero name's face: Archivo again, its Expanded instance (width 125) at
+   weight 900 (Black), the preloader counter's family, so the loader's 100 and the
+   name share one voice. Cut down to the capitals A–Z (2.5 KB WOFF2): the name is
+   set in capitals (hero.css). Preloaded, because it is the first thing on the
+   home page. SIL OFL 1.1, src/fonts/licenses/OFL-archivo.txt. */
+const archivoExpandedBlack = localFont({
+  src: '../fonts/archivo-expanded-black-caps.woff2',
   variable: '--font-hero-face',
-  weight: '700',
+  weight: '900',
   display: 'swap',
   adjustFontFallback: false,
-  fallback: ['sans-serif'],
+  fallback: ['Arial Black', 'sans-serif'],
 })
 
 export const fontVariables = [
@@ -69,5 +71,5 @@ export const fontVariables = [
   azeretMono.variable,
   deutschGothic.variable,
   archivoExpanded.variable,
-  babaPro.variable,
+  archivoExpandedBlack.variable,
 ].join(' ')

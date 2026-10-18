@@ -19,9 +19,12 @@ const sizes = { default: '', compact: 'key-compact' } as const
  * as a key seen from above; it lifts off the block when hovered and presses into
  * it when pressed (key-link.css). It is a real link (a plain anchor in the page, next/link
  * to another route; lib/in-page-href.ts), so hash links and mailto: work as anywhere, without JavaScript, and the label is its accessible
- * name. Used for the contact section's and the footer's calls to action (the
- * site's main CTAs use the frame button, frame-button.tsx); only the label,
- * destination and (in small type) the size change.
+ * name. Only the label, destination and (in small type) the size change.
+ *
+ * Not on the site: kept for the UI library. It was the contact section's and the
+ * footer's call to action until the site settled on one button design, the frame
+ * button (frame-button.tsx). The press hold it relies on still lives in
+ * motion/smooth-scroll.tsx (any `a.key`).
  */
 export function KeyLink({ label, size = 'default', className = '', ...props }: KeyLinkProps) {
   const classes = `key ${sizes[size]} ${className}`

@@ -2,15 +2,18 @@
  * Contact (contact.tsx): the dark field, one screen tall from md, one centred
  * column: the invitation as a single quiet line (its second part, "write to
  * me.", in the accent; two lines on a phone), the departures board large in the
- * middle with its hint centred right under it, and the key below. The orange
+ * middle with its hint centred right under it, and the frame button ("Write an email") below. The orange
  * footer follows.
  *
- * The board (motion/contact-board.tsx): one tile per character, accent tiles
- * with ink letters, an ink hairline across each tile's middle where its flaps
- * meet; letters flash the light tone as they turn. Tiles share the width: in one
- * row from md (--n tiles), in two rows broken at the @ below it (--m, the longer
- * row), so a phone's tiles stay legible; never wider than 4.5rem. The board is a
- * button: it copies the address (the hint under it says so).
+ * The board (motion/contact-board.tsx): the address in lowercase, one cell per
+ * character in the label face (monospace, so the cells are its own advance and
+ * the address reads as one word), the field's text colour with the @ in the
+ * accent; letters catch the accent as they turn. Cells share the width: in
+ * one row from md (--n cells), in two rows broken at the @ below it (--m, the
+ * longer row), so a phone's letters stay large; never wider than 3rem. It was a
+ * row of orange uppercase tiles, which made the one thing this section is for
+ * the hardest thing on the page to read. The board is a button: it copies the
+ * address (the hint under it says so).
  */
 @reference '../../app/globals.css';
 
@@ -37,8 +40,10 @@
 }
 
 .board {
-  --gap: calc(var(--spacing) * 1);
-  --tile: min(4.5rem, calc((100cqw - (var(--m) - 1) * var(--gap)) / var(--m)));
+  /* Azeret Mono's advance width, in em. */
+  --board-advance: 0.65;
+  --gap: 0px;
+  --tile: min(3rem, calc(100cqw / var(--m)));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -60,26 +65,17 @@
 }
 
 .board-tile {
-  position: relative;
   display: grid;
   width: var(--tile);
-  aspect-ratio: 3 / 4.2;
   place-items: center;
-  background-color: var(--color-accent);
-  color: var(--color-black);
+  color: var(--color-fg);
   font-family: var(--font-label);
-  font-size: calc(var(--tile) * 0.62);
-  line-height: 1;
+  /* The cell is the mono's own advance (--board-advance em), so the letters sit
+     at their natural spacing. */
+  font-size: calc(var(--tile) / var(--board-advance));
+  font-weight: 400;
+  line-height: 1.2;
   perspective: calc(var(--tile) * 6);
-}
-
-/* Where the two flaps meet. */
-.board-tile::after {
-  content: '';
-  position: absolute;
-  inset: 50% 0 auto;
-  height: 1px;
-  background-color: color-mix(in srgb, var(--color-black) 55%, transparent);
 }
 
 .board-face {
@@ -88,8 +84,13 @@
   transform-origin: 50% 50%;
 }
 
-/* A pointer over the board (or focus on it): each tile flips over on its middle,
-   one after another, catching the light tone as it turns, as the frame button's
+.board-face[data-at] {
+  color: var(--color-accent);
+}
+
+/* A pointer over the board (or focus on it): each letter flips over on its middle,
+   one after another, catching the accent as it turns (the letters are already the
+   light tone), as the frame button's
    letters do (library/frame-button.css). */
 @media (hover: hover) and (pointer: fine) {
   .board:hover .board-face {
@@ -110,12 +111,12 @@
 
   50% {
     transform: rotateX(-90deg);
-    color: var(--color-white);
+    color: var(--color-accent);
   }
 
   51% {
     transform: rotateX(90deg);
-    color: var(--color-white);
+    color: var(--color-accent);
   }
 
   100% {
@@ -167,7 +168,7 @@
 
 @media (min-width: 48rem) {
   .board {
-    --tile: min(4.5rem, calc((100cqw - (var(--n) - 1) * var(--gap)) / var(--n)));
+    --tile: min(3rem, calc(100cqw / var(--n)));
     flex-direction: row;
     justify-content: center;
   }
@@ -185,9 +186,14 @@
   }
 }
 
+/* From lg the section is as tall as its content with generous room (128px above
+   the header's clearance and below): forced to a full screen, the centred column
+   left about 300px of empty dark field above it and below it. */
 @media (min-width: 64rem) {
   .contact {
-    padding-inline: calc(var(--spacing) * 8);
+    min-height: auto;
+    padding: calc(var(--spacing-header) + var(--spacing) * 32) calc(var(--spacing) * 8)
+      calc(var(--spacing) * 32);
   }
 
   .contact-statement {

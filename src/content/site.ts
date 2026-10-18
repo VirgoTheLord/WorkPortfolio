@@ -19,53 +19,49 @@ export const hero = {
   title: ['Alwin'],
   action: { label: 'See What I Build', href: '#work' },
   stack: { label: 'Built with', items: ['Next.js', 'React', 'TypeScript', 'GSAP'] },
+  drawHint: 'Drag to draw',
 } satisfies HeroContent
 
 /*
- * About copy. PLACEHOLDER: written from the values stated in the project brief
- * (frontend focus, interaction, visual craft, performance, accessibility, few
- * dependencies). It makes no claims about employers, years, clients or results.
- * Replace with final wording.
+ * About copy. The statement is the owner's; the details are facts from the owner's
+ * LinkedIn profile (October 2026): the current role, the degree, the city.
  */
 export const about = {
   label: 'About',
   statement: 'I make interfaces where engineering and visual craft meet.',
   details: [
-    { term: 'Focus', detail: 'Frontend engineering' },
-    { term: 'Interests', detail: 'Interaction, visual craft' },
-    { term: 'Approach', detail: 'Performance and accessibility first' },
+    { term: 'Currently', detail: 'Software Engineer in Test at SOTI' },
+    { term: 'Studied', detail: 'B.Tech in Computer Science, MITS' },
+    { term: 'Based in', detail: 'Ernakulam, Kerala' },
   ],
 } satisfies AboutContent
 
 export const work = {
-  label: 'Selected Work',
   headline: ['Selected', 'work'],
   projectLabel: 'Project',
-  action: { label: "Let's Talk", href: '/#contact' },
 } satisfies WorkContent
 
 /*
- * Contact. PLACEHOLDER: no contact details exist in the project yet, so the
- * address below is deliberately fake (example.com is a reserved domain) and must
- * be replaced before launch. The statement makes no claim about availability.
+ * Contact: the owner's public address (from the owner's LinkedIn profile's contact
+ * details). The statement makes no claim about availability. The phone number
+ * on that profile is deliberately not published here.
  */
 export const contact = {
   statement: ['If something here caught your eye,', 'write to me.'],
-  email: 'your-email@example.com',
+  email: 'alwinabymathew@gmail.com',
   board: {
     copyLabel: 'Copy email address',
     hint: 'Click to copy',
     touchHint: 'Tap to copy',
     done: 'Copied',
   },
+  write: 'Write an email',
 } satisfies ContactContent
 
 /*
- * Footer. Only facts the project already holds: the name, role and year from
- * `site`, the existing navigation, the stack from the hero, and the two typefaces
- * the site is set in. There are no social profiles, no location and no
- * availability in the project, so none are listed (and no live clock stands in
- * for them).
+ * Footer. Only facts the project holds: the name, role and year from `site`, the
+ * existing navigation, the stack from the hero, the two typefaces the site is set
+ * in, and the owner's profiles (`site.profiles`). No live clock or availability.
  */
 /*
  * The preloader's voice: a status line under the counter, dry and a little
@@ -92,6 +88,7 @@ export const footer = {
   typefacesLabel: 'Typefaces',
   contactLabel: 'Contact',
   typefaces: ['Bricolage Grotesque', 'Azeret Mono'],
+  email: 'Email',
   toTop: 'Back to top',
 } satisfies FooterContent
 
@@ -103,6 +100,8 @@ export const footer = {
 export const site = {
   name: 'Alwin Aby Mathew',
   mark: 'AW',
+  /** Profiles elsewhere, linked from the footer. */
+  profiles: [{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/alwin-aby-mathew/' }],
   role: 'Software engineer',
   year: '2026',
   nav: [
