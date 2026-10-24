@@ -2,6 +2,8 @@ import type {
   AboutContent,
   CompactNoticeContent,
   ContactContent,
+  EducationItem,
+  ExperienceItem,
   FooterContent,
   HeroContent,
   LoaderContent,
@@ -24,16 +26,31 @@ export const hero = {
 } satisfies HeroContent
 
 /*
- * About copy. The statement is the owner's; the details are facts from the owner's
- * LinkedIn profile (October 2026): the current role, the degree, the city.
+ * The owner's role, degree and city, from the owner's LinkedIn profile (October
+ * 2026). The one record of them: the full site's About and the compact site both
+ * read these. No dates are held, so none are shown.
  */
+export const experience = [
+  { org: 'SOTI', role: 'Software Engineer in Test', current: true },
+] as const satisfies readonly ExperienceItem[]
+
+export const education = [
+  { school: 'MITS', degree: 'B.Tech', field: 'Computer Science' },
+] as const satisfies readonly EducationItem[]
+
+export const place = 'Ernakulam, Kerala'
+
+const [job] = experience
+const [degree] = education
+
+/* About copy. The statement is the owner's; the details are the facts above. */
 export const about = {
   label: 'About',
   statement: 'I make interfaces where engineering and visual craft meet.',
   details: [
-    { term: 'Currently', detail: 'Software Engineer in Test at SOTI' },
-    { term: 'Studied', detail: 'B.Tech in Computer Science, MITS' },
-    { term: 'Based in', detail: 'Ernakulam, Kerala' },
+    { term: 'Currently', detail: `${job.role} at ${job.org}` },
+    { term: 'Studied', detail: `${degree.degree} in ${degree.field}, ${degree.school}` },
+    { term: 'Based in', detail: place },
   ],
 } satisfies AboutContent
 

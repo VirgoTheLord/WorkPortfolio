@@ -22,6 +22,12 @@
      never altered for contrast. When a value cannot do a job, its role changes.
      Prefer the semantic tokens below to these raw ones. */
   --color-black: #141314; /* dark structure: dark canvas, light-mode text */
+  /* Dark mode is black, red and teal (owner's direction, 24 October 2026;
+     DESIGN.md §9.2): the deep black canvas, red the accent, teal the second
+     accent. Light mode keeps the orange. */
+  --color-black-deep: #0a0a0a; /* the dark canvas */
+  --color-red: #ef3e42; /* the dark accent: marks, active states */
+  --color-teal: #2ec4b6; /* the dark second accent: what answers the visitor */
   --color-white: #eeeeee; /* light structure: light canvas, dark-mode text */
   --color-paper: #f7f7f7; /* light muted background */
   --color-stone: #d5d5d5; /* light surface */
@@ -144,6 +150,10 @@
   --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   /* A rolling marker: dips back, overshoots, settles. */
   --ease-spring: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  /* Expo out: a fast start and a long, soft landing. The compact site's motion. */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Sine in-out: for things that go and come back (a hop, a breath). */
+  --ease-sine: cubic-bezier(0.37, 0, 0.63, 1);
 }
 
 /* Durations have no Tailwind theme namespace, so they are plain variables
@@ -186,7 +196,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --color-bg: var(--color-black);
+    --color-bg: var(--color-black-deep);
     --color-surface: var(--color-graphite);
     --color-surface-2: var(--color-charcoal);
     --color-fg: var(--color-white);
@@ -198,20 +208,20 @@
     --color-groove-lit: #eeeeee15;
     --color-groove-near: #000000d9;
     --color-groove-lit-near: #eeeeee2f;
-    --color-accent: var(--color-orange-bright);
-    --color-accent-secondary: var(--color-orange-soft);
+    --color-accent: var(--color-red);
+    --color-accent-secondary: var(--color-teal);
     --color-accent-fg: var(--color-black);
     --color-focus: var(--color-white);
-    --color-selection: var(--color-orange-bright);
+    --color-selection: var(--color-red);
     --color-selection-fg: var(--color-black);
     --color-ink: var(--color-white);
-    --color-canvas: var(--color-black);
+    --color-canvas: var(--color-black-deep);
   }
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --color-bg: var(--color-black);
+  --color-bg: var(--color-black-deep);
   --color-surface: var(--color-graphite);
   --color-surface-2: var(--color-charcoal);
   --color-fg: var(--color-white);
@@ -223,14 +233,14 @@
   --color-groove-lit: #eeeeee15;
   --color-groove-near: #000000d9;
   --color-groove-lit-near: #eeeeee2f;
-  --color-accent: var(--color-orange-bright);
-  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent: var(--color-red);
+  --color-accent-secondary: var(--color-teal);
   --color-accent-fg: var(--color-black);
   --color-focus: var(--color-white);
-  --color-selection: var(--color-orange-bright);
+  --color-selection: var(--color-red);
   --color-selection-fg: var(--color-black);
   --color-ink: var(--color-white);
-  --color-canvas: var(--color-black);
+  --color-canvas: var(--color-black-deep);
 }
 
 [data-theme='light'] {
@@ -279,6 +289,28 @@
   --color-selection-fg: var(--color-black);
   --color-ink: var(--color-black);
   --color-canvas: var(--color-orange);
+}
+
+/* The brand surface in dark (the full site's footer): red in place of the
+   orange, black on it as before (DESIGN.md §9.2). */
+:root[data-theme='dark'] [data-theme='brand'] {
+  --color-bg: var(--color-red);
+  --color-canvas: var(--color-red);
+  --color-surface: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
+  --color-surface-2: color-mix(in srgb, var(--color-red) 85%, var(--color-white));
+  --color-accent: color-mix(in srgb, var(--color-red) 80%, var(--color-white));
+  --color-accent-secondary: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-theme='brand'] {
+    --color-bg: var(--color-red);
+    --color-canvas: var(--color-red);
+    --color-surface: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
+    --color-surface-2: color-mix(in srgb, var(--color-red) 85%, var(--color-white));
+    --color-accent: color-mix(in srgb, var(--color-red) 80%, var(--color-white));
+    --color-accent-secondary: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
+  }
 }
 
 /* The status dots' pulse: down to half and back (the reference's two seconds). */

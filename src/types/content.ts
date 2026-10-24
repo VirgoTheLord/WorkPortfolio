@@ -86,6 +86,8 @@ export type ProjectMeta = {
   }
   /** Destination, when a case study or live site exists. Omitted until then. */
   href?: string
+  /** The public source repository, when there is one. */
+  source?: string
 }
 
 export type WorkContent = {
@@ -149,34 +151,157 @@ export type SiteConfig = {
   nav: readonly NavItem[]
 }
 
+/** A role held at an organisation. Only verified facts; dates when known. */
+export type ExperienceItem = { org: string; role: string; current?: boolean }
+
+/** A course of study. Only verified facts; dates when known. */
+export type EducationItem = { school: string; degree: string; field: string }
+
 /**
- * A word in the compact site's intro that answers hover, focus and tap with one
- * small, true detail, shown in the readout under the paragraph. `place` adds a
- * marker; `cells` also redraws the word in the hero's pixel cells while active.
+ * A piece of the interface, with its own page on the compact site's workbench
+ * (/compact/components/<slug>), where it runs live.
  */
-export type CompactDetail = { text: string; detail: string; kind?: 'place' | 'cells' }
+export type WorkbenchItem = {
+  slug: string
+  name: string
+  /** One line on what it does. */
+  note: string
+  /** On the full site today, or kept for the UI library. */
+  kind: 'site' | 'library'
+  /** What to do with it on the stage ("Hover it, or tab to it."). */
+  hint: string
+  /** How it behaves, from the component's own comment; nothing it does not do. */
+  details: readonly string[]
+  /** What makes it move: CSS, React, GSAP… */
+  tech: readonly string[]
+  /** Its file, from the repository's root. */
+  source: string
+  /** Where it is live on the full site. */
+  live?: NavItem
+}
 
-/** One live piece on the compact site's shelf; links go somewhere real. */
-export type CompactPiece =
-  | { kind: 'frame' | 'key' | 'scramble'; label: string; href: string }
-  | { kind: 'board' }
-  | { kind: 'pad'; label: string }
+/** The workbench pages' own words. */
+export type WorkbenchContent = {
+  meta: { title: string; description: string }
+  title: string
+  note: string
+  items: readonly WorkbenchItem[]
+  /** The words the pieces are given on their stages. */
+  demo: { arrow: string; key: string; lens: string; tagged: string; tag: string; section: string }
+  labels: {
+    crumb: string
+    stage: string
+    replay: string
+    behaviour: string
+    tech: string
+    source: string
+    where: string
+    kept: string
+    site: string
+    library: string
+    prev: string
+    next: string
+    all: string
+    open: string
+  }
+}
 
-/** A row of the shelf: index, name, the live piece, and one line on what it does. */
-export type CompactShelfItem = { index: string; name: string; note: string; piece: CompactPiece }
+/** The compact site's line icons (components/ui/icon.tsx). */
+export type CompactIcon =
+  | 'arrow'
+  | 'copy'
+  | 'github'
+  | 'grid'
+  | 'hash'
+  | 'home'
+  | 'linkedin'
+  | 'mail'
+  | 'up'
+  | 'box'
+  | 'moon'
 
-/** The compact site (/compact): its metadata, the way back, and the intro. */
+/** A link set as a small chip inside a sentence (the intro's "find me on …"). */
+export type ChipLink = NavItem & { icon: CompactIcon }
+
+/** The compact site's sections, in page order; the order numbers them. */
+export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | 'about' | 'contact'
+
+/** What a search result does when chosen. */
+export type PaletteAction =
+  | { kind: 'go'; href: string; external?: boolean }
+  | { kind: 'copy'; text: string; done: string }
+  | { kind: 'grid' }
+  | { kind: 'theme' }
+
+/** One search result. Every one does something real. */
+export type PaletteCommand = {
+  id: string
+  group: string
+  label: string
+  icon: CompactIcon
+  /** Other words the filter matches ("mail" for the email). */
+  keywords?: string
+  action: PaletteAction
+}
+
+/** The compact site (/compact): the portfolio in short, for a visitor in a hurry. */
 export type CompactContent = {
   meta: { title: string; description: string }
   back: NavItem
-  /** The intro paragraph: plain runs of text and the words that answer. */
-  intro: readonly (string | CompactDetail)[]
-  /** The readout under the intro at rest, for a pointer and for touch. */
-  readoutHint: { pointer: string; touch: string }
-  /** The shelf: this site's interface pieces, live, each doing something real. */
-  shelf: { label: string; items: readonly CompactShelfItem[] }
-  /** The work index's label (the projects themselves are `content/projects`). */
-  work: { label: string }
+  /** In page order; `number` is the order, written "01"; `short` names it in the bar. */
+  sections: readonly { id: CompactSectionId; title: string; short?: string; number: string }[]
+  intro: {
+    /** The line above the name: where, and the time there. */
+    place: string
+    /** The place's coordinates, which the place rolls over to on hover. */
+    coords: string
+    time: { zone: string; fallback: string }
+    role: string
+    /** The statement; `mark` is the words the hand-drawn line underlines. */
+    statement: { before: string; mark: string; after: string }
+    note: string
+    /** The way-out sentence: plain text with chips between. */
+    reach: readonly (string | ChipLink)[]
+  }
+  work: { note: string; view: string; source: string }
+  workbench: { note: string; open: string }
+  experience: readonly { kind: string; org: string; role: string; current?: boolean }[]
+  stack: readonly { name: string; items: readonly string[] }[]
+  about: { paragraphs: readonly string[]; signoff: string }
+  contact: {
+    lead: string
+    copy: { label: string; done: string }
+    write: string
+    /** The label before the owner's local time. */
+    time: string
+    profiles: readonly ChipLink[]
+  }
+  footer: {
+    note: string
+    build: string
+    top: string
+    back: NavItem
+    tip: { before: string; after: string }
+  }
+  search: {
+    label: string
+    placeholder: string
+    /** What the idle field suggests, in turn. */
+    ideas: readonly string[]
+    empty: string
+    hints: { move: string; run: string; close: string }
+    commands: readonly PaletteCommand[]
+  }
+  /** The switch's name ("Dark mode"); it is on in dark. */
+  theme: { label: string }
+  ui: {
+    current: string
+    sections: string
+    index: string
+    home: string
+    /** The bunny's name as a button ("Pet the bunny"). */
+    bunny: string
+  }
 }
 
 /** The notice on the full site's home page that offers the compact site. */

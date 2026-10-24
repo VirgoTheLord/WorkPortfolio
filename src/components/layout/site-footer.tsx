@@ -1,10 +1,11 @@
 import { FooterInk } from '@/components/motion/footer-ink'
 import { FooterScene } from '@/components/motion/footer-scene'
 import { TextLink } from '@/components/ui/text-link'
-import { contact, footer, hero, menu, site } from '@/content/site'
+import { compactNotice, contact, footer, hero, menu, site } from '@/content/site'
 import './site-footer.css'
 
-const items = [menu.home, ...site.nav]
+/* The destinations, then the compact site, so it is always one click away. */
+const items = [menu.home, ...site.nav, compactNotice.link]
 
 /*
  * The footer, recreated from neuemontreal.com's: a solid field (here the brand

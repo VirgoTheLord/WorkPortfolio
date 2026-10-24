@@ -13,8 +13,6 @@ type ContactBoardProps = {
   touchHint: string
   /** What the board and the hint say once the address is copied. */
   done: string
-  /** `compact` for the compact site's shelf: one row, smaller cells, from the left. */
-  size?: 'default' | 'compact'
 }
 
 /* On a copy each cell runs through a few characters before it lands (a little
@@ -39,14 +37,7 @@ const HOLD_MS = 1800
  * readable the moment it is on screen. On a phone the board breaks at the @ into
  * two rows (contact.css), so the letters stay large.
  */
-export function ContactBoard({
-  email,
-  copyLabel,
-  hint,
-  touchHint,
-  done,
-  size = 'default',
-}: ContactBoardProps) {
+export function ContactBoard({ email, copyLabel, hint, touchHint, done }: ContactBoardProps) {
   const ref = useRef<HTMLButtonElement>(null)
   const timers = useRef(new Set<number>())
   const [copied, setCopied] = useState(false)
@@ -154,7 +145,7 @@ export function ContactBoard({
 
   let index = 0
   return (
-    <div className={size === 'compact' ? 'board-wrap board-wrap-compact' : 'board-wrap'}>
+    <div className="board-wrap">
       <button
         ref={ref}
         type="button"

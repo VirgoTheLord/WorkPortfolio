@@ -7,8 +7,7 @@
  * row), so a phone's letters stay large; never wider than 3rem. It was a row of
  * orange uppercase tiles, which made the one thing the contact section is for
  * the hardest thing on the page to read. The board is a button: it copies the
- * address (the hint under it says so). `board-wrap-compact` (the compact site's
- * shelf): one row at any width, smaller cells, set from the left.
+ * address (the hint under it says so).
  */
 @reference '../../app/globals.css';
 
@@ -132,22 +131,4 @@
     flex-direction: row;
     justify-content: center;
   }
-}
-
-/* ---- Compact (the compact site's shelf) ------------------------------------- */
-
-.board-wrap-compact {
-  gap: calc(var(--spacing) * 2);
-  align-items: flex-start;
-}
-
-.board-wrap-compact .board {
-  --tile: min(1.25rem, calc(100cqw / var(--n)));
-  flex-direction: row;
-  justify-content: flex-start;
-}
-
-.board-wrap-compact .board-hint {
-  align-self: flex-start;
-  text-align: left;
 }

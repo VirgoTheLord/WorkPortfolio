@@ -21,6 +21,7 @@ export const projects: readonly ProjectMeta[] = [
     category: 'Design & engineering',
     year: '2026',
     stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'GSAP'],
+    source: 'https://github.com/VirgoTheLord/WorkPortfolio',
     cover: {
       image: portfolioCover,
       alt: 'The portfolio home page: the name set large in black on an off-white ground, an orange call to action and small monospace labels.',

@@ -1,7 +1,6 @@
 /*
  * A fading trail of cells on the site's grid, drawn on a canvas that covers
- * `host`: the hero's drag-to-draw (motion/hero-draw.tsx) and the compact site's
- * pixel pad (interactive/draw-pad.tsx). Cells are a third of a grid square
+ * `host`: the hero's drag-to-draw (motion/hero-draw.tsx). Cells are a third of a grid square
  * (--spacing-grid), on the grid's own lines (columns from the host's centre line,
  * rows from its top), in the host's text colour. A stroke lights a BRUSH × BRUSH
  * square at every half cell along the path, each cell growing in over GROW and

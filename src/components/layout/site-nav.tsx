@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { menu, site } from '@/content/site'
+import { TextLink } from '@/components/ui/text-link'
+import { compactNotice, menu, site } from '@/content/site'
 import { isInPageHref } from '@/lib/in-page-href'
 
 const items = [menu.home, ...site.nav]
@@ -19,11 +20,14 @@ const items = [menu.home, ...site.nav]
  * The data-menu-* attributes are the island's hooks; every reveal sits in a
  * mask inside the link, so its focus ring is never clipped. Section links are
  * plain anchors, so they work again after you have scrolled away
- * (lib/in-page-href.ts).
+ * (lib/in-page-href.ts). Under them, at the foot of the menu, a quiet link to
+ * the compact site, there whenever the menu is (the home page's notice can be
+ * dismissed for good).
  */
 export function SiteNav() {
   return (
-    <nav aria-label="Primary" className="flex min-h-full flex-col justify-center">
+    <nav aria-label="Primary" className="flex min-h-full flex-col">
+      <span aria-hidden="true" className="flex-1" />
       <ol className="menu-list flex flex-col items-center lg:flex-row lg:flex-wrap lg:justify-center">
         {items.map((item, index) => {
           const Anchor = isInPageHref(item.href) ? 'a' : Link
@@ -81,6 +85,11 @@ export function SiteNav() {
           )
         })}
       </ol>
+      <p className="flex flex-1 items-end justify-center pt-10 font-label text-label text-ink uppercase">
+        <TextLink href={compactNotice.link.href}>
+          {compactNotice.link.label} <span aria-hidden="true">→</span>
+        </TextLink>
+      </p>
     </nav>
   )
 }
