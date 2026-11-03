@@ -1,0 +1,236 @@
+/*
+ * The comet field (comet-field.tsx). On focus the label climbs out of the
+ * field letter by letter while a comet with a prism head laps the edge once;
+ * it lands at the middle of the bottom edge and comes to rest as a thin border
+ * in the accent, with light spreading inside from where it landed. Two rings on the edge, masked to a hairline, carry the
+ * comet; three animated values drive it: the comet's angle (--wui-comet-a), how
+ * settled the border is (--wui-comet-e), and the light. Nothing moves at rest.
+ */
+
+@property --wui-comet-a {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --wui-comet-e {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.wui-comet {
+  --wui-comet-field: color-mix(in oklab, var(--wui-bg), white 70%);
+  /* The comet sets off from the middle of the bottom edge and laps once back
+     to it, where the light rises. (A conic gradient does not wrap, so the lap
+     stays within 360deg.) */
+  --wui-comet-start: 180deg;
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: min(var(--wui-comet-width, 21rem), 100%);
+  border-radius: calc(var(--wui-unit) * 3);
+  background: var(--wui-comet-field);
+  box-shadow:
+    0 0 0 1px var(--wui-rule),
+    0 1px 2px rgb(0 0 0 / 0.05);
+  cursor: text;
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-comet {
+    --wui-comet-field: color-mix(in oklab, var(--wui-bg), white 5%);
+  }
+}
+
+[data-theme='dark'] .wui-comet,
+[data-theme='light'] [data-theme='dark'] .wui-comet {
+  --wui-comet-field: color-mix(in oklab, var(--wui-bg), white 5%);
+}
+
+[data-theme='light'] .wui-comet,
+[data-theme='dark'] [data-theme='light'] .wui-comet {
+  --wui-comet-field: color-mix(in oklab, var(--wui-bg), white 70%);
+}
+
+.wui-comet-input {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  padding: calc(var(--wui-unit) * 5.5) calc(var(--wui-unit) * 4) calc(var(--wui-unit) * 1.75);
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: var(--wui-fg);
+  font: 400 var(--wui-text-base) / 1.25 var(--wui-font-sans);
+  outline: none;
+  caret-color: var(--wui-accent);
+}
+
+.wui-comet-input::placeholder {
+  color: color-mix(in oklab, var(--wui-muted) 70%, transparent);
+}
+
+/* The placeholder waits until the label has climbed out of the way. */
+.wui-comet:not(:focus-within, [data-has]) .wui-comet-input::placeholder {
+  color: transparent;
+}
+
+.wui-comet:has(.wui-comet-input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* The label: in the field at rest; on focus or with a value it climbs to the
+   top and shrinks, a letter at a time, taking the accent. */
+.wui-comet-label {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--wui-unit) * 3.9);
+  left: calc(var(--wui-unit) * 4);
+  color: var(--wui-muted);
+  font: var(--wui-text-base) / 1.25 var(--wui-font-sans);
+  white-space: pre;
+  transform-origin: 0 0;
+  pointer-events: none;
+  transition:
+    scale 360ms var(--wui-ease-out),
+    color 200ms;
+}
+
+.wui-comet-label > span {
+  display: inline-block;
+  transition: translate 420ms cubic-bezier(0.3, 1.4, 0.5, 1);
+  transition-delay: calc(var(--i) * 16ms);
+}
+
+.wui-comet:is(:focus-within, [data-has]) .wui-comet-label {
+  color: var(--wui-accent);
+  scale: 0.74;
+}
+
+.wui-comet:is(:focus-within, [data-has]) .wui-comet-label > span {
+  translate: 0 -0.85rem;
+}
+
+/* The comet: a short arc with a prism at its head, one lap. */
+.wui-comet-ring {
+  position: absolute;
+  z-index: 3;
+  inset: -1.5px;
+  padding: 1.5px;
+  border-radius: calc(var(--wui-unit) * 3 + 1.5px);
+  background: conic-gradient(
+    from var(--wui-comet-start),
+    transparent calc(var(--wui-comet-a) - 70deg),
+    color-mix(in oklab, var(--wui-accent) 70%, transparent) calc(var(--wui-comet-a) - 34deg),
+    #ffd36b calc(var(--wui-comet-a) - 18deg),
+    #7cf0c8 calc(var(--wui-comet-a) - 11deg),
+    #7ab8ff calc(var(--wui-comet-a) - 6deg),
+    #fff calc(var(--wui-comet-a) - 2deg),
+    transparent var(--wui-comet-a)
+  );
+  opacity: 0;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+.wui-comet-ring[data-soft] {
+  inset: -4px;
+  padding: 4px;
+  border-radius: calc(var(--wui-unit) * 3 + 4px);
+  filter: blur(4px);
+}
+
+.wui-comet:focus-within .wui-comet-ring {
+  animation:
+    wui-comet-lap 2.2s cubic-bezier(0.45, 0.05, 0.25, 1) forwards,
+    wui-comet-fade 2.3s linear forwards;
+}
+
+.wui-comet:focus-within .wui-comet-ring[data-soft] {
+  --wui-comet-peak: 0.6;
+}
+
+@keyframes wui-comet-lap {
+  from {
+    --wui-comet-a: 0deg;
+  }
+
+  to {
+    --wui-comet-a: 360deg;
+  }
+}
+
+@keyframes wui-comet-fade {
+  0%,
+  86% {
+    opacity: var(--wui-comet-peak, 1);
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The rest: a thin border in the accent, eased in as the comet finishes. */
+.wui-comet:focus-within {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--wui-accent) calc(var(--wui-comet-e) * 80%), var(--wui-rule)),
+    0 1px 2px rgb(0 0 0 / 0.05);
+  animation: wui-comet-settle 2.2s linear forwards;
+}
+
+@keyframes wui-comet-settle {
+  0%,
+  85% {
+    --wui-comet-e: 0;
+  }
+
+  100% {
+    --wui-comet-e: 1;
+  }
+}
+
+/* And light rising inside the field from where the comet lands, the middle
+   of the bottom edge: it spreads out from there, behind the text. */
+.wui-comet-low {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(70% 110% at 50% 135%, color-mix(in oklab, var(--wui-accent) 30%, transparent), transparent 70%);
+  opacity: 0;
+  scale: 0.2 0.6;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  transition:
+    opacity 400ms var(--wui-ease-out),
+    scale 900ms var(--wui-ease-out);
+}
+
+.wui-comet:focus-within .wui-comet-low {
+  opacity: 1;
+  scale: 1;
+  transition-delay: 1.85s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-comet,
+  .wui-comet * {
+    animation: none !important;
+    transition-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+
+  .wui-comet:focus-within {
+    --wui-comet-e: 1;
+  }
+}

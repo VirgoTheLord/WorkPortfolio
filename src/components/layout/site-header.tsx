@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ModeSwitch } from '@/components/interactive/mode-switch'
 import { FrameButton } from '@/components/library/frame-button'
 import { SiteMenu } from '@/components/motion/site-menu'
 import { SiteBrand } from '@/components/layout/site-brand'
@@ -27,6 +28,7 @@ export function SiteHeader() {
           action={<FrameButton label={menu.action.label} href={menu.action.href} size="compact" />}
         >
           <SiteNav />
+          <ModeSwitch label={menu.mode} />
         </SiteMenu>
         {/* Without JavaScript the menu cannot open, so the destinations are listed
           plainly and the header returns to normal flow. */}

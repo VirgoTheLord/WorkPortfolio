@@ -49,8 +49,8 @@ const TRAIL = {
 const INTERACTIVE = 'a[href], button, [role="button"], summary, [data-cursor="lens"]'
 const SKIP = '[data-cursor="off"], [data-cursor-text], [data-cursor-tag]'
 
-/* What turns the head into a tag carrying a word (the Skills "See all" and the
-   Skills page's "Say hello"; studionamma.com's own cursor does this). */
+/* What turns the head into a tag carrying a word (studionamma.com's own cursor
+   does this). */
 const TAGGED = '[data-cursor-tag]'
 
 type Point = { x: number; y: number; age: number; color: string }

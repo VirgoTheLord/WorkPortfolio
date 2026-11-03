@@ -3,3 +3,6 @@ node_modules
 pnpm-lock.yaml
 next-env.d.ts
 *.md
+# Copied verbatim from Cairn; re-copying must stay a copy.
+src/components/library/cairn/*
+!src/components/library/cairn/cairn-tokens.css

@@ -65,7 +65,7 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
       <header className="cp-piece-head">
         <p className="cp-piece-kind font-label">
           <span aria-hidden="true" className="cp-square" />
-          {item.kind === 'library' ? labels.library : labels.site}
+          {labels[item.kind]}
           <span className="text-fg-muted">
             {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
           </span>
@@ -129,7 +129,9 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
             </dd>
           </div>
           <div className="cp-row">
-            <dt className="cp-row-label font-label">{labels.where}</dt>
+            <dt className="cp-row-label font-label">
+              {item.kind === 'cairn' ? labels.docs : labels.where}
+            </dt>
             <dd className="cp-row-body">
               {item.live ? (
                 <Link href={item.live.href} className="cp-piece-link">

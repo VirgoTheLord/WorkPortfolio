@@ -1,18 +1,14 @@
 import type { ChipLink, CompactContent, PaletteCommand } from '@/types/content'
 import { projects } from './projects'
-import { about, contact, education, experience, place, site } from './site'
+import { contact, education, experience, place, site, tagline } from './site'
 import { workbench } from './workbench'
 
 const [job] = experience
 const [degree] = education
 
-/*
- * The owner's GitHub: the account that holds this site's public repository (the
- * repo's origin remote). Linked from the compact site only; the full site's
- * profiles are unchanged.
- */
-const github = 'https://github.com/VirgoTheLord'
-const linkedin = site.profiles.find((profile) => profile.label === 'LinkedIn')?.href ?? ''
+const profile = (label: string) => site.profiles.find((item) => item.label === label)?.href ?? ''
+const linkedin = profile('LinkedIn')
+const github = profile('GitHub')
 const mailto = `mailto:${contact.email}`
 
 const profiles = [
@@ -31,9 +27,9 @@ const sections: CompactContent['sections'] = (
   ] as const
 ).map((section, index) => ({ ...section, number: String(index + 1).padStart(2, '0') }))
 
-/* The full site's statement, with the words the hand-drawn line sits under. */
-const mark = 'visual craft'
-const [before = '', after = ''] = about.statement.split(mark)
+/* The owner's tagline, with the words the hand-drawn line sits under. */
+const mark = 'creativity and technology'
+const [before = '', after = ''] = tagline.split(mark)
 
 /*
  * What the search finds (interactive/site-search.tsx): the page's sections, the
@@ -57,7 +53,9 @@ const commands: readonly PaletteCommand[] = [
     label: project.title,
     icon: 'arrow' as const,
     keywords: `${project.category} ${project.stack.join(' ')}`,
-    action: { kind: 'go' as const, href: project.href ?? `/#work-${project.slug}` },
+    action: project.href
+      ? { kind: 'go' as const, href: project.href, external: true }
+      : { kind: 'go' as const, href: `/#work-${project.slug}` },
   })),
   ...projects.flatMap((project) =>
     project.source
@@ -140,18 +138,20 @@ const commands: readonly PaletteCommand[] = [
 
 /*
  * The compact site (/compact): the portfolio in short (DESIGN.md §5b). Every fact
- * comes from `site.ts` and `projects`; the stack lists only what this site is
- * built with (package.json). No writing, contribution graph, visitor count or
- * availability: the project holds none of them. The About paragraphs are a draft
- * for the owner to rewrite.
+ * comes from `site.ts` and `projects`; the stack is this site's own tools plus
+ * the ones the owner's previous portfolio listed and the projects use. No
+ * writing, contribution graph, visitor count or availability: the project holds
+ * none of them. The About paragraphs are the owner's, from the previous
+ * portfolio.
  */
 export const compact = {
   meta: {
     /* The whole tab title (it replaces the root template). */
     title: `${site.name} · ${site.role}, in short`,
-    description: `${site.role} in ${place}. ${about.statement} The work, a workbench of live interface pieces, the stack and how to reach me, on one page.`,
+    description: `${site.role} in ${place}. ${tagline} The work, a workbench of live interface pieces, the stack and how to reach me, on one page.`,
   },
   back: { label: 'Full site', href: '/' },
+  terminal: { prompt: '~/compact $', command: 'cd ../full-site' },
   sections,
   intro: {
     place,
@@ -166,19 +166,19 @@ export const compact = {
       ' and ',
       profiles[1],
       ', ',
-      { label: 'write to me', href: mailto, icon: 'mail' },
+      { label: 'write to me', href: mailto },
       ', or take the long way round on the ',
-      { label: 'full site', href: '/', icon: 'home' },
+      { label: 'full site', href: '/' },
       '.',
     ],
   },
   work: {
-    note: 'Four things I built for this very site, all live on the full one.',
-    view: 'See it on the full site',
+    note: 'Cairn, my component library, for now. More is on the way.',
+    view: 'Open the live site',
     source: 'Source',
   },
   workbench: {
-    note: workbench.note,
+    note: 'The premium pieces from Cairn, my component library. Each one runs live on its own page: poke it, hover it, break it.',
     open: workbench.labels.open,
   },
   experience: [
@@ -186,19 +186,20 @@ export const compact = {
     { kind: 'Study', org: degree.school, role: `${degree.degree}, ${degree.field}` },
   ],
   stack: [
-    { name: 'Language', items: ['TypeScript', 'JavaScript', 'HTML', 'CSS'] },
+    { name: 'Language', items: ['TypeScript', 'JavaScript', 'Python', 'HTML', 'CSS'] },
     { name: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS', 'GSAP', 'Lenis'] },
+    { name: 'Backend', items: ['Node.js', 'Express', 'MongoDB', 'WebSockets'] },
     { name: 'Workflow', items: ['Git', 'pnpm', 'ESLint', 'Prettier'] },
   ],
   about: {
     paragraphs: [
-      'I care about the parts of an interface people feel before they notice them: how a label sits on its rule, where focus goes when a menu closes, what a page does when motion is turned off.',
-      'I would rather get one detail right than ship five rough ones. Every page here is static, reads without JavaScript, and has a path for reduced motion.',
+      'I translate complex problems into elegant and pure digital solutions, with a strong focus on quality and user experience.',
+      'I believe in the power of simplicity and clarity, and I strive to create products that are not only functional but also beautiful and intuitive.',
     ],
     signoff: 'Alwin',
   },
   contact: {
-    lead: contact.statement.join(' '),
+    lead: contact.lead,
     copy: { label: 'Copy email address', done: 'Email address copied' },
     write: 'Write an email',
     time: `Local time in ${place.split(',')[0]}`,
@@ -214,9 +215,7 @@ export const compact = {
   search: {
     label: 'Search the site',
     placeholder: 'Search…',
-    ideas: ['Search…', 'Try “key”', 'Try “email”', 'Try “dark”', 'Try “stack”'],
     empty: 'Nothing here. Try “stack”, “email” or “key”.',
-    hints: { move: 'Move', run: 'Open', close: 'Close' },
     commands,
   },
   theme: { label: 'Dark mode' },

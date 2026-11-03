@@ -1,0 +1,232 @@
+/*
+ * The split-flap checkbox (flap-checkbox.tsx): one departures-board cell. Its
+ * face is cut in two at the hinge; flipping, the old top half falls away and
+ * the new bottom half swings down over the old one, overshooting a little as
+ * it lands. Four halves do it: the new top and the old bottom sit still, the
+ * old top and the new bottom move. The state is the native input's, so it is
+ * right before hydration; the fall only plays once the box has been used.
+ */
+
+.wui-flap {
+  --flap-tile: #1d1d20;
+  --flap-edge: transparent;
+  --flap-sheen: rgb(255 255 255 / 0.04);
+  --flap-hinge: rgb(0 0 0 / 0.65);
+  --flap-ink: var(--wui-accent);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--wui-unit) * 3);
+  color: var(--wui-fg);
+  font: 500 var(--wui-text-sm) / 1.2 var(--wui-font-sans);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Dark: the tile turns white, so the flap reads against the page; the tick
+   darkens to hold on it. :where() keeps the system's dark below a data-theme
+   on any ancestor. */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-flap {
+    --flap-tile: #f2f2f4;
+    --flap-edge: transparent;
+    --flap-sheen: rgb(255 255 255 / 0.9);
+    --flap-hinge: rgb(0 0 0 / 0.22);
+    --flap-ink: color-mix(in oklab, var(--wui-accent), black 28%);
+  }
+}
+
+[data-theme='dark'] .wui-flap,
+[data-theme='light'] [data-theme='dark'] .wui-flap {
+  --flap-tile: #f2f2f4;
+  --flap-edge: transparent;
+  --flap-sheen: rgb(255 255 255 / 0.9);
+  --flap-hinge: rgb(0 0 0 / 0.22);
+  --flap-ink: color-mix(in oklab, var(--wui-accent), black 28%);
+}
+
+[data-theme='light'] .wui-flap,
+[data-theme='dark'] [data-theme='light'] .wui-flap {
+  --flap-tile: #1d1d20;
+  --flap-edge: transparent;
+  --flap-sheen: rgb(255 255 255 / 0.04);
+  --flap-hinge: rgb(0 0 0 / 0.65);
+  --flap-ink: var(--wui-accent);
+}
+
+.wui-flap-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wui-flap-cell {
+  position: relative;
+  flex-shrink: 0;
+  width: calc(var(--wui-unit) * 6);
+  height: calc(var(--wui-unit) * 6.5);
+  border-radius: calc(var(--wui-unit) * 1);
+  background: var(--flap-tile);
+  box-shadow:
+    0 0 0 1px var(--flap-edge),
+    inset 0 1px 0 var(--flap-sheen),
+    0 1px 2px rgb(0 0 0 / 0.3);
+  perspective: calc(var(--wui-unit) * 16);
+}
+
+.wui-flap-input:focus-visible ~ .wui-flap-cell {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 4px;
+}
+
+/* The hinge, over everything. */
+.wui-flap-cell::after {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--flap-hinge);
+}
+
+.wui-flap-half {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--flap-tile);
+  backface-visibility: hidden;
+}
+
+.wui-flap-half[data-top] {
+  top: 0;
+  border-radius: calc(var(--wui-unit) * 1) calc(var(--wui-unit) * 1) 0 0;
+  box-shadow: inset 0 1px 0 var(--flap-sheen);
+  transform-origin: 50% 100%;
+}
+
+.wui-flap-half[data-bottom] {
+  bottom: 0;
+  border-radius: 0 0 calc(var(--wui-unit) * 1) calc(var(--wui-unit) * 1);
+  transform-origin: 50% 0;
+}
+
+/* The tick, drawn at the cell's full height and cut by its half. */
+.wui-flap-tick {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 200%;
+  fill: none;
+  stroke: var(--flap-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+  opacity: 0;
+}
+
+[data-top] > .wui-flap-tick {
+  top: 0;
+}
+
+[data-bottom] > .wui-flap-tick {
+  bottom: 0;
+}
+
+/* The moving halves ride above the still ones; at rest the falling top is
+   edge-on (hidden) and the new bottom lies flat. */
+[data-moving] {
+  z-index: 2;
+}
+
+.wui-flap-half[data-moving][data-top] {
+  transform: rotateX(-90deg);
+}
+
+/* Which halves carry the tick: the new face is on the still top and the
+   moving bottom; the old face on the still bottom and the moving top. At rest
+   the moving bottom lies over the still one, so only the new face shows. */
+.wui-flap-input:checked ~ .wui-flap-cell [data-new] > .wui-flap-tick,
+.wui-flap-input:not(:checked) ~ .wui-flap-cell [data-old] > .wui-flap-tick {
+  opacity: 1;
+}
+
+/* The fall. Two names a direction, so it restarts at every flip. */
+.wui-flap[data-used] .wui-flap-input:checked ~ .wui-flap-cell [data-moving][data-top] {
+  animation: wui-flap-fall-a 420ms ease-in both;
+}
+
+.wui-flap[data-used] .wui-flap-input:checked ~ .wui-flap-cell [data-moving][data-bottom] {
+  animation: wui-flap-land-a 420ms ease-out both;
+}
+
+.wui-flap[data-used] .wui-flap-input:not(:checked) ~ .wui-flap-cell [data-moving][data-top] {
+  animation: wui-flap-fall-b 420ms ease-in both;
+}
+
+.wui-flap[data-used] .wui-flap-input:not(:checked) ~ .wui-flap-cell [data-moving][data-bottom] {
+  animation: wui-flap-land-b 420ms ease-out both;
+}
+
+@keyframes wui-flap-fall-a {
+  0% {
+    transform: rotateX(0);
+  }
+  50%,
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes wui-flap-land-a {
+  0%,
+  50% {
+    transform: rotateX(90deg);
+  }
+  85% {
+    transform: rotateX(-12deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+@keyframes wui-flap-fall-b {
+  0% {
+    transform: rotateX(0);
+  }
+  50%,
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes wui-flap-land-b {
+  0%,
+  50% {
+    transform: rotateX(90deg);
+  }
+  85% {
+    transform: rotateX(-12deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+.wui-flap:has(:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-flap .wui-flap-half {
+    animation: none !important;
+  }
+}

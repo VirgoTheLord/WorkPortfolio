@@ -1,69 +1,25 @@
 import type { ProjectMeta } from '@/types/content'
-import designSystemCover from './design-system/cover.png'
-import navigationCover from './navigation/cover.png'
-import portfolioCover from './portfolio/cover.png'
-import skillsPageCover from './skills-page/cover.png'
+import cairnCover from './cairn/cover.png'
 
 /*
- * Selected work. The repo holds no client or personal projects yet, so these are
- * four real, shipped pieces of this portfolio, each shown with a genuine
- * screenshot of the running site (src/content/projects/<slug>/cover.png).
- * Everything stated is checkable in the repository; no outcomes, metrics or
- * employers are claimed. Replace or extend with real projects as they exist:
- * the section renders however many are listed, in this order.
+ * Selected work. Only Cairn for now (owner's choice, November 2026): its live
+ * site is w-ui.vercel.app; the repository is private, so no source link. No
+ * placeholder projects: the compact site says more is on the way in one line.
+ * The section renders however many are listed, in this order.
  */
 export const projects: readonly ProjectMeta[] = [
   {
-    slug: 'portfolio',
-    title: 'This portfolio',
+    slug: 'cairn',
+    title: 'Cairn',
     summary:
-      'A static Next.js build with a token-based design system, a CSS-first motion language, and GSAP where it earns its place.',
-    category: 'Design & engineering',
+      'A library of 30 React components, each built around a single interaction. Install it as a package, or copy the files and own them.',
+    category: 'Component library',
     year: '2026',
-    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'GSAP'],
-    source: 'https://github.com/VirgoTheLord/WorkPortfolio',
+    stack: ['React', 'TypeScript', 'CSS'],
+    href: 'https://w-ui.vercel.app',
     cover: {
-      image: portfolioCover,
-      alt: 'The portfolio home page: the name set large in black on an off-white ground, an orange call to action and small monospace labels.',
-    },
-  },
-  {
-    slug: 'design-system',
-    title: 'Design system',
-    summary:
-      'Off-white, off-black and signature orange, set in Bricolage Grotesque and Azeret Mono and documented as tokens with measured contrast.',
-    category: 'Design system',
-    year: '2026',
-    stack: ['Tailwind CSS', 'Design tokens'],
-    cover: {
-      image: designSystemCover,
-      alt: 'The color reference page: twelve labelled palette swatches, orange first, above a list of semantic tokens.',
-    },
-  },
-  {
-    slug: 'navigation',
-    title: 'Navigation',
-    summary:
-      'An expanding navbar panel with separate open and close sequences in GSAP: the page behind goes inert, focus returns to the trigger, and a reduced-motion path keeps every function.',
-    category: 'Interaction',
-    year: '2026',
-    stack: ['GSAP', 'CSS'],
-    cover: {
-      image: navigationCover,
-      alt: 'The open navbar: a panel with Home, About, Skills, Selected Work and Contact set large beside contact details and two project cards, over a dimmed page.',
-    },
-  },
-  {
-    slug: 'skills-page',
-    title: 'Skills page',
-    summary:
-      'A second static route with its own entrance language: headlines rise out of masks line by line as they reach the screen, and nothing moves for reduced motion.',
-    category: 'Page design',
-    year: '2026',
-    stack: ['Next.js', 'CSS', 'IntersectionObserver'],
-    cover: {
-      image: skillsPageCover,
-      alt: 'The Skills page opening: "Serious about the details." set in heavy black capitals across an off-white page, under the navbar.',
+      image: cairnCover,
+      alt: 'The Cairn home page: "Interface details, stacked with care." set large in white over a red, scan-lined backdrop, above a Browse components button and an npm install command.',
     },
   },
 ]

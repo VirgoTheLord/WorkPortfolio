@@ -1,18 +1,44 @@
 /*
- * The compact site's light and dark switch (DESIGN.md §5b). The full site follows
- * the system and nothing overrides it (app/layout.tsx clears the old `theme`
- * key); the compact site, at the owner's request, lets a visitor choose, under
- * its own key. The choice is `data-theme` on <html> (globals.css), set before
- * first paint by `themeScript` (in app/layout.tsx's inline script) and dropped again when the visitor leaves the
- * compact site, so the full site is never forced into it.
+ * Light and dark, chosen by the visitor (DESIGN.md §9). The choice is
+ * `data-theme` on <html> (globals.css), set before first paint by `themeScript`
+ * (in app/layout.tsx's inline script). Each site keeps its own: the compact
+ * site's switch (DESIGN.md §5b) remembers across visits (localStorage); the full
+ * site's, in its menu, only for the tab (sessionStorage), so a new visit follows
+ * the system again and nobody stays locked to a mode. Crossing from one site to
+ * the other puts that site's own choice back, or none.
  */
 export type Theme = 'light' | 'dark'
 
 export const THEME_KEY = 'compact-theme'
+export const SITE_THEME_KEY = 'site-theme'
 
-/* Part of the root layout's inline script, so on a compact page a stored choice
-   is there before first paint; every other route is left to the system. */
-export const themeScript = `try{if(location.pathname.indexOf('/compact')===0){var t=localStorage.getItem('${THEME_KEY}');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){}`
+/* Part of the root layout's inline script, so the site's stored choice is there
+   before first paint. */
+export const themeScript = `try{var c=location.pathname.indexOf('/compact')===0;var t=c?localStorage.getItem('${THEME_KEY}'):sessionStorage.getItem('${SITE_THEME_KEY}');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}`
+
+/* Where each site keeps its choice. */
+const stores = {
+  compact: () => localStorage,
+  site: () => sessionStorage,
+} as const
+type Site = keyof typeof stores
+const keys: Record<Site, string> = { compact: THEME_KEY, site: SITE_THEME_KEY }
+
+function stored(site: Site): Theme | null {
+  try {
+    const value = stores[site]().getItem(keys[site])
+    return value === 'light' || value === 'dark' ? value : null
+  } catch {
+    return null
+  }
+}
+
+/* Sets one site's choice on <html>, or clears it to follow the system. */
+function put(site: Site) {
+  const theme = stored(site)
+  if (theme) document.documentElement.dataset.theme = theme
+  else delete document.documentElement.dataset.theme
+}
 
 const darkQuery = '(prefers-color-scheme: dark)'
 
@@ -33,23 +59,20 @@ export function subscribeTheme(onChange: () => void) {
   }
 }
 
-/* Puts a stored choice back (a client-side arrival skips the inline script). */
+/* Puts the compact site's choice back (a client-side arrival skips the inline script). */
 export function restoreTheme() {
-  try {
-    const stored = localStorage.getItem(THEME_KEY)
-    if (stored === 'light' || stored === 'dark') document.documentElement.dataset.theme = stored
-  } catch {}
+  put('compact')
 }
 
-/* Leaving the compact site: the full site goes back to following the system. */
+/* Leaving the compact site: the full site's own choice, or the system. */
 export function releaseTheme() {
-  delete document.documentElement.dataset.theme
+  put('site')
 }
 
-function apply(theme: Theme) {
+function apply(theme: Theme, site: Site) {
   document.documentElement.dataset.theme = theme
   try {
-    localStorage.setItem(THEME_KEY, theme)
+    stores[site]().setItem(keys[site], theme)
   } catch {}
 }
 
@@ -58,17 +81,17 @@ function apply(theme: Theme) {
  * a circle from `origin` (the toggle) over the old one; with reduced motion, or
  * without them, it simply changes.
  */
-export function switchTheme(origin?: { x: number; y: number }) {
+export function switchTheme(origin?: { x: number; y: number }, site: Site = 'compact') {
   const next: Theme = readTheme() === 'dark' ? 'light' : 'dark'
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (still || !('startViewTransition' in document)) {
-    apply(next)
+    apply(next, site)
     return next
   }
   const x = origin?.x ?? window.innerWidth / 2
   const y = origin?.y ?? 0
   const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
-  const transition = document.startViewTransition(() => apply(next))
+  const transition = document.startViewTransition(() => apply(next, site))
   void transition.ready.then(() => {
     document.documentElement.animate(
       { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },

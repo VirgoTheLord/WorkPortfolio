@@ -29,9 +29,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="en" className={fontVariables || undefined} suppressHydrationWarning>
       <head>
         {/* Adds .js (scripting is on; ARCHITECTURE.md §6). The colour mode follows the
-            system (prefers-color-scheme) and nothing overrides it: the stored choice
-            an earlier light/dark switch saved is cleared, so no visitor stays locked
-            to the mode they once picked. On the home page it also
+            system (prefers-color-scheme) until the visitor chooses; the old `theme`
+            key an earlier switch saved is cleared, so no visitor stays locked to a
+            mode from long ago. On the home page it also
             marks the intro as playing before first paint, so the overlay
             covers the hero from the start. Skipped for reduced motion, for deep
             links (a hash) and for every route but the home page. Once this tab
@@ -39,13 +39,14 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             reload marks .is-enter instead: the hero's entrance alone, no
             preloader, with the same starting states before first paint. If the intro
             island has not picked it up within 4s (scripts failed or are very
-            slow), the page is released in its final state. On the compact site only,
-            a light or dark mode the visitor chose there is put back
-            (lib/compact-theme.ts). */}
+            slow), the page is released in its final state. A light or dark mode the
+            visitor chose is put back: the compact site's from localStorage, the
+            full site's from this tab's sessionStorage (lib/compact-theme.ts). The path the tab landed on is kept (data-landing)
+            so the hero can tell a load from a link followed inside the site. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;d.classList.add('js');try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}}catch(e){}" +
+              "try{var d=document.documentElement;d.classList.add('js');d.dataset.landing=location.pathname;try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}}catch(e){}" +
               themeScript,
           }}
         />

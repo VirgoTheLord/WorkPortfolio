@@ -1,0 +1,226 @@
+/*
+ * The code input (code-input.tsx). A row of raised blank keys in sockets. A
+ * key's height above its socket is one number, --wui-code-up: the cap rides up
+ * by it and a hard shadow of the same size is the key's wall, so travel,
+ * depth and shadow can never disagree. Typing presses a key down and prints
+ * its legend; the key to type next stands a little taller. A right code hops
+ * through the row, left to right, and the caps take the accent; a wrong one
+ * rattles the row, then the keys spring back up and blank in turn. Nothing
+ * runs at rest. Reduced motion changes the state without the motion.
+ */
+
+@property --wui-code-up {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.wui-code {
+  --wui-code-slot: calc(var(--wui-unit) * 12);
+  --wui-code-gap: calc(var(--wui-unit) * 2);
+  --wui-code-surface: var(--wui-bg);
+  --wui-code-light: color-mix(in oklab, var(--wui-code-surface), white 90%);
+  --wui-code-dark: color-mix(in oklab, var(--wui-code-surface), #1c2433 21%);
+  --wui-code-face: color-mix(in oklab, var(--wui-code-surface), white 75%);
+  --wui-code-wall: color-mix(in oklab, var(--wui-code-surface), #1c2433 26%);
+  --wui-code-hi: rgb(255 255 255 / 0.95);
+  --wui-code-edge: transparent;
+  --wui-code-shadow: 0.16;
+  --wui-code-bad: #d92d20;
+  --wui-code-spring: cubic-bezier(0.3, 1.45, 0.5, 1);
+  position: relative;
+  width: min(100%, calc(var(--wui-code-length, 6) * var(--wui-code-slot) + (var(--wui-code-length, 6) - 1) * var(--wui-code-gap)));
+  color: var(--wui-fg);
+  font-family: var(--wui-font-label);
+  font-size: var(--wui-text-lg);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-code {
+    --wui-code-light: color-mix(in oklab, var(--wui-code-surface), white 9%);
+    --wui-code-dark: #000;
+    --wui-code-face: color-mix(in oklab, var(--wui-code-surface), white 13%);
+    --wui-code-wall: color-mix(in oklab, var(--wui-code-surface), #000 65%);
+    --wui-code-hi: rgb(255 255 255 / 0.08);
+    --wui-code-edge: rgb(255 255 255 / 0.12);
+    --wui-code-shadow: 0.5;
+    --wui-code-bad: #ff6369;
+  }
+}
+
+[data-theme='dark'] .wui-code,
+[data-theme='light'] [data-theme='dark'] .wui-code {
+  --wui-code-light: color-mix(in oklab, var(--wui-code-surface), white 9%);
+  --wui-code-dark: #000;
+  --wui-code-face: color-mix(in oklab, var(--wui-code-surface), white 13%);
+  --wui-code-wall: color-mix(in oklab, var(--wui-code-surface), #000 65%);
+  --wui-code-hi: rgb(255 255 255 / 0.08);
+  --wui-code-edge: rgb(255 255 255 / 0.12);
+  --wui-code-shadow: 0.5;
+  --wui-code-bad: #ff6369;
+}
+
+[data-theme='light'] .wui-code,
+[data-theme='dark'] [data-theme='light'] .wui-code {
+  --wui-code-light: color-mix(in oklab, var(--wui-code-surface), white 90%);
+  --wui-code-dark: color-mix(in oklab, var(--wui-code-surface), #1c2433 21%);
+  --wui-code-face: color-mix(in oklab, var(--wui-code-surface), white 75%);
+  --wui-code-wall: color-mix(in oklab, var(--wui-code-surface), #1c2433 26%);
+  --wui-code-hi: rgb(255 255 255 / 0.95);
+  --wui-code-edge: transparent;
+  --wui-code-shadow: 0.16;
+  --wui-code-bad: #d92d20;
+}
+
+/* The native input, invisible, over the whole row. */
+.wui-code-input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  opacity: 0;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+  cursor: text;
+}
+
+.wui-code-input:disabled {
+  cursor: not-allowed;
+}
+
+.wui-code:has(.wui-code-input:disabled) {
+  opacity: 0.5;
+}
+
+.wui-code-slots {
+  display: grid;
+  grid-template-columns: repeat(var(--wui-code-length, 6), minmax(0, 1fr));
+  gap: var(--wui-code-gap);
+}
+
+.wui-code-slot {
+  --wui-code-up: 7;
+  position: relative;
+  aspect-ratio: 1 / 1.22;
+  border-radius: calc(var(--wui-unit) * 3);
+  background: var(--wui-code-surface);
+  box-shadow:
+    inset calc(var(--wui-unit) * 0.75) calc(var(--wui-unit) * 0.75) calc(var(--wui-unit) * 1.5) var(--wui-code-dark),
+    inset calc(var(--wui-unit) * -0.75) calc(var(--wui-unit) * -0.75) calc(var(--wui-unit) * 1.5) var(--wui-code-light);
+  transition:
+    --wui-code-up 360ms var(--wui-code-spring),
+    box-shadow var(--wui-duration-base);
+}
+
+/* The key to type next stands taller, and is ringed in the accent. */
+.wui-code-slot[data-on] {
+  --wui-code-up: 9;
+  box-shadow:
+    inset calc(var(--wui-unit) * 0.75) calc(var(--wui-unit) * 0.75) calc(var(--wui-unit) * 1.5) var(--wui-code-dark),
+    inset calc(var(--wui-unit) * -0.75) calc(var(--wui-unit) * -0.75) calc(var(--wui-unit) * 1.5) var(--wui-code-light),
+    inset 0 0 0 1.5px var(--wui-accent);
+}
+
+.wui-code-slot[data-filled='true'] {
+  --wui-code-up: 0;
+}
+
+.wui-code-cap {
+  position: absolute;
+  inset: calc(var(--wui-unit) * 1.25);
+  display: grid;
+  place-items: center;
+  border-radius: calc(var(--wui-unit) * 2);
+  background: var(--wui-code-face);
+  color: transparent;
+  transform: translateY(calc(var(--wui-code-up) * -1px));
+  box-shadow:
+    0 calc(var(--wui-code-up) * 1px) 0 var(--wui-code-wall),
+    0 calc(var(--wui-code-up) * 1px + 2px) calc(var(--wui-code-up) * 1.5px + 3px) rgb(0 0 0 / var(--wui-code-shadow)),
+    inset 0 1px 0 var(--wui-code-hi),
+    0 0 0 1px var(--wui-code-edge);
+  transition:
+    background 300ms,
+    color 220ms;
+}
+
+.wui-code-slot[data-filled='true'] .wui-code-cap {
+  color: var(--wui-fg);
+  transition-delay: 70ms;
+}
+
+/* Right: a hop runs through the row and the caps take the accent. */
+.wui-code[data-state='ok'] .wui-code-slot {
+  animation: wui-code-hop 560ms calc(var(--wui-code-i) * 60ms) both;
+}
+
+.wui-code[data-state='ok'] .wui-code-cap {
+  background: var(--wui-accent);
+  color: var(--wui-accent-fg);
+  transition-delay: calc(var(--wui-code-i) * 60ms);
+}
+
+@keyframes wui-code-hop {
+  40% {
+    --wui-code-up: 5;
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.7);
+  }
+  100% {
+    --wui-code-up: 0;
+  }
+}
+
+/* Wrong: the row rattles, then the keys spring back up and blank in turn. */
+.wui-code[data-state='bad'] .wui-code-slots {
+  animation: wui-code-rattle 460ms;
+}
+
+.wui-code[data-state='bad'] .wui-code-cap {
+  color: var(--wui-code-bad);
+}
+
+.wui-code[data-state='clear'] .wui-code-slot,
+.wui-code[data-state='clear'] .wui-code-cap {
+  transition-delay: calc(var(--wui-code-i) * 45ms);
+}
+
+@keyframes wui-code-rattle {
+  15% {
+    transform: translateX(calc(var(--wui-unit) * 1.25)) rotate(0.6deg);
+  }
+  30% {
+    transform: translateX(calc(var(--wui-unit) * -1.25)) rotate(-0.6deg);
+  }
+  45% {
+    transform: translateX(calc(var(--wui-unit) * 0.75));
+  }
+  60% {
+    transform: translateX(calc(var(--wui-unit) * -0.5));
+  }
+  75% {
+    transform: translateX(calc(var(--wui-unit) * 0.25));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-code-slot,
+  .wui-code-cap {
+    transition-duration: 1ms;
+    transition-delay: 0ms !important;
+  }
+
+  .wui-code[data-state] .wui-code-slot,
+  .wui-code[data-state] .wui-code-slots {
+    animation: none;
+  }
+}

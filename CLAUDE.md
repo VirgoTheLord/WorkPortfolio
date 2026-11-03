@@ -47,7 +47,8 @@ pnpm format         # prettier --write . (Markdown is excluded on purpose)
 ## Code conventions
 
 - Files kebab-case, named exports, one component per file, no barrel files, `@/` alias → `src/`.
-- `src/components/library/` holds the reusable UI pieces kept for a future UI library (the buttons today: the frame button, the key, the scramble button). A piece there may be in use on the site or kept for later; each file says which.
+- `src/components/library/` holds the reusable UI pieces kept for a future UI library (the buttons today: the frame button, the key, the scramble button; and the pixel mark). A piece there may be in use on the site or kept for later; each file says which.
+- `src/components/library/cairn/` holds Cairn's premium pieces, copied verbatim from the owner's library (see ARCHITECTURE.md's tree). Rule 3 does not apply inside it; theme them only through `cairn-tokens.css`. Update by copying again, then re-run `pnpm typecheck`.
 - Prefer explicit props over configurable "variant soup". Use simple object maps for variants and `lib/cn.ts` for joining classes.
 - Avoid `useEffect` except for DOM side effects. No client state libraries.
 - Types for content live in `src/types/content.ts`. Use `satisfies` for content objects.

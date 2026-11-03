@@ -1,0 +1,169 @@
+/*
+ * The ballpoint button (ballpoint-button.tsx). The drawing is an SVG that
+ * overhangs the button by 30px all round, for the block, the overshooting
+ * corners and the focus loop; the engine (ballpoint-engine.ts) builds and moves
+ * it. This sheet holds the colours, the label and the states the script does
+ * not draw:
+ *
+ * - The pen is --wui-ballpoint-ink, the text colour by default, or blue, red or
+ *   the accent by data-ink, each with a lighter shade for dark pages. The face
+ *   is filled with --wui-ballpoint-paper, the page colour, so the block's
+ *   hatching hides behind it; set it to match a section that is not the page.
+ * - The label rides the face: the engine moves it by --wui-ballpoint-x / -y.
+ *   They start at the resting offset, so nothing shifts when the script lands.
+ * - Before the script runs (no data-ready) the button shows a hairline edge
+ *   where the face will be drawn.
+ * - While it draws itself in (data-intro) the label waits, then fades in with
+ *   the rising face. On a replay it fades out first (data-intro="out").
+ * - Keyboard focus draws one loose loop round the whole block, in place of the
+ *   outline; until the drawing exists it is the ordinary focus ring.
+ */
+
+.wui-ballpoint {
+  --wui-ballpoint-ink: var(--wui-fg);
+  --wui-ballpoint-paper: var(--wui-bg);
+  --wui-ballpoint-x: -5.3px;
+  --wui-ballpoint-y: -5.3px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: calc(var(--wui-unit) * 44);
+  min-height: calc(var(--wui-unit) * 13);
+  margin: 0;
+  padding: 0 calc(var(--wui-unit) * 9);
+  border: 0;
+  background: none;
+  color: var(--wui-fg);
+  font: 600 var(--wui-text-sm) / 1 var(--wui-font-sans);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wui-ballpoint:not([data-ready]) {
+  box-shadow: inset 0 0 0 1px var(--wui-rule);
+}
+
+/* Before the drawing exists, focus is the plain ring; after, the drawn loop is. */
+.wui-ballpoint:not([data-ready]):focus-visible {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 2px;
+}
+
+.wui-ballpoint[data-ready] {
+  outline: none;
+}
+
+.wui-ballpoint-art {
+  position: absolute;
+  inset: calc(var(--wui-unit) * -7.5);
+  width: calc(100% + var(--wui-unit) * 15);
+  height: calc(100% + var(--wui-unit) * 15);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.wui-ballpoint-art path {
+  fill: none;
+  stroke: var(--wui-ballpoint-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wui-ballpoint-dot {
+  fill: var(--wui-ballpoint-ink);
+}
+
+.wui-ballpoint-paper {
+  fill: var(--wui-ballpoint-paper);
+}
+
+.wui-ballpoint-label {
+  position: relative;
+  translate: var(--wui-ballpoint-x) var(--wui-ballpoint-y);
+  white-space: nowrap;
+}
+
+/* The intro: the label waits while the pen rules the face, then fades in as the
+   block rises (the engine's RISE_AT, 680ms), riding the face as it goes. */
+.wui-ballpoint[data-intro='pending'] .wui-ballpoint-label {
+  opacity: 0;
+}
+
+.wui-ballpoint[data-intro='out'] .wui-ballpoint-label {
+  opacity: 0;
+  transition: opacity var(--wui-duration-fast) var(--wui-ease-out);
+}
+
+.wui-ballpoint[data-intro='run'] .wui-ballpoint-label {
+  animation: wui-ballpoint-label 420ms var(--wui-ease-out) 700ms both;
+}
+
+@keyframes wui-ballpoint-label {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+
+.wui-ballpoint-art .wui-ballpoint-ring {
+  stroke-width: 0.9;
+  opacity: 0.7;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--wui-duration-fast) var(--wui-ease-out);
+}
+
+.wui-ballpoint:focus-visible .wui-ballpoint-ring {
+  stroke-dashoffset: 0;
+  transition-duration: 520ms;
+}
+
+.wui-ballpoint:is(:disabled, [aria-disabled='true']) {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* The pens. Blue and red each have a lighter shade for dark pages. */
+.wui-ballpoint[data-ink='accent'] {
+  --wui-ballpoint-ink: var(--wui-accent);
+}
+
+.wui-ballpoint[data-ink='blue'] {
+  --wui-ballpoint-ink: #2443b5;
+}
+
+.wui-ballpoint[data-ink='red'] {
+  --wui-ballpoint-ink: #c8262c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-ballpoint[data-ink='blue'] {
+    --wui-ballpoint-ink: #9db1ff;
+  }
+  :where(:root:not([data-theme='light'])) .wui-ballpoint[data-ink='red'] {
+    --wui-ballpoint-ink: #ff8a85;
+  }
+}
+
+[data-theme='dark'] .wui-ballpoint[data-ink='blue'],
+[data-theme='light'] [data-theme='dark'] .wui-ballpoint[data-ink='blue'] {
+  --wui-ballpoint-ink: #9db1ff;
+}
+
+[data-theme='dark'] .wui-ballpoint[data-ink='red'],
+[data-theme='light'] [data-theme='dark'] .wui-ballpoint[data-ink='red'] {
+  --wui-ballpoint-ink: #ff8a85;
+}
+
+[data-theme='light'] .wui-ballpoint[data-ink='blue'],
+[data-theme='dark'] [data-theme='light'] .wui-ballpoint[data-ink='blue'] {
+  --wui-ballpoint-ink: #2443b5;
+}
+
+[data-theme='light'] .wui-ballpoint[data-ink='red'],
+[data-theme='dark'] [data-theme='light'] .wui-ballpoint[data-ink='red'] {
+  --wui-ballpoint-ink: #c8262c;
+}

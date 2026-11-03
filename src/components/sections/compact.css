@@ -164,26 +164,22 @@
   color: var(--color-fg-muted);
 }
 
-.cp-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 1.5);
-  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2);
-  border: 1px solid var(--cp-tint);
-  border-radius: var(--radius-sm);
-  background-color: var(--cp-raise);
-  color: var(--color-fg);
-  line-height: 1.5;
+/* The small chips: Cairn's ballpoint button, drawn still and scaled down
+   whole with zoom, so the drawing, its block and its label shrink together
+   (the engine measures in the button's own pixels, so it draws true). The
+   label is set larger to come out at the label size, and the button is sized
+   to its words. The drawing overhangs the button, so neighbours keep room. */
+.wui-ballpoint.cp-ink {
+  --cp-ink-zoom: 0.42;
+  zoom: var(--cp-ink-zoom);
+  min-width: 0;
+  min-height: calc(var(--spacing) * 11);
+  margin: 0 calc(var(--spacing) * 4) calc(var(--spacing) * 3) calc(var(--spacing) * 1);
+  padding-inline: calc(var(--spacing) * 6);
+  font-size: calc(var(--text-sm) / var(--cp-ink-zoom));
+  font-weight: 500;
   white-space: nowrap;
-  vertical-align: baseline;
-  transition:
-    border-color var(--duration-base) var(--ease-expo),
-    background-color var(--duration-base) var(--ease-expo);
-}
-
-.cp-chip svg {
-  color: var(--color-fg-muted);
-  transition: color var(--duration-base) var(--ease-expo);
+  vertical-align: middle;
 }
 
 .cp-tag {
@@ -207,14 +203,6 @@
 }
 
 @media (hover: hover) {
-  .cp-chip:hover {
-    border-color: var(--color-fg);
-  }
-
-  .cp-chip:hover svg {
-    color: var(--cp-second);
-  }
-
   a:hover > .cp-nudge,
   .cp-work-row:hover .cp-nudge {
     transform: translate(2px, -2px);
@@ -230,9 +218,11 @@
 /* Controls that need script are not there without it. */
 html:not(.js) .cp-search,
 html:not(.js) .cp-theme,
+html:not(.js) .cp-term,
 html:not(.js) .cp-foot-tip,
 html:not(.js) .cp-copy-wrap,
-html:not(.js) .cp-replay-button {
+html:not(.js) .cp-replay-button,
+html:not(.js) .cp-demo-replay {
   display: none;
 }
 
@@ -260,8 +250,8 @@ html:not(.js) .cp-replay-button {
 
 /* The mark: a rubber stamp. It thumps down once on arrival; on hover its
    letters hop one after the other while the accent print slips out from under
-   them, and the "Full site" label beside it rolls over as its arrow leans out;
-   a press squashes it. */
+   them, and the way back types itself beside it as a command
+   (terminal-hint.tsx); a press squashes it. */
 .cp-logo {
   position: relative;
   display: inline-flex;
@@ -296,55 +286,55 @@ html:not(.js) .cp-replay-button {
   transition: translate var(--duration-slow) var(--ease-expo);
 }
 
-.cp-logo-back {
+.cp-term {
   position: absolute;
   top: 50%;
   left: 100%;
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--spacing) * 1.5);
   margin-left: calc(var(--spacing) * 3);
   padding-left: calc(var(--spacing) * 3);
   border-left: 1px solid var(--cp-tint);
   font-size: var(--text-xs);
-  line-height: 1.6;
-  letter-spacing: 0.04em;
   color: var(--color-fg-muted);
-  text-transform: uppercase;
-  white-space: nowrap;
+  white-space: pre;
   opacity: 0;
-  translate: calc(var(--spacing) * -2) -50%;
-  clip-path: inset(0 100% 0 0);
-  transition:
-    opacity var(--duration-base) var(--ease-expo),
-    translate var(--duration-slow) var(--ease-expo),
-    clip-path var(--duration-slow) var(--ease-expo);
+  translate: 0 -50%;
+  transition: opacity var(--duration-base) var(--ease-expo);
   pointer-events: none;
 }
 
-.cp-logo:hover .cp-logo-back,
-.cp-logo:focus-visible .cp-logo-back {
+.cp-term[data-on] {
   opacity: 1;
-  translate: 0 -50%;
-  clip-path: inset(0 0 0 0);
 }
 
-.cp-logo-arrow {
+.cp-term-prompt {
+  /* The line is a flex row, which drops the space between its parts. */
+  margin-right: 0.6em;
+  color: var(--cp-second);
+}
+
+.cp-term-cursor {
   display: inline-block;
-  transition:
-    translate var(--duration-slow) var(--ease-expo) 120ms,
-    color var(--duration-slow) var(--ease-expo);
+  width: 0.6em;
+  height: 1.15em;
+  margin-left: 0.15em;
+  background-color: var(--cp-second);
+}
+
+.cp-term[data-on] .cp-term-cursor {
+  animation: cp-caret 1s steps(1) infinite;
+}
+
+@keyframes cp-caret {
+  50% {
+    opacity: 0;
+  }
 }
 
 .cp-logo:hover .cp-logo-letter::before,
 .cp-logo:focus-visible .cp-logo-letter::before {
   translate: 0.07em 0.06em;
-}
-
-.cp-logo:hover .cp-logo-arrow,
-.cp-logo:focus-visible .cp-logo-arrow {
-  translate: 0.15em -0.15em;
-  color: var(--cp-second);
 }
 
 .cp-logo:active .cp-logo-ink {
@@ -383,82 +373,45 @@ html:not(.js) .cp-replay-button {
   gap: calc(var(--spacing) * 2);
 }
 
-/* The search field: a real input in the bar. */
+/* The search: Cairn's lens search as a palette (interactive/site-search.tsx).
+   In the bar it is only a small trigger, the field's shape at the bar's height;
+   it opens in the middle of the screen. The lens fills its board with the
+   accent; here, as on Cairn's own site, the highlight is a quiet tint of the
+   text colour instead, so the palette reads as part of the page. */
+.cp-search,
+.wui-lens-palette {
+  --wui-accent: color-mix(in oklab, var(--color-fg) 55%, transparent);
+  --wui-accent-fg: var(--color-fg);
+}
 
 .cp-search {
-  min-width: 0;
-  flex: 0 1 11rem;
-  transition: flex-basis var(--duration-base) var(--ease-expo);
+  flex: none;
 }
 
-.cp-search[data-open] {
-  flex-basis: 15rem;
+.cp-search .wui-lens {
+  --wui-lens-width: 10.5rem;
+  --wui-lens-height: calc(var(--spacing) * 8.5);
 }
 
-.cp-search-field {
-  display: flex;
-  height: calc(var(--spacing) * 9);
-  align-items: center;
-  gap: calc(var(--spacing) * 2);
-  padding-inline: calc(var(--spacing) * 2.5);
-  border: 1px solid var(--cp-tint);
-  border-radius: var(--radius-sm);
-  background-color: var(--cp-raise);
-  cursor: text;
-  transition: border-color var(--duration-base) var(--ease-expo);
+.cp-search .wui-lens-placeholder {
+  font-size: var(--text-sm);
 }
 
-.cp-search[data-open] .cp-search-field {
-  border-color: var(--cp-second);
+/* The palette's board is a raised surface of the page, not a field of colour.
+   The palette lives on <body>, outside the compact frame, so it is mixed from
+   the site's own tokens here. */
+.wui-lens-palette .wui-lens-panel {
+  background: color-mix(in oklab, var(--color-fg) 5%, var(--color-bg));
+  box-shadow:
+    0 0 0 1px var(--color-rule),
+    0 calc(var(--spacing) * 3) calc(var(--spacing) * 8)
+      color-mix(in oklab, var(--color-black) 25%, transparent);
 }
 
-.cp-search-field:has(:focus-visible) {
-  outline: 2px solid var(--cp-second);
-  outline-offset: -1px;
-}
-
-.cp-search-glass {
-  color: var(--color-fg-muted);
-  transition:
-    rotate var(--duration-base) var(--ease-expo),
-    scale var(--duration-base) var(--ease-expo),
-    color var(--duration-base) var(--ease-expo);
-}
-
-.cp-search[data-open] .cp-search-glass {
-  rotate: -14deg;
-  scale: 1.15;
-  color: var(--cp-second);
-}
-
-.cp-search-input {
-  min-width: 0;
-  flex: 1;
-  background: transparent;
-  /* At least 16px, so a phone does not zoom in on focus. */
-  font-size: max(1rem, var(--text-sm));
-  color: var(--color-fg);
-}
-
-.cp-search-input::placeholder {
-  color: var(--color-fg-muted);
-}
-
-.cp-search-input:focus-visible {
-  outline: none;
-}
-
-.cp-search-kbd {
-  display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .cp-search-kbd {
-    display: inline-flex;
-  }
-
-  .cp-search-field:hover {
-    border-color: color-mix(in srgb, var(--color-fg) 30%, transparent);
+@media (pointer: coarse) {
+  .cp-search .wui-lens {
+    --wui-lens-width: 8rem;
+    --wui-lens-height: calc(var(--spacing) * 10);
   }
 }
 
@@ -685,6 +638,8 @@ html:not(.js) .cp-replay-button {
 }
 
 .cp-intro-name {
+  /* The name's accent impressions sit behind it, not behind the page. */
+  isolation: isolate;
   margin-top: calc(var(--spacing) * 5);
   font-family: var(--font-display);
   font-size: var(--text-2xl);
@@ -721,8 +676,7 @@ html:not(.js) .cp-replay-button {
   line-height: 2.1;
 }
 
-/* The one hand-drawn line: two loose strokes under the statement's key words,
-   drawn once on arrival. Already drawn for reduced motion (globals.css). */
+/* The one hand-drawn line: two loose strokes under the statement's key words. */
 .cp-scribble-words {
   position: relative;
   white-space: nowrap;
@@ -738,27 +692,30 @@ html:not(.js) .cp-replay-button {
   pointer-events: none;
 }
 
+/* Drawn in from the left by one clip on the drawing itself, pen-first, once
+   the page has settled (interactive/scribble-line.tsx sets data-draw). The
+   clip reaches past the line all round so its round caps are not cut. Without
+   script, or with reduced motion, it is simply drawn. */
+html.js .cp-scribble {
+  clip-path: inset(-50% 100% -50% -2%);
+}
+
+html.js .cp-scribble[data-draw] {
+  clip-path: inset(-50% -2% -50% -2%);
+  transition: clip-path var(--duration-media) var(--ease-in-out);
+}
+
 .cp-scribble path {
   fill: none;
   stroke: var(--color-accent);
   stroke-width: 2.25;
   stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
   vector-effect: non-scaling-stroke;
-  animation: cp-draw var(--duration-media) var(--ease-in-out) 400ms forwards;
-}
-
-@keyframes cp-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cp-scribble path {
-    stroke-dashoffset: 0;
-    animation: none;
+  html.js .cp-scribble {
+    clip-path: none;
   }
 }
 
@@ -1280,10 +1237,6 @@ html:not(.js) .cp-replay-button {
   margin-top: calc(var(--spacing) * 5);
 }
 
-.cp-chips .cp-chip {
-  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2.5);
-}
-
 .cp-contact-time {
   margin-top: calc(var(--spacing) * 5);
   font-size: var(--text-xs);
@@ -1309,10 +1262,6 @@ html:not(.js) .cp-replay-button {
 
   .cp-theme {
     --cp-slot: calc(var(--spacing) * 9.5);
-  }
-
-  .cp-chips .cp-chip {
-    min-height: calc(var(--spacing) * 11);
   }
 }
 
@@ -1447,104 +1396,6 @@ html:not(.js) .cp-replay-button {
   pointer-events: none;
 }
 
-/* The search's list, under the bar (positioned on the sticky bar). */
-
-.cp-search-panel {
-  position: absolute;
-  top: calc(100% + var(--spacing) * 1);
-  right: var(--cp-bar-edge);
-  display: flex;
-  width: min(26rem, calc(100% - var(--cp-bar-edge) * 2));
-  max-height: min(28rem, 70dvh);
-  flex-direction: column;
-  border: 1px solid var(--cp-tint);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-bg);
-  transform-origin: top right;
-  animation: cp-drop var(--duration-slow) var(--ease-expo);
-}
-
-.cp-search-panel[hidden] {
-  display: none;
-}
-
-@keyframes cp-drop {
-  from {
-    opacity: 0;
-    scale: 0.96;
-    translate: 0 calc(var(--spacing) * -2);
-  }
-}
-
-.cp-search-list {
-  flex: 1;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: calc(var(--spacing) * 2);
-}
-
-.cp-search-group {
-  padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 2) calc(var(--spacing) * 1);
-  font-size: var(--text-xs);
-  color: var(--color-fg-muted);
-}
-
-.cp-search-option {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 3);
-  padding: calc(var(--spacing) * 2);
-  border-radius: var(--radius-sm);
-  color: var(--color-fg-muted);
-  cursor: pointer;
-  transition: padding var(--duration-base) var(--ease-expo);
-}
-
-.cp-search-option[aria-selected='true'] {
-  padding-left: calc(var(--spacing) * 3);
-  background-color: color-mix(in srgb, var(--color-fg) 7%, transparent);
-  color: var(--color-fg);
-}
-
-.cp-search-option[aria-selected='true'] svg:first-child {
-  color: var(--cp-second);
-}
-
-.cp-search-option:focus {
-  outline: none;
-}
-
-.cp-search-out {
-  color: var(--color-fg-muted);
-}
-
-.cp-search-empty {
-  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 4);
-  text-align: center;
-  color: var(--color-fg-muted);
-}
-
-.cp-search-foot {
-  display: flex;
-  justify-content: flex-end;
-  gap: calc(var(--spacing) * 4);
-  padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 4);
-  border-top: var(--cp-dash);
-  font-size: var(--text-xs);
-  color: var(--color-fg-muted);
-}
-
-.cp-search-foot .cp-kbd {
-  min-width: 0;
-  margin-right: calc(var(--spacing) * 1);
-}
-
-@media (hover: none) {
-  .cp-search-foot {
-    display: none;
-  }
-}
-
 /* What a command did ("Email address copied"), at the foot of the screen. */
 .cp-toast {
   position: fixed;
@@ -1573,25 +1424,61 @@ html:not(.js) .cp-replay-button {
    but the clock's colon, and globals.css stills them all for reduced motion. */
 
 /* The name: its letters ripple up in orange, one after another. */
-.cp-wave-word {
+/* The name, offset-printed: each word carries an accent impression behind
+   it, a hair down and to the right, as a second colour printed slightly out of
+   register. On hover the impression slips further out while the word thumps,
+   then both land back, word after word (like the logo's stamp). Transforms
+   only; the words are decoration, the heading's name is the plain text. */
+.cp-print-word {
+  position: relative;
   display: inline-block;
   white-space: nowrap;
 }
 
-.cp-wave-letter {
-  display: inline-block;
+.cp-print-word::before {
+  content: attr(data-word);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  color: var(--color-accent);
+  translate: 0.05em 0.05em;
 }
 
-@media (hover: hover) {
-  .cp-intro-name:hover .cp-wave-letter {
-    animation: cp-wave 900ms var(--ease-sine) calc(var(--i) * 24ms);
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .cp-intro-name:hover .cp-print-word {
+    animation: cp-print-thump 700ms var(--ease-out) calc(var(--w) * 70ms) both;
+  }
+
+  .cp-intro-name:hover .cp-print-word::before {
+    animation: cp-print-slip 700ms var(--ease-out) calc(var(--w) * 70ms) both;
   }
 }
 
-@keyframes cp-wave {
-  40% {
-    translate: 0 -0.1em;
-    color: var(--cp-second);
+@keyframes cp-print-slip {
+  30% {
+    translate: 0.16em 0.12em;
+  }
+
+  55% {
+    translate: -0.015em -0.01em;
+  }
+
+  100% {
+    translate: 0.05em 0.05em;
+  }
+}
+
+@keyframes cp-print-thump {
+  30% {
+    scale: 1.035;
+  }
+
+  55% {
+    scale: 0.985;
+  }
+
+  100% {
+    scale: 1;
   }
 }
 
@@ -1649,12 +1536,6 @@ html:not(.js) .cp-replay-button {
   display: inline-flex;
   align-items: center;
   gap: calc(var(--spacing) * 1.5);
-}
-
-@media (pointer: coarse) {
-  .cp-search-field {
-    height: calc(var(--spacing) * 11);
-  }
 }
 
 /* The workbench pages. */
@@ -1787,46 +1668,65 @@ html:not(.js) .cp-replay-button {
   gap: calc(var(--spacing) * 8);
 }
 
-.cp-replay-button {
-  cursor: pointer;
-}
-
-.cp-replay-icon {
-  transition: rotate var(--duration-slow) var(--ease-expo);
-}
-
-@media (hover: hover) {
-  .cp-replay-button:hover .cp-replay-icon {
-    rotate: -200deg;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .cp-replay-button {
+  .cp-replay-button,
+  .cp-demo-replay {
     display: none;
   }
 }
 
-.cp-demo-sentence {
-  max-width: 24ch;
-  font-size: var(--text-lg);
-  line-height: 1.35;
-  text-align: center;
+/* Cairn's pieces on the stage. The ballpoint's face is filled with the page
+   colour so its hatching hides behind it; on the stage that is the mat. */
+.cp-stage {
+  --wui-ballpoint-paper: var(--cp-raise);
+  --wui-neo-surface: var(--cp-raise);
 }
 
-.cp-demo-pointer,
+.cp-demo-column {
+  display: grid;
+  justify-items: start;
+  gap: calc(var(--spacing) * 6);
+}
+
+.cp-demo-stack {
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--spacing) * 14);
+  padding-block: calc(var(--spacing) * 6);
+}
+
+.cp-demo-field,
+.cp-demo-search {
+  width: min(100%, 24rem);
+}
+
+/* The lens search's results lie over what follows, so the stage keeps room. */
+.cp-demo-search {
+  align-self: start;
+  min-height: calc(var(--spacing) * 80);
+}
+
+/* The pixel mark, at stage size: a larger mark and larger cells, the word
+   centred on the mark rather than hung from its left edge as in a bar. */
+.pixel-mark.cp-demo-pixel {
+  --pixel-cell: calc(var(--spacing) * 2);
+  --pixel-gap: calc(var(--spacing) * 0.5);
+}
+
+.cp-demo-pixel .pixel-mark-ink {
+  font-size: var(--text-3xl);
+}
+
+.cp-demo-pixel .pixel-mark-cells {
+  left: 50%;
+  translate: -50% -50%;
+}
+
 .cp-demo-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: calc(var(--spacing) * 5);
-}
-
-.cp-demo-target {
-  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
-  border: var(--cp-dash);
-  border-radius: var(--radius-sm);
-  background-color: var(--cp-raise);
 }
 
 /* How it behaves: numbered steps. */

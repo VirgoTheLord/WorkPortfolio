@@ -1,21 +1,19 @@
-import Image from 'next/image'
 import { Rise } from '@/components/motion/rise'
 import { SkillsRows } from '@/components/motion/skills-rows'
-import { ArrowLink } from '@/components/ui/arrow-link'
 import { skills } from '@/content/skills'
+import { SkillLogo } from '@/components/sections/skill-logo'
 import './skills.css'
 
 /*
  * Skills, recreated from the reference's services list (studionamma.com): the
- * label, then the skills as one centred stack of large capitals, then a link to
- * the full page (/skills).
+ * label, then the skills as one centred stack of large capitals.
  *
  * With a fine pointer, from lg (skills.css): hovering a row dims the others, shows
- * its detail beside it and opens a screenshot of this site at the frame's left
- * edge. On screens without hover the row passing the top of the screen is the one
+ * its detail beside it and opens the tool's mark on a brand panel at the
+ * frame's left edge. On screens without hover the row passing the top of the screen is the one
  * at full strength (motion/skills-rows.tsx). Each row rises out of its mask as it
- * arrives (motion/rise.tsx). The detail is real text either way; the screenshot
- * is decoration here (the full page carries the same images with their alt text).
+ * arrives (motion/rise.tsx). The detail is real text either way; the mark is
+ * decoration (the row's name says the same).
  */
 export function Skills() {
   return (
@@ -42,21 +40,15 @@ export function Skills() {
                     {row.detail}
                   </span>
                 </span>
-                <span aria-hidden="true" className="skills-row-visual">
-                  <Image src={row.visual.image} alt="" sizes="28vw" />
+                <span aria-hidden="true" data-theme="brand" className="skills-row-visual">
+                  {row.logos.map((logo) => (
+                    <SkillLogo key={logo} name={logo} className="skills-row-logo" />
+                  ))}
                 </span>
               </li>
             ))}
           </ul>
         </SkillsRows>
-
-        <div className="skills-mask skills-more">
-          <span data-rise="" data-rise-as="label" className="inline-block">
-            <ArrowLink href={skills.more.href} data-cursor-tag={skills.more.tag}>
-              {skills.more.label}
-            </ArrowLink>
-          </span>
-        </div>
       </Rise>
     </section>
   )

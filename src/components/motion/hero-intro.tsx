@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { loader, site } from '@/content/site'
 import { loadGsap } from '@/lib/motion/gsap'
 import './hero-intro.css'
@@ -106,6 +106,22 @@ const COPY = 0.3
  */
 export function HeroIntro() {
   const overlayRef = useRef<HTMLDivElement>(null)
+
+  // Arriving by a link inside the site (the compact site's logo, say), the
+  // head script never ran for this page, so nothing set .is-enter: the hero
+  // would skip its wipe and print the name's cells a frame at a time while the
+  // route is still settling, which reads as lag. A layout
+  // effect runs before that first paint, so setting the class here starts the
+  // same CSS entrance a reload gets. The first mount after landing on the home
+  // page is the load itself, which the head script has already handled.
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    const landed = mounts++ === 0 && root.dataset.landing === '/'
+    if (landed || root.classList.contains('is-intro') || root.classList.contains('is-enter')) return
+    if (location.hash || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    root.classList.add('is-enter')
+    startEnter()
+  }, [])
 
   useEffect(() => {
     const root = document.documentElement
@@ -247,9 +263,12 @@ export function HeroIntro() {
    paint, where waiting for script left about 0.9s of empty grid in development
    (measured in the owner's browser). This only ends it: the class comes off when
    the last piece has landed, or at once on any input, leaving the final state.
-   Runs once per page load, outside React's lifecycle. */
+   Runs outside React's lifecycle: once on a load, and again each time the hero
+   is reached by a link inside the site. */
 const ENTER_MS = 1300
 let entering = false
+/* How many times the hero has mounted in this document (see HeroIntro). */
+let mounts = 0
 function startEnter() {
   const root = document.documentElement
   if (entering || !root.classList.contains('is-enter')) return
@@ -260,6 +279,7 @@ function startEnter() {
     window.clearTimeout(timer)
     inputs.forEach((type) => window.removeEventListener(type, finish))
     root.classList.remove('is-enter', 'intro-live')
+    entering = false
   }
   const inputs = ['wheel', 'touchmove', 'keydown'] as const
   inputs.forEach((type) => window.addEventListener(type, finish, { passive: true }))

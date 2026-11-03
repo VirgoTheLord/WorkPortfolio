@@ -1,26 +1,23 @@
-import Link from 'next/link'
-import { Icon } from '@/components/ui/icon'
+import { BallpointLink } from '@/components/interactive/ballpoint-link'
 import { compact } from '@/content/compact'
 import { workbench } from '@/content/workbench'
 import { CompactSection } from './compact-section'
 import { WorkbenchList } from './workbench-list'
-import { RollText } from '@/components/ui/roll-text'
 
 /*
- * The workbench: the small pieces the site is built from. Each opens its own
- * page where it runs live (app/(compact)/compact/components).
+ * The workbench, in short: Cairn's premium pieces, each opening its own page
+ * where it runs live (app/(compact)/compact/components); the link under them
+ * goes to all of it, the site's own pieces too.
  */
+const cairn = workbench.items.filter((item) => item.kind === 'cairn')
+
 export function CompactWorkbench() {
   return (
-    <CompactSection id="workbench" meta={`${workbench.items.length} pieces`}>
+    <CompactSection id="workbench" meta={`${cairn.length} pieces`}>
       <p className="cp-note">{compact.workbench.note}</p>
-      <WorkbenchList />
+      <WorkbenchList items={cairn} />
       <p className="cp-more">
-        <Link href="/compact/components" className="cp-chip">
-          <Icon name="box" className="size-3.5" />
-          <RollText>{compact.workbench.open}</RollText>
-          <Icon name="arrow" className="cp-nudge size-3" />
-        </Link>
+        <BallpointLink label={compact.workbench.open} href="/compact/components" />
       </p>
     </CompactSection>
   )

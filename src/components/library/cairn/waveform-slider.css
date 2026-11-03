@@ -1,0 +1,102 @@
+/*
+ * The waveform slider (waveform-slider.tsx): a row of audio bars that light up
+ * to the value. The bars are one WebGL canvas; a real range input lies over
+ * them, invisible, so the pointer, keys and forms all go through it. Its thumb
+ * is as wide as the canvas's end padding, so the value under the pointer is
+ * the value drawn.
+ */
+
+.wui-wave {
+  display: grid;
+  gap: calc(var(--wui-unit) * 2);
+  width: min(var(--wui-wave-width, 22rem), 100%);
+  color: var(--wui-fg);
+}
+
+.wui-wave-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--wui-unit) * 3);
+  font: 500 var(--wui-text-sm) / 1.2 var(--wui-font-sans);
+}
+
+.wui-wave-value {
+  color: var(--wui-muted);
+  font: var(--wui-text-label) / 1 var(--wui-font-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.wui-wave-field {
+  position: relative;
+  height: calc(var(--wui-unit) * 14);
+}
+
+.wui-wave-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wui-wave-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: none;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.wui-wave-input::-webkit-slider-thumb {
+  width: calc(var(--wui-unit) * 4);
+  height: calc(var(--wui-unit) * 8);
+  -webkit-appearance: none;
+}
+
+.wui-wave-input::-moz-range-thumb {
+  width: calc(var(--wui-unit) * 4);
+  height: calc(var(--wui-unit) * 8);
+  border: 0;
+}
+
+.wui-wave-input:disabled {
+  cursor: not-allowed;
+}
+
+.wui-wave:has(.wui-wave-input:disabled) {
+  opacity: 0.5;
+}
+
+.wui-wave-field:has(.wui-wave-input:focus-visible) {
+  border-radius: calc(var(--wui-unit) * 2);
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 4px;
+}
+
+/* Without WebGL: a plain bar, filled to the value. */
+.wui-wave-field:not([data-gl='on'])::before,
+.wui-wave-field:not([data-gl='on'])::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(var(--wui-unit) * 2);
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 2px;
+}
+
+.wui-wave-field:not([data-gl='on'])::before {
+  right: calc(var(--wui-unit) * 2);
+  background: var(--wui-rule);
+}
+
+.wui-wave-field:not([data-gl='on'])::after {
+  width: calc((100% - var(--wui-unit) * 4) * var(--wui-wave-v));
+  background: var(--wui-accent);
+}

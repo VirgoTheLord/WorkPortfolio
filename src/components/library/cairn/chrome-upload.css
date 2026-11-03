@@ -1,0 +1,260 @@
+/*
+ * The chrome upload (chrome-upload.tsx). The track is CSS; the pill's face,
+ * chrome border and shadow are one WebGL canvas over it; the real button
+ * sits on the pill and its content cross-fades from one state to the next.
+ * --wui-chrome-face sets the face (light on light, smoked in dark); the
+ * script picks dark or light text to suit it and marks the tone on the root.
+ */
+
+.wui-chrome {
+  --wui-chrome-face: #f4f4f4;
+  --chrome-fg: #1d1d1f;
+  --chrome-muted: #86868b;
+  width: min(var(--wui-chrome-width, 28.75rem), 100%);
+  font-family: var(--wui-font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* :where() keeps the system's dark below a data-theme on any ancestor. */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-chrome {
+    --wui-chrome-face: #222226;
+  }
+}
+
+[data-theme='dark'] .wui-chrome,
+[data-theme='light'] [data-theme='dark'] .wui-chrome {
+  --wui-chrome-face: #222226;
+}
+
+[data-theme='light'] .wui-chrome,
+[data-theme='dark'] [data-theme='light'] .wui-chrome {
+  --wui-chrome-face: #f4f4f4;
+}
+
+.wui-chrome[data-tone='dark'] {
+  --chrome-fg: #f2f2f4;
+  --chrome-muted: #8d8d93;
+}
+
+.wui-chrome-track {
+  /* Opaque, so a patterned page never shows through the groove. */
+  position: relative;
+  height: calc(var(--wui-unit) * 19);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.06), rgb(255 255 255 / 0.05)), var(--wui-bg);
+  box-shadow:
+    inset 0 2px 5px rgb(0 0 0 / 0.14),
+    inset 0 -1px 0 rgb(255 255 255 / 0.5),
+    0 1px 0 rgb(255 255 255 / 0.75);
+}
+
+.wui-chrome[data-tone='dark'] .wui-chrome-track {
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.35), rgb(255 255 255 / 0.02)), var(--wui-bg);
+  box-shadow:
+    inset 0 2px 6px rgb(0 0 0 / 0.6),
+    inset 0 -1px 0 rgb(255 255 255 / 0.05),
+    0 1px 0 rgb(255 255 255 / 0.07);
+}
+
+.wui-chrome-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wui-chrome-pill {
+  position: absolute;
+  top: calc(var(--wui-unit) * 2);
+  left: calc(var(--wui-unit) * 2);
+  height: calc(var(--wui-unit) * 15);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--chrome-fg);
+  font: 500 1.25rem / 1 var(--wui-font-sans);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+
+/* Hidden until the script has sized and drawn it, so a reload never shows
+   an unsized pill; the resting label is there already, without its entrance. */
+.wui-chrome:not([data-ready]) .wui-chrome-pill {
+  opacity: 0;
+}
+
+.wui-chrome-face[data-first] {
+  animation: none;
+}
+
+/* Without WebGL: a plain pill. */
+.wui-chrome:not([data-gl]) .wui-chrome-pill {
+  background: var(--wui-chrome-face);
+  box-shadow: 0 0 0 1.5px var(--chrome-muted);
+}
+
+.wui-chrome-pill:focus-visible {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 4px;
+}
+
+.wui-chrome-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--wui-unit) * 2.5);
+  padding: 0 calc(var(--wui-unit) * 8);
+  animation: wui-chrome-in 450ms cubic-bezier(0.3, 1.25, 0.5, 1) both;
+}
+
+.wui-chrome-face[data-leaving] {
+  animation: wui-chrome-out 220ms ease forwards;
+}
+
+/* Measures the resting content, from which the pill's width is taken. */
+.wui-chrome-measure {
+  inset: auto;
+  padding: 0;
+  font: 500 1.25rem / 1 var(--wui-font-sans);
+  letter-spacing: -0.01em;
+  visibility: hidden;
+  pointer-events: none;
+  animation: none;
+}
+
+@keyframes wui-chrome-in {
+  from {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(12px) scale(0.94);
+  }
+}
+
+@keyframes wui-chrome-out {
+  to {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(-12px) scale(0.94);
+  }
+}
+
+.wui-chrome-icon {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  color: var(--chrome-muted);
+}
+
+.wui-chrome-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+/* The loader: a short stroke that runs forever around an infinity sign. */
+.wui-chrome-infinity {
+  width: 1.875rem;
+}
+
+.wui-chrome-run {
+  animation: wui-chrome-run 1.6s linear infinite;
+  stroke: var(--chrome-fg);
+  stroke-dasharray: 26 74;
+  stroke-width: 2.4;
+}
+
+@keyframes wui-chrome-run {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* Done: a ring draws itself, then the check. */
+.wui-chrome-check {
+  width: 1.875rem;
+  height: 1.875rem;
+  color: var(--chrome-fg);
+}
+
+.wui-chrome-check circle,
+.wui-chrome-check path {
+  animation: wui-chrome-draw 550ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.wui-chrome-check circle {
+  opacity: 0.45;
+  stroke-width: 1.6;
+}
+
+.wui-chrome-check path {
+  animation-delay: 280ms;
+  animation-duration: 400ms;
+  stroke-width: 2.2;
+}
+
+@keyframes wui-chrome-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-chrome-face {
+    animation: wui-chrome-fade 200ms ease both;
+  }
+
+  .wui-chrome-face[data-leaving] {
+    animation: wui-chrome-fade 150ms ease reverse forwards;
+  }
+
+  .wui-chrome-run {
+    animation: none;
+  }
+
+  .wui-chrome-check circle,
+  .wui-chrome-check path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes wui-chrome-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* As a link (href): the resting pill alone. The track hugs it (its width is
+   set from the label) and has no groove, so only the chrome pill shows. A
+   plain width, not one capped by the container: in a row sized by its
+   content the cap would resolve to nothing. */
+.wui-chrome[data-bare] {
+  flex: none;
+  width: var(--wui-chrome-width, auto);
+  max-width: none;
+}
+
+.wui-chrome[data-bare] .wui-chrome-track {
+  background: none;
+  box-shadow: none;
+}
+
+.wui-chrome[data-bare] .wui-chrome-pill {
+  text-decoration: none;
+}

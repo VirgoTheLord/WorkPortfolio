@@ -1,6 +1,7 @@
 import { Fragment, type CSSProperties } from 'react'
+import { BallpointLink } from '@/components/interactive/ballpoint-link'
 import { LocalTime } from '@/components/interactive/local-time'
-import { Icon } from '@/components/ui/icon'
+import { ScribbleLine } from '@/components/interactive/scribble-line'
 import { compact } from '@/content/compact'
 import { site } from '@/content/site'
 import { RollText } from '@/components/ui/roll-text'
@@ -9,11 +10,12 @@ const { intro } = compact
 
 /*
  * The compact site's opening (DESIGN.md §5b): where and what time it is there,
- * the name (its letters ripple up in orange, one after another, on hover), the
+ * the name (printed over an accent impression a hair out of register, which
+ * slips further out and thumps back in on hover, word by word), the
  * role, the full site's statement with one hand-drawn orange line under its key
  * words (drawn once on arrival, and it wobbles when the statement is hovered,
  * compact.css), a line on now, and the ways out as small chips inside a
- * sentence (10xshivam.dev's), their icons wiggling on hover.
+ * sentence (10xshivam.dev's), each drawn in ballpoint (Cairn's button, still).
  */
 export function CompactIntro() {
   return (
@@ -31,25 +33,18 @@ export function CompactIntro() {
       <h1 id="intro-heading" className="cp-intro-name">
         <span className="sr-only">{site.name}</span>
         <span aria-hidden="true">
-          {site.name.split(' ').map((word, w, words) => {
-            const start = words.slice(0, w).join('').length
-            return (
-              <Fragment key={word}>
-                {w > 0 ? ' ' : null}
-                <span className="cp-wave-word">
-                  {[...word].map((letter, l) => (
-                    <span
-                      key={l}
-                      className="cp-wave-letter"
-                      style={{ '--i': start + l } as CSSProperties}
-                    >
-                      {letter}
-                    </span>
-                  ))}
-                </span>
-              </Fragment>
-            )
-          })}
+          {site.name.split(' ').map((word, w) => (
+            <Fragment key={word}>
+              {w > 0 ? ' ' : null}
+              <span
+                className="cp-print-word"
+                data-word={word}
+                style={{ '--w': w } as CSSProperties}
+              >
+                {word}
+              </span>
+            </Fragment>
+          ))}
         </span>
       </h1>
       <p className="cp-intro-role font-label">{intro.role}</p>
@@ -57,14 +52,7 @@ export function CompactIntro() {
         {intro.statement.before}
         <span className="cp-scribble-words">
           {intro.statement.mark}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 200 14"
-            preserveAspectRatio="none"
-            className="cp-scribble"
-          >
-            <path pathLength={1} d="M3 8.5C48 4.2 112 3.1 197 5.6M22 11.6c42-2.4 96-2.9 158-1.4" />
-          </svg>
+          <ScribbleLine />
         </span>
         {intro.statement.after}
       </p>
@@ -74,15 +62,7 @@ export function CompactIntro() {
           typeof part === 'string' ? (
             part
           ) : (
-            <a
-              key={part.href}
-              href={part.href}
-              {...(part.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-              className="cp-chip"
-            >
-              <Icon name={part.icon} className="size-3.5" />
-              <RollText>{part.label}</RollText>
-            </a>
+            <BallpointLink key={part.href} label={part.label} href={part.href} />
           ),
         )}
       </p>

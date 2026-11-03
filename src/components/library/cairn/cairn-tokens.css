@@ -1,0 +1,65 @@
+/*
+ * Cairn's tokens, answered by this site's own (Cairn is the owner's component
+ * library: w-ui.vercel.app). Cairn's components read only --wui-* properties, so
+ * instead of importing Cairn's tokens.css (its own greys and orange) every one
+ * is pointed at the matching site token here. Set on every themed subtree as
+ * well as the root, so a piece inside data-theme="dark" or "brand" takes that
+ * subtree's colours rather than the root's.
+ *
+ * The files beside this one are copied verbatim from Cairn's registry so they
+ * can be updated by copying again; this file is the only seam.
+ */
+
+:root,
+[data-theme] {
+  --wui-bg: var(--color-bg);
+  --wui-fg: var(--color-fg);
+  --wui-muted: var(--color-fg-muted);
+  --wui-rule: var(--color-rule);
+  --wui-accent: var(--color-accent);
+  --wui-accent-fg: var(--color-accent-fg);
+  --wui-focus: var(--color-focus);
+}
+
+:root {
+  --wui-font-sans: var(--font-text);
+  --wui-font-label: var(--font-label);
+  --wui-font-mark: var(--font-mark);
+  --wui-text-label: var(--text-label);
+  --wui-text-sm: var(--text-sm);
+  --wui-text-base: var(--text-base);
+  --wui-text-lg: var(--text-lg);
+  --wui-text-xl: var(--text-xl);
+
+  --wui-unit: 0.25rem;
+
+  --wui-ease-out: var(--ease-out);
+  --wui-ease-in-out: var(--ease-in-out);
+  --wui-ease-emphasis: var(--ease-emphasis);
+  --wui-ease-expo: var(--ease-expo);
+  --wui-duration-fast: var(--duration-fast);
+  --wui-duration-base: var(--duration-base);
+  --wui-duration-slow: var(--duration-slow);
+  --wui-duration-media: var(--duration-media);
+  --wui-duration-deliberate: var(--duration-deliberate);
+  --wui-stagger: var(--stagger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --wui-stagger: 0ms;
+  }
+}
+
+/* Visually hidden, still read: Cairn's components keep their names here. */
+.wui-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

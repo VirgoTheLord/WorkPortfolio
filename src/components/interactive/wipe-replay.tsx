@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, type ReactNode } from 'react'
-import { Icon } from '@/components/ui/icon'
+import { BallpointButton } from '@/components/library/cairn/ballpoint-button'
 
 /*
  * Plays the headline wipe (motion/headline-wipe.css) on the workbench stage,
@@ -24,10 +24,12 @@ export function WipeReplay({ label, children }: { label: string; children: React
   return (
     <div className="cp-replay">
       <div ref={ref}>{children}</div>
-      <button type="button" onClick={() => play(ref.current)} className="cp-chip cp-replay-button">
-        <Icon name="replay" className="cp-replay-icon size-3.5" />
-        {label}
-      </button>
+      <BallpointButton
+        label={label}
+        intro={false}
+        onClick={() => play(ref.current)}
+        className="cp-ink cp-replay-button"
+      />
     </div>
   )
 }

@@ -1,17 +1,16 @@
+import { BallpointLink } from '@/components/interactive/ballpoint-link'
 import { CopyButton } from '@/components/interactive/copy-button'
 import { LocalTime } from '@/components/interactive/local-time'
-import { Icon } from '@/components/ui/icon'
 import { compact } from '@/content/compact'
 import { contact as details } from '@/content/site'
 import { CompactSection } from './compact-section'
-import { RollText } from '@/components/ui/roll-text'
 
 const { contact, intro } = compact
 
 /*
  * The way to get in touch: the full site's invitation, the address set large
  * with a copy button beside it (ratneshc.com's), the email and profile links as
- * chips, and the owner's local time and how far it is from the visitor's.
+ * small chips drawn in ballpoint (Cairn's button, still), and the owner's local time and how far it is from the visitor's.
  */
 export function CompactContact() {
   return (
@@ -25,17 +24,11 @@ export function CompactContact() {
       </p>
       <ul className="cp-chips">
         <li>
-          <a href={`mailto:${details.email}`} className="cp-chip">
-            <Icon name="mail" className="size-3.5" />
-            <RollText>{contact.write}</RollText>
-          </a>
+          <BallpointLink label={contact.write} href={`mailto:${details.email}`} />
         </li>
         {contact.profiles.map((profile) => (
           <li key={profile.href}>
-            <a href={profile.href} target="_blank" rel="noreferrer" className="cp-chip">
-              <Icon name={profile.icon} className="size-3.5" />
-              <RollText>{profile.label}</RollText>
-            </a>
+            <BallpointLink label={profile.label} href={profile.href} />
           </li>
         ))}
       </ul>

@@ -37,7 +37,7 @@ function Chevrons() {
  * in turn (a chase), and the label's letters flip over one after another like a
  * departures board (frame-button.css). First built for Selected Work (after the
  * "View all case studies" key on kushbothra.com), then made the hero's, the
- * navbar's and the Skills page's call to action.
+ * navbar's and the contact section's call to action.
  *
  * A real link: a plain anchor for a hash on the home page (so the smooth
  * scroller takes it, lib/in-page-href.ts), next/link to another route. The label

@@ -13,9 +13,7 @@ import type {
 } from '@/types/content'
 
 /*
- * Hero copy. The title is the name, on one line across the hero. The line under it names the
- * three areas the Skills section is organised around (engineering, interaction,
- * craft), so it claims nothing the page does not already say. The stack row
+ * Hero copy. The title is the name, on one line across the hero. The stack row
  * lists tools this site is built with (see `content/skills`).
  */
 export const hero = {
@@ -24,6 +22,10 @@ export const hero = {
   stack: { label: 'Built with', items: ['Next.js', 'React', 'TypeScript', 'GSAP'] },
   drawHint: 'Drag to draw',
 } satisfies HeroContent
+
+/* The owner's one-line pitch, from the previous portfolio's hero. */
+export const tagline =
+  'Crafting immersive digital experiences with a blend of creativity and technology.'
 
 /*
  * The owner's role, degree and city, from the owner's LinkedIn profile (October
@@ -43,10 +45,13 @@ export const place = 'Ernakulam, Kerala'
 const [job] = experience
 const [degree] = education
 
-/* About copy. The statement is the owner's; the details are the facts above. */
+/*
+ * About copy. The statement opens the owner's About from the previous portfolio
+ * (the rest of it is the compact site's About); the details are the facts above.
+ */
 export const about = {
-  label: 'About',
-  statement: 'I make interfaces where engineering and visual craft meet.',
+  label: 'About me',
+  statement: 'I translate complex problems into elegant and pure digital solutions.',
   details: [
     { term: 'Currently', detail: `${job.role} at ${job.org}` },
     { term: 'Studied', detail: `${degree.degree} in ${degree.field}, ${degree.school}` },
@@ -60,18 +65,18 @@ export const work = {
 } satisfies WorkContent
 
 /*
- * Contact: the owner's public address (from the owner's LinkedIn profile's contact
- * details). The statement makes no claim about availability. The phone number
- * on that profile is deliberately not published here.
+ * Contact: the heading, the owner's invitation from the previous portfolio
+ * (`lead`, on the compact site) and its address.
  */
 export const contact = {
-  statement: ['If something here caught your eye,', 'write to me.'],
-  email: 'alwinabymathew@gmail.com',
+  statement: ["Let's build", 'something together.'],
+  lead: "Have a project in mind or just want to say hello? Feel free to reach out. I'm always open to discussing new ideas and opportunities.",
+  email: 'alwinabyofficial@gmail.com',
   board: {
     copyLabel: 'Copy email address',
     hint: 'Click to copy',
     touchHint: 'Tap to copy',
-    done: 'Copied',
+    done: 'Copied!',
   },
   write: 'Write an email',
 } satisfies ContactContent
@@ -119,8 +124,11 @@ export const site = {
   name: 'Alwin Aby Mathew',
   mark: 'AW',
   /** Profiles elsewhere, linked from the footer. */
-  profiles: [{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/alwin-aby-mathew/' }],
-  role: 'Software engineer',
+  profiles: [
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/alwin-aby-mathew/' },
+    { label: 'GitHub', href: 'https://github.com/VirgoTheLord' },
+  ],
+  role: 'Software developer',
   year: '2026',
   nav: [
     { label: 'About', href: '/#about' },
@@ -140,6 +148,7 @@ export const menu = {
   home: { label: 'Home', href: '/' },
   action: { label: "Let's Talk", href: '/#contact' },
   status: [site.role, `Portfolio ${site.year}`],
+  mode: 'Dark mode',
 } satisfies MenuContent
 
 /*

@@ -3,6 +3,7 @@ import { CompactFooter } from '@/components/sections/compact-footer'
 import { CompactHeader } from '@/components/sections/compact-header'
 import { compact } from '@/content/compact'
 import type { Viewport } from 'next'
+import '@/components/library/cairn/cairn-tokens.css'
 import '@/components/sections/compact.css'
 
 /* The browser's own chrome (the address bar on phones) in the page's colours:

@@ -1,0 +1,287 @@
+/*
+ * The record stack (record-stack.tsx). Covers are squares of --wui-stack-size
+ * (12.25rem by default) with rounded corners and a soft contact shadow (deeper
+ * on dark pages), piled with the second and third a little turned and lower, so
+ * it reads as a deck; any further covers wait squarely beneath them, so a
+ * tucked cover never vanishes. The engine moves them with inline transforms;
+ * the data-slot rules here put them in the same places before the script runs,
+ * so nothing jumps on load.
+ *
+ * The top cover carries one mark: a hairline round its edge in the accent that
+ * fills with the song (--wui-stack-progress, 0 to 1); its faint track shows
+ * only while a record plays. Under the pile, the ticker: a bare play glyph, the
+ * title and artist in a window with faded edges (two slides, so the new title
+ * can follow the old one in), and the elapsed time in tabular mono. Covers in
+ * dark mode get a hairline edge so they don't sink into the page.
+ */
+
+.wui-stack {
+  --wui-stack-size: 12.25rem;
+  --wui-stack-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.12), 0 12px 24px -16px rgb(0 0 0 / 0.22);
+  --wui-stack-edge: transparent;
+  display: inline-grid;
+  justify-items: center;
+  gap: calc(var(--wui-unit) * 7);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wui-stack-pile {
+  position: relative;
+  width: var(--wui-stack-size);
+  height: var(--wui-stack-size);
+  border-radius: calc(var(--wui-stack-size) * 0.112);
+  touch-action: pan-y;
+  outline: none;
+}
+
+.wui-stack-pile:focus-visible {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: calc(var(--wui-unit) * 4);
+}
+
+.wui-stack[data-variant='fan'] .wui-stack-pile {
+  touch-action: manipulation;
+}
+
+.wui-stack-card {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--wui-stack-shadow), 0 0 0 1px var(--wui-stack-edge);
+  cursor: grab;
+  will-change: transform;
+  transition: opacity var(--wui-duration-base) var(--wui-ease-out);
+}
+
+.wui-stack-card:active {
+  cursor: grabbing;
+}
+
+.wui-stack[data-variant='fan'] .wui-stack-card {
+  cursor: pointer;
+}
+
+/* Resting places, so it is right before the script takes over. */
+.wui-stack-card[data-slot='0'] {
+  transform: rotate(-2deg);
+}
+
+.wui-stack-card[data-slot='1'] {
+  transform: translate(calc(var(--wui-stack-size) * 0.051), calc(var(--wui-stack-size) * 0.041)) rotate(5deg) scale(0.97);
+}
+
+.wui-stack-card[data-slot='2'] {
+  transform: translate(calc(var(--wui-stack-size) * -0.051), calc(var(--wui-stack-size) * 0.061)) rotate(-7deg) scale(0.94);
+}
+
+.wui-stack-card[data-slot='3'],
+.wui-stack-card[data-slot='4'] {
+  transform: translateY(calc(var(--wui-stack-size) * 0.077)) scale(0.9);
+}
+
+.wui-stack-art {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--wui-rule);
+}
+
+.wui-stack-art > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Images in the art never start a native drag or catch the pointer. */
+.wui-stack-art img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* A soft sheen across the top left, as on a printed sleeve. */
+.wui-stack-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.18), transparent 40%);
+  pointer-events: none;
+}
+
+.wui-stack-edge {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--wui-duration-base) var(--wui-ease-out);
+}
+
+.wui-stack-edge rect {
+  fill: none;
+  stroke-width: 1.2;
+  /* Flat ends, so an empty ring draws nothing at all (a round cap leaves a dot). */
+  stroke-linecap: butt;
+}
+
+/* The track only shows while a record plays, so a resting cover has no frame. */
+.wui-stack-edge-track {
+  stroke: var(--wui-rule);
+  opacity: 0;
+  transition: opacity var(--wui-duration-base) var(--wui-ease-out);
+}
+
+.wui-stack[data-playing] .wui-stack-edge-track {
+  opacity: 1;
+}
+
+.wui-stack-edge-fill {
+  stroke: var(--wui-accent);
+  /* The dash is the progress itself, so an empty ring has nothing to draw. */
+  stroke-dasharray: var(--wui-stack-progress, 0) 2;
+}
+
+.wui-stack-card[data-slot='0'] .wui-stack-edge {
+  opacity: 1;
+}
+
+.wui-stack[data-variant='fan'] .wui-stack-edge,
+.wui-stack[data-dragging] .wui-stack-edge {
+  opacity: 0;
+}
+
+.wui-stack-glyph {
+  width: calc(var(--wui-unit) * 4);
+  height: calc(var(--wui-unit) * 4);
+  overflow: visible;
+}
+
+.wui-stack-glyph path {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+/* ---------- the ticker ---------- */
+
+.wui-stack-ticker {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--wui-unit) * 2.5);
+  width: calc(var(--wui-stack-size) + var(--wui-unit) * 14);
+  max-width: 100%;
+}
+
+.wui-stack-play {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: calc(var(--wui-unit) * 11);
+  height: calc(var(--wui-unit) * 11);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--wui-fg);
+  cursor: pointer;
+  transition: background-color var(--wui-duration-fast) var(--wui-ease-out), scale var(--wui-duration-fast) var(--wui-ease-out);
+}
+
+.wui-stack-play .wui-stack-glyph {
+  width: calc(var(--wui-unit) * 4.5);
+  height: calc(var(--wui-unit) * 4.5);
+}
+
+.wui-stack-play:hover {
+  background: var(--wui-rule);
+}
+
+.wui-stack-play:active {
+  scale: 0.9;
+}
+
+.wui-stack-play:focus-visible {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 2px;
+}
+
+.wui-stack-window {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: calc(var(--wui-unit) * 10);
+  overflow: hidden;
+  mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.wui-stack-slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  will-change: transform, opacity;
+}
+
+.wui-stack-title,
+.wui-stack-artist {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wui-stack-title {
+  color: var(--wui-fg);
+  font: 600 var(--wui-text-sm) / 1.2 var(--wui-font-sans);
+  letter-spacing: -0.01em;
+}
+
+.wui-stack-artist {
+  color: var(--wui-muted);
+  font: 0.75rem / 1.2 var(--wui-font-sans);
+}
+
+.wui-stack-time {
+  flex: none;
+  min-width: calc(var(--wui-unit) * 9);
+  color: var(--wui-muted);
+  font: 0.6875rem / 1 var(--wui-font-label);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Dark pages: a hairline round each cover. */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-stack {
+    --wui-stack-edge: rgb(255 255 255 / 0.1);
+    --wui-stack-shadow: 0 14px 28px -12px rgb(0 0 0 / 0.8);
+  }
+}
+
+[data-theme='dark'] .wui-stack,
+[data-theme='light'] [data-theme='dark'] .wui-stack {
+  --wui-stack-edge: rgb(255 255 255 / 0.1);
+  --wui-stack-shadow: 0 14px 28px -12px rgb(0 0 0 / 0.8);
+}
+
+[data-theme='light'] .wui-stack,
+[data-theme='dark'] [data-theme='light'] .wui-stack {
+  --wui-stack-edge: transparent;
+  --wui-stack-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.12), 0 12px 24px -16px rgb(0 0 0 / 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-stack-card,
+  .wui-stack-edge {
+    transition: none;
+  }
+}

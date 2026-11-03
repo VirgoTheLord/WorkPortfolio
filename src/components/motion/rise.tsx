@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import './rise.css'
 
 /*
- * The Skills pages' entrance, from the reference (studionamma.com): each line,
+ * The Skills section's entrance, from the reference (studionamma.com): each line,
  * label or block marked `data-rise` inside this island rises once into place as it
  * reaches the screen, out of a mask its parent provides (rise.css). Nothing
  * reverses on the way back up, as on the reference.

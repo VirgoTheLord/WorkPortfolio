@@ -19,56 +19,28 @@ export type AboutContent = {
   details: readonly { term: string; detail: string }[]
 }
 
-/** A real screenshot of this site, standing for one skill. `alt` is required. */
-export type SkillVisual = {
-  image: StaticImageData
-  alt: string
-}
+/** A tool's mark, drawn in sections/skill-logo.tsx. */
+export type SkillLogo =
+  | 'react'
+  | 'typescript'
+  | 'next'
+  | 'gsap'
+  | 'mongodb'
+  | 'express'
+  | 'node'
+  | 'websocket'
+  | 'javascript'
+  | 'tailwind'
+  | 'python'
 
 export type SkillsContent = {
   /** The section label, and the menu's name for it. */
   label: string
-  /** One row each: the name set large, the detail beside it on hover. */
-  rows: readonly { name: string; detail: string; visual: SkillVisual }[]
-  /** The link to the full page; `tag` is the word the cursor carries over it. */
-  more: { label: string; href: string; tag: string }
-}
-
-export type SkillsPageContent = {
-  /** Page metadata. */
-  meta: { title: string; description: string }
-  /** The hero headline, one entry per line. */
-  title: readonly string[]
-  scrollCue: string
-  intro: { label: string; text: string }
-  /** The four marks that rise under the intro, named for assistive tech. */
-  tools: { label: string; items: readonly ('next' | 'react' | 'typescript' | 'gsap')[] }
-  /** The headline over the groups, one entry per line; the visual sits at the start of `visualLine`. */
-  heading: { lines: readonly string[]; visualLine: number; visual: SkillVisual }
-  groupsLabel: string
-  groups: readonly {
-    index: string
-    name: string
-    text: string
-    skills: readonly string[]
-    link?: { label: string; href: string }
-    /** A screenshot, or the build's own route table set as text. */
-    visual: SkillVisual | { build: readonly string[]; label: string }
-  }[]
-  closing: {
-    label: string
-    statement: readonly string[]
-    visual: SkillVisual
-    link: { label: string; href: string }
-  }
-  cta: {
-    lines: readonly string[]
-    visualLine: number
-    visual: SkillVisual
-    text: readonly string[]
-    /** `tag` is the word the cursor carries over the link. */
-    link: { label: string; href: string; tag: string }
-  }
+  /**
+   * One row each: the name set large, the detail beside it on hover and the
+   * tool's mark (several for a stack, such as MERN).
+   */
+  rows: readonly { name: string; detail: string; logos: readonly SkillLogo[] }[]
 }
 
 export type ProjectMeta = {
@@ -100,6 +72,8 @@ export type WorkContent = {
 export type ContactContent = {
   /** The invitation, the section's heading, one entry per line. */
   statement: readonly string[]
+  /** The invitation under the heading, a sentence or two. */
+  lead: string
   email: string
   /** The departures board: what clicking it does, how to, and the confirmation. */
   board: { copyLabel: string; hint: string; touchHint: string; done: string }
@@ -131,6 +105,8 @@ export type MenuContent = {
   action: NavItem
   /** Short facts: the role and the year (set in the contact section). */
   status: readonly string[]
+  /** The light/dark switch's name (it sits in the open menu's corner). */
+  mode: string
 }
 
 export type LoaderContent = {
@@ -166,8 +142,8 @@ export type WorkbenchItem = {
   name: string
   /** One line on what it does. */
   note: string
-  /** On the full site today, or kept for the UI library. */
-  kind: 'site' | 'library'
+  /** From Cairn (the owner's component library), on the full site, or kept for the library. */
+  kind: 'cairn' | 'site' | 'library'
   /** What to do with it on the stage ("Hover it, or tab to it."). */
   hint: string
   /** How it behaves, from the component's own comment; nothing it does not do. */
@@ -176,7 +152,7 @@ export type WorkbenchItem = {
   tech: readonly string[]
   /** Its file, from the repository's root. */
   source: string
-  /** Where it is live on the full site. */
+  /** Where it is live: on the full site, or (for Cairn pieces) its page in Cairn's docs. */
   live?: NavItem
 }
 
@@ -187,7 +163,31 @@ export type WorkbenchContent = {
   note: string
   items: readonly WorkbenchItem[]
   /** The words the pieces are given on their stages. */
-  demo: { arrow: string; key: string; lens: string; tagged: string; tag: string; section: string }
+  demo: {
+    key: string
+    /** What the pixel mark spells on hover. */
+    pixel: string
+    /** The Cairn pieces' words on their stages. */
+    cairn: {
+      switches: readonly string[]
+      checks: readonly string[]
+      segments: { label: string; options: readonly string[]; value: string }
+      cards: {
+        label: string
+        options: readonly { value: string; title: string; meta: string; description: string }[]
+        value: string
+      }
+      slider: string
+      field: { label: string; placeholder: string }
+      search: string
+      code: { label: string; value: string }
+      ballpoint: { label: string; replay: string }
+      records: {
+        label: string
+        items: readonly { title: string; artist: string; duration: number }[]
+      }
+    }
+  }
   labels: {
     crumb: string
     stage: string
@@ -196,7 +196,9 @@ export type WorkbenchContent = {
     tech: string
     source: string
     where: string
+    docs: string
     kept: string
+    cairn: string
     site: string
     library: string
     prev: string
@@ -220,7 +222,7 @@ export type CompactIcon =
   | 'box'
   | 'moon'
 
-/** A link set as a small chip inside a sentence (the intro's "find me on …"). */
+/** A profile link with its icon (the search's commands). */
 export type ChipLink = NavItem & { icon: CompactIcon }
 
 /** The compact site's sections, in page order; the order numbers them. */
@@ -248,6 +250,8 @@ export type PaletteCommand = {
 export type CompactContent = {
   meta: { title: string; description: string }
   back: NavItem
+  /** The way back typed as a command beside the AW mark on hover: the prompt, then what it types. */
+  terminal: { prompt: string; command: string }
   /** In page order; `number` is the order, written "01"; `short` names it in the bar. */
   sections: readonly { id: CompactSectionId; title: string; short?: string; number: string }[]
   intro: {
@@ -261,7 +265,8 @@ export type CompactContent = {
     statement: { before: string; mark: string; after: string }
     note: string
     /** The way-out sentence: plain text with chips between. */
-    reach: readonly (string | ChipLink)[]
+    /** A sentence with the ways out set in it as small drawn chips. */
+    reach: readonly (string | NavItem)[]
   }
   work: { note: string; view: string; source: string }
   workbench: { note: string; open: string }
@@ -287,9 +292,7 @@ export type CompactContent = {
     label: string
     placeholder: string
     /** What the idle field suggests, in turn. */
-    ideas: readonly string[]
     empty: string
-    hints: { move: string; run: string; close: string }
     commands: readonly PaletteCommand[]
   }
   /** The switch's name ("Dark mode"); it is on in dark. */

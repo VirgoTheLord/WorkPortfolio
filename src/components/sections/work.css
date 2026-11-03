@@ -4,7 +4,7 @@
  *
  * The head: a large two-line headline, wiped in line by line the way the hero's
  * name is (motion/work-stack.tsx). A small label above it said the same words,
- * so it went (kept for the UI library, library/section-label.tsx).
+ * so it went.
  *
  * The projects: one card per project, each a folder with a numbered tab in its
  * own tone (by position: accent, ink, soft accent, surface). From lg every card

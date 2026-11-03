@@ -60,24 +60,6 @@
   display: none;
 }
 
-.skills-more {
-  text-align: center;
-}
-
-/* As on the reference, the link's arrow follows its words in: it fades in slowly,
-   starting once they are most of the way up. */
-@media (prefers-reduced-motion: no-preference) {
-  .skills-more [data-rise] .arrow-link-arrow {
-    transition:
-      transform var(--duration-fast) var(--ease-out),
-      opacity var(--duration-intro) var(--ease-cubic-out) 450ms;
-  }
-
-  .skills-more [data-rise='pending'] .arrow-link-arrow {
-    opacity: 0;
-  }
-}
-
 /* On a touch screen one row is highlighted as the list passes; the others stay
    readable (35%; the reference's 15% left six of seven rows unreadable at any
    moment). The hover dim from lg stays at 15%: there it is a passing state. */
@@ -134,7 +116,7 @@
     top: 50%;
     left: 0;
     z-index: -1;
-    display: block;
+    display: flex;
     width: calc(100% * 384 / 1400);
     aspect-ratio: 4 / 3;
     overflow: hidden;
@@ -147,10 +129,22 @@
       opacity 200ms var(--ease-out);
   }
 
-  .skills-row-visual img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .skills-row-visual {
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--spacing) * 6);
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  /* One mark sits large; a stack's marks share the panel. */
+  .skills-row-logo {
+    width: 40%;
+    height: auto;
+  }
+
+  .skills-row-logo:not(:only-child) {
+    width: 16%;
   }
 
   .skills-row:hover .skills-row-detail {

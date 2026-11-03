@@ -111,7 +111,7 @@
   --text-hero: clamp(2rem, 0.7757rem + 5.2245vw, 6rem);
   --text-hero--line-height: 1.1;
   --text-hero--letter-spacing: -0.025em;
-  /* Large uppercase Bricolage (the Skills lists and /skills headlines). The display
+  /* Large uppercase Bricolage (the Skills list). The display
      tracking: at -0.04em the 600 capitals touched (N-T, T-A, A-B). */
   --tracking-caps: -0.025em;
 
@@ -145,7 +145,7 @@
   --ease-emphasis: cubic-bezier(0.83, 0, 0.17, 1);
   /* The navbar's standard departure: quick start, long soft landing. */
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
-  /* GSAP's power3.out: the Skills pages' rise (motion/rise.css), measured on the
+  /* GSAP's power3.out: the Skills section's rise (motion/rise.css), measured on the
      reference. */
   --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   /* A rolling marker: dips back, overshoots, settles. */

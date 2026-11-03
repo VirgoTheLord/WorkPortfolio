@@ -1,0 +1,243 @@
+/*
+ * The neumorph switch (neo-switch.tsx): a groove pressed into the surface and
+ * a dome riding in it, shaped only by a light from the top left. Everything
+ * moves off two animated values on the track, where the dome is (x, 0-1) and
+ * how full its cup is (on, 0-1), so a drag and a flip look the same.
+ * --wui-neo-surface is the surface it is moulded from; match it to whatever
+ * the switch sits on.
+ */
+
+@property --wui-neo-x {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --wui-neo-on {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --wui-neo-stretch {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --wui-neo-lean {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+.wui-neo {
+  --wui-neo-surface: var(--wui-bg);
+  --neo-light: color-mix(in oklab, var(--wui-neo-surface), white 90%);
+  --neo-dark: color-mix(in oklab, var(--wui-neo-surface), #1c2433 21%);
+  --neo-top: color-mix(in oklab, var(--wui-neo-surface), white 75%);
+  --neo-bottom: color-mix(in oklab, var(--wui-neo-surface), #1c2433 3%);
+  --neo-rim: transparent;
+  --w: 4.5rem;
+  --h: 2.25rem;
+  --pad: 0.25rem;
+  --t: calc(var(--h) - var(--pad) * 2);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--wui-unit) * 3.5);
+  color: var(--wui-fg);
+  font: 500 var(--wui-text-sm) / 1.2 var(--wui-font-sans);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Dark: shadows can only go to black, so the shape comes from its highlights.
+   :where() keeps the system's dark below a data-theme on any ancestor. */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-neo {
+    --neo-light: color-mix(in oklab, var(--wui-neo-surface), white 12%);
+    --neo-dark: #000;
+    --neo-top: color-mix(in oklab, var(--wui-neo-surface), white 17%);
+    --neo-bottom: color-mix(in oklab, var(--wui-neo-surface), white 5%);
+    --neo-rim: color-mix(in oklab, var(--wui-neo-surface), white 11%);
+  }
+}
+
+[data-theme='dark'] .wui-neo,
+[data-theme='light'] [data-theme='dark'] .wui-neo {
+  --neo-light: color-mix(in oklab, var(--wui-neo-surface), white 12%);
+  --neo-dark: #000;
+  --neo-top: color-mix(in oklab, var(--wui-neo-surface), white 17%);
+  --neo-bottom: color-mix(in oklab, var(--wui-neo-surface), white 5%);
+  --neo-rim: color-mix(in oklab, var(--wui-neo-surface), white 11%);
+}
+
+[data-theme='light'] .wui-neo,
+[data-theme='dark'] [data-theme='light'] .wui-neo {
+  --neo-light: color-mix(in oklab, var(--wui-neo-surface), white 90%);
+  --neo-dark: color-mix(in oklab, var(--wui-neo-surface), #1c2433 21%);
+  --neo-top: color-mix(in oklab, var(--wui-neo-surface), white 75%);
+  --neo-bottom: color-mix(in oklab, var(--wui-neo-surface), #1c2433 3%);
+  --neo-rim: transparent;
+}
+
+.wui-neo[data-size='sm'] {
+  --w: 3.25rem;
+  --h: 1.75rem;
+  --pad: 0.1875rem;
+}
+
+/* The groove. The dome rolls across and hits the end (no ease-out: it is
+   still moving when it lands); the cup fills once it has, with a pop. */
+.wui-neo-track {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--w);
+  height: var(--h);
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--wui-neo-surface);
+  box-shadow:
+    inset 3px 3px 6px var(--neo-dark),
+    inset -3px -3px 6px var(--neo-light),
+    0 0 0 1px var(--neo-rim);
+  cursor: inherit;
+  touch-action: pan-y;
+  transition:
+    --wui-neo-x 330ms cubic-bezier(0.5, 0, 0.9, 0.7),
+    --wui-neo-on 420ms cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.wui-neo-track[aria-checked='true'] {
+  --wui-neo-x: 1;
+  --wui-neo-on: 1;
+  transition-delay: 0ms, 300ms;
+}
+
+/* Dragging, the script writes x itself. */
+.wui-neo-track[data-dragging] {
+  transition-property: --wui-neo-on;
+}
+
+.wui-neo-track:focus-visible {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 4px;
+}
+
+/* The dome: raised, lit from the top left. */
+.wui-neo-thumb {
+  position: absolute;
+  top: var(--pad);
+  left: var(--pad);
+  display: grid;
+  width: calc(var(--t) + var(--wui-neo-stretch));
+  height: var(--t);
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(145deg, var(--neo-top), var(--neo-bottom));
+  box-shadow:
+    3px 3px 7px var(--neo-dark),
+    -2px -2px 5px var(--neo-light),
+    inset 1px 1px 1px var(--neo-light);
+  translate: calc(var(--wui-neo-x) * (var(--w) - var(--h) - var(--wui-neo-stretch)) + var(--wui-neo-lean)) 0;
+  transition:
+    --wui-neo-stretch 280ms var(--wui-ease-out),
+    --wui-neo-lean 320ms var(--wui-ease-out),
+    scale 280ms var(--wui-ease-out),
+    box-shadow 280ms var(--wui-ease-out);
+}
+
+/* Hovered, it leans toward the side it would go to. */
+@media (hover: hover) {
+  .wui-neo:hover .wui-neo-track:not(:disabled) .wui-neo-thumb {
+    --wui-neo-lean: 2px;
+  }
+
+  .wui-neo:hover .wui-neo-track[aria-checked='true']:not(:disabled) .wui-neo-thumb {
+    --wui-neo-lean: -2px;
+  }
+}
+
+/* Pressed, it sinks and stretches toward the far side, like a rubber key. */
+.wui-neo-track:active:not(:disabled) .wui-neo-thumb {
+  --wui-neo-stretch: calc(var(--h) * 0.24);
+  --wui-neo-lean: 0px;
+  scale: 0.97;
+  box-shadow:
+    1px 1px 2px var(--neo-dark),
+    -1px -1px 2px var(--neo-light),
+    inset 1px 1px 2px var(--neo-dark);
+}
+
+/* At the end of the groove it squashes against the wall and springs back.
+   Two names, so the animation restarts at each flip; it only runs once the
+   switch has been used, never on load. */
+.wui-neo-track[data-used][aria-checked='true'] .wui-neo-thumb {
+  transform-origin: 100% 50%;
+  animation: wui-neo-hit-on 620ms;
+}
+
+.wui-neo-track[data-used][aria-checked='false'] .wui-neo-thumb {
+  transform-origin: 0% 50%;
+  animation: wui-neo-hit-off 620ms;
+}
+
+@keyframes wui-neo-hit-on {
+  0%,
+  52% {
+    transform: none;
+  }
+  62% {
+    transform: scale(0.86, 1.08);
+  }
+  78% {
+    transform: scale(1.04, 0.97);
+  }
+  90% {
+    transform: scale(0.99, 1.01);
+  }
+}
+
+@keyframes wui-neo-hit-off {
+  0%,
+  52% {
+    transform: none;
+  }
+  62% {
+    transform: scale(0.86, 1.08);
+  }
+  78% {
+    transform: scale(1.04, 0.97);
+  }
+  90% {
+    transform: scale(0.99, 1.01);
+  }
+}
+
+/* The cup pressed into the dome's crown; on, the accent fills it from the
+   bottom. */
+.wui-neo-cup {
+  width: calc(var(--t) * 0.36);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(to top, var(--wui-accent) clamp(0%, var(--wui-neo-on) * 100%, 100%), var(--neo-bottom) 0);
+  box-shadow:
+    inset 1.5px 1.5px 2px var(--neo-dark),
+    inset -1px -1px 1px var(--neo-light);
+}
+
+.wui-neo:has(:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-neo-track,
+  .wui-neo-thumb {
+    animation: none !important;
+    transition: none;
+    --wui-neo-lean: 0px !important;
+  }
+}
