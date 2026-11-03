@@ -121,10 +121,13 @@ function arrange(words: Word[]) {
 export function SiteMenu({
   brand,
   action,
+  mode,
   children,
 }: {
   brand: ReactNode
   action: ReactNode
+  /** The light/dark switch: in the bar, shown only while the menu is open. */
+  mode: ReactNode
   children: ReactNode
 }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -541,6 +544,9 @@ export function SiteMenu({
               {action}
             </div>
           </div>
+          {/* In the bar, not the field: the bar lies over the field, so a switch
+              placed under it could be seen but not clicked. */}
+          <div className="menu-mode-slot">{mode}</div>
         </div>
       </div>
 

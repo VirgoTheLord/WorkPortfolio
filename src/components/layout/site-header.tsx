@@ -26,9 +26,9 @@ export function SiteHeader() {
         <SiteMenu
           brand={<SiteBrand />}
           action={<FrameButton label={menu.action.label} href={menu.action.href} size="compact" />}
+          mode={<ModeSwitch label={menu.mode} />}
         >
           <SiteNav />
-          <ModeSwitch label={menu.mode} />
         </SiteMenu>
         {/* Without JavaScript the menu cannot open, so the destinations are listed
           plainly and the header returns to normal flow. */}
