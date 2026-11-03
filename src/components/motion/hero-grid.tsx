@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { subscribeTheme } from '@/lib/compact-theme'
 import './hero-grid.css'
 
 /* The field around the pointer, in cells: lines inside it bend, lines outside
@@ -55,13 +56,13 @@ export function HeroGrid() {
     const query = window.matchMedia(
       '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
     )
-    const scheme = window.matchMedia('(prefers-color-scheme: dark)')
 
     let width = 0
     let height = 0
     let ratio = 1
     let cell = 0
     let colors: Colors = { groove: '', lit: '', near: '', nearLit: '' }
+    let unsubscribe = () => {}
     // The pointer (target) and the field's centre (eased), in the hero's
     // coordinates; the field's strength and where it is heading.
     let tx = 0
@@ -293,7 +294,8 @@ export function HeroGrid() {
       hero.addEventListener('pointerenter', onEnter)
       hero.addEventListener('pointermove', onMove, { passive: true })
       hero.addEventListener('pointerleave', settle)
-      scheme.addEventListener('change', repaint)
+      // The system or the visitor's switch (data-theme on <html>) changed the colours.
+      unsubscribe = subscribeTheme(repaint)
     }
     const stop = () => {
       if (!live) return
@@ -303,7 +305,7 @@ export function HeroGrid() {
       hero.removeEventListener('pointerenter', onEnter)
       hero.removeEventListener('pointermove', onMove)
       hero.removeEventListener('pointerleave', settle)
-      scheme.removeEventListener('change', repaint)
+      unsubscribe()
       window.clearTimeout(rest)
       window.cancelAnimationFrame(frame)
       frame = 0

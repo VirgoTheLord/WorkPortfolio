@@ -1,5 +1,6 @@
 'use client'
 
+import { subscribeTheme } from '@/lib/compact-theme'
 import { useEffect, useRef } from 'react'
 
 /* Cells per grid square: at least thirds of the hero's grid, so every cell sits
@@ -557,20 +558,20 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
       hero.addEventListener('pointerleave', onLeave)
     }
   })
-  // The theme changes the ink: redraw in the new colours.
-  const scheme = window.matchMedia('(prefers-color-scheme: dark)')
+  // The theme changes the ink: redraw in the new colours, whether the system
+  // changed it or the visitor's switch did (data-theme on <html>).
   const recolour = () => {
     if (!cells.length) return
     build()
     draw(performance.now())
   }
-  scheme.addEventListener('change', recolour)
+  const unsubscribe = subscribeTheme(recolour)
 
   const teardown = () => {
     cancelled = true
     watch.disconnect()
     resize.disconnect()
-    scheme.removeEventListener('change', recolour)
+    unsubscribe()
     hero.removeEventListener('pointermove', onMove)
     hero.removeEventListener('pointerleave', onLeave)
     if (frame) cancelAnimationFrame(frame)
