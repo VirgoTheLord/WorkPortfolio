@@ -424,40 +424,15 @@ html:has(.menu[data-open='true']) {
 
 /* ---- The light/dark switch ---------------------------------------------- */
 
-/* Cairn's neumorph switch (interactive/mode-switch.tsx) in the open menu's top
-   right corner. It lives in the bar, which lies over the field: from lg in the
-   corner the call to action leaves when the menu opens; below lg, where the
-   trigger holds that corner, just under it. It is there, and reachable, only
-   while the menu is open (visibility, so it leaves the tab order too). Moulded
-   from the open menu's dark surface, and kept clean: no accent cup. */
-.menu-mode-slot {
-  position: absolute;
-  top: calc(100% + var(--spacing) * 3);
-  right: var(--menu-inset);
-  display: flex;
+/* Cairn's neumorph switch (interactive/mode-switch.tsx) in the bar: beside the
+   call to action from lg, beside the trigger below it (one or the other is
+   shown, so it is in the tab order once). Moulded from the page under the bar,
+   and kept clean: no accent cup. From lg it goes with the call to action while
+   the menu is open. */
+.menu-mode {
   --wui-neo-surface: var(--color-bg);
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 600ms var(--menu-ease),
-    visibility 0s 600ms;
 }
 
-.menu[data-open='true'] .menu-mode-slot {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity 600ms var(--menu-ease) 300ms,
-    visibility 0s;
-}
-
-@media (min-width: 64rem) {
-  .menu-mode-slot {
-    top: 50%;
-    translate: 0 -50%;
-  }
-}
-
-.menu-mode-slot .wui-neo-cup {
+.menu-mode .wui-neo-cup {
   display: none;
 }

@@ -126,7 +126,7 @@ export function SiteMenu({
 }: {
   brand: ReactNode
   action: ReactNode
-  /** The light/dark switch: in the bar, shown only while the menu is open. */
+  /** The light/dark switch: beside the call to action from lg, beside the trigger below. */
   mode: ReactNode
   children: ReactNode
 }) {
@@ -515,7 +515,8 @@ export function SiteMenu({
           <div aria-hidden="true" className="menu-surface absolute inset-0" />
           <div className="menu-bar-row relative grid h-full grid-cols-2 items-center lg:grid-cols-3">
             <div className="menu-brand justify-self-start">{brand}</div>
-            <div className="menu-cell justify-self-end lg:justify-self-center">
+            <div className="menu-cell flex items-center gap-4 justify-self-end lg:justify-self-center">
+              <span className="menu-mode flex lg:hidden">{mode}</span>
               <button
                 ref={triggerRef}
                 type="button"
@@ -540,13 +541,14 @@ export function SiteMenu({
                 </span>
               </button>
             </div>
-            <div ref={actionRef} className="menu-action hidden justify-self-end lg:block">
+            <div
+              ref={actionRef}
+              className="menu-action hidden items-center gap-5 justify-self-end lg:flex"
+            >
+              <span className="menu-mode flex">{mode}</span>
               {action}
             </div>
           </div>
-          {/* In the bar, not the field: the bar lies over the field, so a switch
-              placed under it could be seen but not clicked. */}
-          <div className="menu-mode-slot">{mode}</div>
         </div>
       </div>
 

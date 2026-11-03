@@ -8,10 +8,10 @@ const none = () => null
 
 /*
  * The full site's light and dark switch: Cairn's neumorph switch, small, in the
- * open menu's top right corner (site-menu.css, .menu-mode-slot), clean, without the
- * accent cup. On is dark. The new mode opens as a circle from the switch
- * (lib/compact-theme.ts), behind the menu's frost, and is kept for the tab.
- * Before hydration the mode is unknown, so the switch waits to show.
+ * bar beside "Let's Talk" (beside the menu trigger below lg; site-menu.tsx),
+ * clean, without the accent cup. On is dark. The new mode opens as a circle
+ * from the switch (lib/compact-theme.ts) and is kept for the tab. Before
+ * hydration the mode is unknown, so the switch waits to show.
  */
 export function ModeSwitch({ label }: { label: string }) {
   const theme = useSyncExternalStore(subscribeTheme, readTheme, none)
