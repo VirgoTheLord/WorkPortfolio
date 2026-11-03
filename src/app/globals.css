@@ -3,8 +3,8 @@
 /*
  * Design tokens — see DESIGN.md §4.
  * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color is the
- * reference's orange system (DESIGN.md §9.2): off-white and off-black carry
- * canvas and text, orange is the signature accent. Components use the semantic
+ * reference's system (DESIGN.md §9.2): off-white and off-black carry canvas
+ * and text, and red is the accent in both modes (it was orange in light). Components use the semantic
  * tokens via Tailwind utilities only — never raw values.
  */
 
@@ -24,9 +24,11 @@
   --color-black: #141314; /* dark structure: dark canvas, light-mode text */
   /* Dark mode is black, red and teal (owner's direction, 24 October 2026;
      DESIGN.md §9.2): the deep black canvas, red the accent, teal the second
-     accent. Light mode keeps the orange. */
+     accent. Light mode uses the same red (owner's request, November 2026); the
+     orange values stay below for the /color-test reference only. */
   --color-black-deep: #0a0a0a; /* the dark canvas */
-  --color-red: #ef3e42; /* the dark accent: marks, active states */
+  --color-red: #ef3e42; /* the accent in both modes: marks, active states, brand fields */
+  --color-red-soft: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
   --color-teal: #2ec4b6; /* the dark second accent: what answers the visitor */
   --color-white: #eeeeee; /* light structure: light canvas, dark-mode text */
   --color-paper: #f7f7f7; /* light muted background */
@@ -56,11 +58,11 @@
   --color-groove-lit: #ffffff8c;
   --color-groove-near: #0000003b;
   --color-groove-lit-near: #ffffff;
-  --color-accent: var(--color-orange);
-  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent: var(--color-red);
+  --color-accent-secondary: var(--color-red-soft);
   --color-accent-fg: var(--color-black);
   --color-focus: var(--color-black);
-  --color-selection: var(--color-orange);
+  --color-selection: var(--color-red);
   --color-selection-fg: var(--color-white);
 
   /* Aliases of fg and bg, so the hero and the menu keep their names. */
@@ -191,7 +193,7 @@
 /* Modes, as the reference defines them. Light is the default above. Dark
    follows the system setting, and data-theme="light" or "dark" forces a mode on
    the root or on any subtree (/color-test uses this). data-theme="brand" is the
-   reference's orange field (its preloader): black on orange. It is never a
+   reference's brand field (its preloader, the footer): black on the red. It is never a
    page-wide mode. Keep the light and dark blocks in step. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
@@ -257,11 +259,11 @@
   --color-fg-subtle: var(--color-grey);
   --color-rule: #0000001a;
   --color-rule-strong: #00000033;
-  --color-accent: var(--color-orange);
-  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent: var(--color-red);
+  --color-accent-secondary: var(--color-red-soft);
   --color-accent-fg: var(--color-black);
   --color-focus: var(--color-black);
-  --color-selection: var(--color-orange);
+  --color-selection: var(--color-red);
   --color-selection-fg: var(--color-white);
   --color-ink: var(--color-black);
   --color-canvas: var(--color-white);
@@ -269,9 +271,9 @@
 
 [data-theme='brand'] {
   color-scheme: light;
-  --color-bg: var(--color-orange);
-  --color-surface: var(--color-orange-soft);
-  --color-surface-2: var(--color-orange-muted);
+  --color-bg: var(--color-red);
+  --color-surface: var(--color-red-soft);
+  --color-surface-2: color-mix(in srgb, var(--color-red) 85%, var(--color-white));
   --color-fg: var(--color-black);
   --color-fg-muted: var(--color-charcoal);
   --color-fg-subtle: var(--color-charcoal);
@@ -281,36 +283,14 @@
   --color-groove-lit: #ffffff26;
   --color-groove-near: #00000047;
   --color-groove-lit-near: #ffffff4d;
-  --color-accent: var(--color-orange-bright);
-  --color-accent-secondary: var(--color-orange-soft);
+  --color-accent: color-mix(in srgb, var(--color-red) 80%, var(--color-white));
+  --color-accent-secondary: var(--color-red-soft);
   --color-accent-fg: var(--color-black);
   --color-focus: var(--color-black);
   --color-selection: var(--color-white);
   --color-selection-fg: var(--color-black);
   --color-ink: var(--color-black);
-  --color-canvas: var(--color-orange);
-}
-
-/* The brand surface in dark (the full site's footer): red in place of the
-   orange, black on it as before (DESIGN.md §9.2). */
-:root[data-theme='dark'] [data-theme='brand'] {
-  --color-bg: var(--color-red);
   --color-canvas: var(--color-red);
-  --color-surface: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
-  --color-surface-2: color-mix(in srgb, var(--color-red) 85%, var(--color-white));
-  --color-accent: color-mix(in srgb, var(--color-red) 80%, var(--color-white));
-  --color-accent-secondary: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) [data-theme='brand'] {
-    --color-bg: var(--color-red);
-    --color-canvas: var(--color-red);
-    --color-surface: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
-    --color-surface-2: color-mix(in srgb, var(--color-red) 85%, var(--color-white));
-    --color-accent: color-mix(in srgb, var(--color-red) 80%, var(--color-white));
-    --color-accent-secondary: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
-  }
 }
 
 /* The status dots' pulse: down to half and back (the reference's two seconds). */

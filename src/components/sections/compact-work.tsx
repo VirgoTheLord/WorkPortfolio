@@ -17,7 +17,10 @@ import { RollText } from '@/components/ui/roll-text'
  */
 export function CompactWork() {
   return (
-    <CompactSection id="work" meta={`${projects.length} projects`}>
+    <CompactSection
+      id="work"
+      meta={`${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`}
+    >
       <p className="cp-note">{compact.work.note}</p>
       <WorkPreview
         items={projects.map((project) => ({ slug: project.slug, image: project.cover.image }))}
