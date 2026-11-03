@@ -1,13 +1,7 @@
 'use client'
 
-import { useEffect, useSyncExternalStore } from 'react'
-import {
-  readTheme,
-  releaseTheme,
-  restoreTheme,
-  subscribeTheme,
-  switchTheme,
-} from '@/lib/compact-theme'
+import { useSyncExternalStore } from 'react'
+import { readTheme, subscribeTheme, switchTheme } from '@/lib/theme'
 import type { CompactContent } from '@/types/content'
 
 const none = () => null
@@ -15,7 +9,8 @@ const none = () => null
 const RAYS = [0, 45, 90, 135, 180, 225, 270, 315]
 
 /*
- * The compact site's light/dark switch (lib/compact-theme.ts): two slots, a sun
+ * The compact site's light/dark switch (lib/theme.ts; one choice with the full
+ * site's switch): two slots, a sun
  * and a moon, in one hairline pill, and a block in the accent that glides to
  * whichever is on. The sun's rays spread as it lights; the moon tips back and a
  * star glints beside it. All CSS (compact.css), keyed off <html>'s mode, so it
@@ -24,11 +19,6 @@ const RAYS = [0, 45, 90, 135, 180, 225, 270, 315]
  */
 export function ThemeToggle({ label }: CompactContent['theme']) {
   const theme = useSyncExternalStore(subscribeTheme, readTheme, none)
-
-  useEffect(() => {
-    restoreTheme()
-    return releaseTheme
-  }, [])
 
   return (
     <button

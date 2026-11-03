@@ -1,6 +1,6 @@
 'use client'
 
-import { subscribeTheme } from '@/lib/compact-theme'
+import { subscribeTheme } from '@/lib/theme'
 import { useEffect, useRef } from 'react'
 
 /* Cells per grid square: at least thirds of the hero's grid, so every cell sits

@@ -436,3 +436,28 @@ html:has(.menu[data-open='true']) {
 .menu-mode .wui-neo-cup {
   display: none;
 }
+
+/* The sun and the moon either side of it: hairline marks in the muted text
+   colour, the one that is on in ink. */
+.mode-switch {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+
+.mode-switch svg {
+  width: calc(var(--spacing) * 4);
+  height: calc(var(--spacing) * 4);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--color-fg-muted);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.mode-switch[data-mode='light'] .mode-switch-sun,
+.mode-switch[data-mode='dark'] .mode-switch-moon {
+  color: var(--color-fg);
+}

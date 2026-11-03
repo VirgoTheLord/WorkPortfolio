@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { subscribeTheme } from '@/lib/compact-theme'
+import { subscribeTheme } from '@/lib/theme'
 import './hero-grid.css'
 
 /* The field around the pointer, in cells: lines inside it bend, lines outside

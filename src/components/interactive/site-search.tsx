@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { LensSearch } from '@/components/library/cairn/lens-search'
 import { Icon } from '@/components/ui/icon'
-import { switchTheme } from '@/lib/compact-theme'
+import { switchTheme } from '@/lib/theme'
 import { copyText } from '@/lib/copy-text'
 import type { CompactContent, PaletteCommand } from '@/types/content'
 

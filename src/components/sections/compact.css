@@ -614,7 +614,7 @@ html:not(.js) .cp-demo-replay {
   color: var(--color-fg-muted);
 }
 
-/* The new mode opens as a circle from the switch (lib/compact-theme.ts); the
+/* The new mode opens as a circle from the switch (lib/theme.ts); the
    browser's own crossfade is turned off so only the circle moves. */
 ::view-transition-old(root),
 ::view-transition-new(root) {

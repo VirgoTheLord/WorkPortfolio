@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { about, site } from '@/content/site'
-import { themeScript } from '@/lib/compact-theme'
+import { themeScript } from '@/lib/theme'
 import { fontVariables } from '@/lib/fonts'
 import './globals.css'
 
@@ -40,8 +40,8 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             preloader, with the same starting states before first paint. If the intro
             island has not picked it up within 4s (scripts failed or are very
             slow), the page is released in its final state. A light or dark mode the
-            visitor chose is put back: the compact site's from localStorage, the
-            full site's from this tab's sessionStorage (lib/compact-theme.ts). The path the tab landed on is kept (data-landing)
+            visitor chose is put back, the same one on both sites (localStorage,
+            lib/theme.ts). The path the tab landed on is kept (data-landing)
             so the hero can tell a load from a link followed inside the site. */}
         <script
           dangerouslySetInnerHTML={{

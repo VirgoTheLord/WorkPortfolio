@@ -93,18 +93,25 @@ export function ContactBoard({ email, copyLabel, hint, touchHint, done }: Contac
   }
 
   /* A message across the cells: centred in the longer row when the board is in
-     two rows (a phone), across the whole board otherwise. */
+     two rows (a phone), across the whole board otherwise. Cells cannot move by
+     half a cell, so a message whose length does not pair with the row's (an odd
+     word on an even row) would sit a cell off centre: it drops its trailing
+     punctuation to pair ("copied!" lands as "copied"); the hint keeps it. */
   const message = (word: string) => {
     const stacked = window.matchMedia('not all and (min-width: 48rem)').matches
     const text = Array<string>(chars.length).fill(' ')
+    const fit = (span: number) =>
+      (span - word.length) % 2 !== 0 && /[!.?]$/.test(word) ? word.slice(0, -1) : word
     if (stacked && rows.length > 1) {
       const row = rows[0]!.length >= rows[1]!.length ? 0 : 1
+      const shown = fit(rows[row]!.length)
       const start =
-        (row === 0 ? 0 : rows[0]!.length) + Math.floor((rows[row]!.length - word.length) / 2)
-      Array.from(word).forEach((c, i) => (text[start + i] = c))
+        (row === 0 ? 0 : rows[0]!.length) + Math.floor((rows[row]!.length - shown.length) / 2)
+      Array.from(shown).forEach((c, i) => (text[start + i] = c))
     } else {
-      const start = Math.floor((chars.length - word.length) / 2)
-      Array.from(word).forEach((c, i) => (text[start + i] = c))
+      const shown = fit(chars.length)
+      const start = Math.floor((chars.length - shown.length) / 2)
+      Array.from(shown).forEach((c, i) => (text[start + i] = c))
     }
     return text
   }
