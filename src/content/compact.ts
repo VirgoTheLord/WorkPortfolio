@@ -186,10 +186,10 @@ export const compact = {
     { kind: 'Study', org: degree.school, role: `${degree.degree}, ${degree.field}` },
   ],
   stack: [
-    { name: 'Language', items: ['TypeScript', 'JavaScript', 'Python', 'HTML', 'CSS'] },
+    { name: 'Language', items: ['TypeScript', 'JavaScript', 'HTML', 'CSS'] },
     { name: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS', 'GSAP', 'Lenis'] },
-    { name: 'Backend', items: ['Node.js', 'Express', 'MongoDB', 'WebSockets'] },
-    { name: 'Workflow', items: ['Git', 'pnpm', 'ESLint', 'Prettier'] },
+    { name: 'Backend', items: ['Node.js', 'Express', 'MongoDB'] },
+    { name: 'Workflow', items: ['Git', 'pnpm', 'ESLint', 'Prettier', 'Figma'] },
   ],
   about: {
     paragraphs: [

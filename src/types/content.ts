@@ -28,10 +28,9 @@ export type SkillLogo =
   | 'mongodb'
   | 'express'
   | 'node'
-  | 'websocket'
   | 'javascript'
   | 'tailwind'
-  | 'python'
+  | 'figma'
 
 export type SkillsContent = {
   /** The section label, and the menu's name for it. */

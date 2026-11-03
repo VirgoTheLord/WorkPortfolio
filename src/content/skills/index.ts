@@ -12,9 +12,8 @@ export const skills = {
     { name: 'Next.js', detail: 'Intermediate', logos: ['next'] },
     { name: 'GSAP', detail: 'Intermediate', logos: ['gsap'] },
     { name: 'MERN', detail: 'Expert', logos: ['mongodb', 'express', 'react', 'node'] },
-    { name: 'WebSockets', detail: 'Intermediate', logos: ['websocket'] },
     { name: 'JavaScript', detail: 'Intermediate', logos: ['javascript'] },
     { name: 'Tailwind CSS', detail: 'Expert', logos: ['tailwind'] },
-    { name: 'Python', detail: 'Intermediate', logos: ['python'] },
+    { name: 'Figma', detail: 'Design', logos: ['figma'] },
   ],
 } satisfies SkillsContent
