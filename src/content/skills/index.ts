@@ -14,6 +14,6 @@ export const skills = {
     { name: 'MERN', detail: 'Expert', logos: ['mongodb', 'express', 'react', 'node'] },
     { name: 'JavaScript', detail: 'Intermediate', logos: ['javascript'] },
     { name: 'Tailwind CSS', detail: 'Expert', logos: ['tailwind'] },
-    { name: 'Figma', detail: 'Design', logos: ['figma'] },
+    { name: 'Figma', detail: 'Intermediate', logos: ['figma'] },
   ],
 } satisfies SkillsContent
