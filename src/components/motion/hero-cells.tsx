@@ -230,12 +230,26 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
   let frame = 0
   let last = 0
 
-  /* Lay the cells: sample the name once, cell by cell. */
+  /* Lay the cells: sample the name once, cell by cell. Measured from layout,
+     not from the screen: the hero's contents are moved and scaled by scroll
+     (hero.css's push, about.css's sink), and a box read off the screen while
+     they are would build the name smaller and out of place. */
   const build = () => {
-    const box = text.getBoundingClientRect()
+    const box = { width: text.offsetWidth, height: text.offsetHeight }
     // Nothing to sample in an empty box (the hero leaving the page).
     if (!box.width || !box.height) return
-    const heroBox = hero.getBoundingClientRect()
+    // Where the name sits in the hero, through the offset chain (layout only).
+    let fromTop = 0
+    let fromLeft = 0
+    for (
+      let el: HTMLElement | null = text;
+      el && el !== hero;
+      el = el.offsetParent as HTMLElement | null
+    ) {
+      fromTop += el.offsetTop
+      fromLeft += el.offsetLeft
+      if (el.offsetParent && !hero.contains(el.offsetParent)) break
+    }
     const style = getComputedStyle(text)
     const root = getComputedStyle(document.documentElement)
     const grid = parseFloat(root.getPropertyValue('--spacing-grid')) * parseFloat(root.fontSize)
@@ -275,7 +289,7 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
 
     // Vertical: the capital height is a whole number of rows, the baseline on a
     // row of the hero's grid (rows from its top).
-    const oy = ((((heroBox.top - box.top) % cell) + cell) % cell) - cell
+    const oy = (((-fromTop % cell) + cell) % cell) - cell
     const capInk = probe.measureText('H').actualBoundingBoxAscent || size * 0.7
     const rows = Math.max(1, Math.round(capInk / cell))
     const sy = (rows * cell) / capInk
@@ -373,7 +387,7 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
     const total = Math.max(...glyphs.map((g, i) => offsets[i]! + g.cols))
 
     // Centred on the hero's centre line (a column edge), kept inside the line's box.
-    const centre = heroBox.left + heroBox.width / 2 - box.left
+    const centre = hero.offsetWidth / 2 - fromLeft
     let left = centre - Math.floor(total / 2) * cell
     while (left < 0) left += cell
     while (left + total * cell > width && left - cell >= 0) left -= cell
@@ -558,11 +572,13 @@ function mountCells(canvas: HTMLCanvasElement): (() => void) | undefined {
       hero.addEventListener('pointerleave', onLeave)
     }
   })
-  // The theme changes the ink: redraw in the new colours, whether the system
-  // changed it or the visitor's switch did (data-theme on <html>).
+  // The theme changes the ink only: redraw the same cells in the new colour,
+  // whether the system changed it or the visitor's switch did (data-theme on
+  // <html>). Nothing is measured again, so where the page is scrolled to (and
+  // how the hero is moved by it) cannot shift the name.
   const recolour = () => {
     if (!cells.length) return
-    build()
+    ink = getComputedStyle(title).color
     draw(performance.now())
   }
   const unsubscribe = subscribeTheme(recolour)
