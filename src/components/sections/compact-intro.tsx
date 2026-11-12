@@ -12,7 +12,7 @@ const { intro } = compact
  * The compact site's opening (DESIGN.md §5b): where and what time it is there,
  * the name (printed over an accent impression a hair out of register, which
  * slips further out and thumps back in on hover, word by word), the
- * role, the full site's statement with one hand-drawn orange line under its key
+ * role, the full site's statement with one hand-drawn red line under its key
  * words (drawn once on arrival, and it wobbles when the statement is hovered,
  * compact.css), a line on now, and the ways out as small chips inside a
  * sentence (10xshivam.dev's), each drawn in ballpoint (Cairn's button, still).

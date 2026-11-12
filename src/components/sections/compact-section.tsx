@@ -10,7 +10,7 @@ type Props = {
 }
 
 /*
- * One section of the compact site, under its heading: the orange square and
+ * One section of the compact site, under its heading: the red square and
  * the section's number (the full site's section label, made small), the title,
  * a dashed rule to the edge and, at its end, a short fact. The section takes
  * focus (not in the tab order) so the palette and the index can move focus to

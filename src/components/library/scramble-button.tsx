@@ -7,7 +7,7 @@ import './scramble-button.css'
 type ScrambleButtonProps = {
   label: string
   href: string
-  /** Which ground it sits on: `accent` is the orange fill, `ink` is black on a light ground (white on a dark one). */
+  /** Which ground it sits on: `accent` is the red fill, `ink` is black on a light ground (white on a dark one). */
   tone?: 'accent' | 'ink'
   className?: string
 }
@@ -21,8 +21,7 @@ const SCRAMBLE_MS = 600
 const FRAME_MS = 45
 
 /*
- * Library: kept for reuse; not on the site. It was the full site's hero and navbar call to action until the
- * frame button (frame-button.tsx) became the primary CTA.
+ * Library: kept for reuse; not on the site.
  *
  * A real link whose label scrambles into place, letter by
  * letter from the left, while the plus changes sides (scramble-button.css).

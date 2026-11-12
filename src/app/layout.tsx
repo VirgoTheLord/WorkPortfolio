@@ -33,11 +33,14 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             key an earlier switch saved is cleared, so no visitor stays locked to a
             mode from long ago. On the home page it also
             marks the intro as playing before first paint, so the overlay
-            covers the hero from the start. Skipped for reduced motion, for deep
-            links (a hash) and for every route but the home page. Once this tab
-            has seen it (sessionStorage 'intro-seen', set by hero-intro.tsx) a
-            reload marks .is-enter instead: the hero's entrance alone, no
-            preloader, with the same starting states before first paint. If the intro
+            covers the hero from the start. Skipped for reduced motion and for
+            every route but the home page. Once this tab has seen it
+            (sessionStorage 'intro-seen', set by hero-intro.tsx), and always for
+            a URL with a hash, it marks .is-enter instead: the hero's entrance
+            alone, no preloader, with the same starting states before first
+            paint. A hash must not skip the entrance: a reload keeps it and puts
+            the scroll back, often on the hero (after an in-page link and a
+            scroll back up), where the name then printed with no wipe. If the intro
             island has not picked it up within 4s (scripts failed or are very
             slow), the page is released in its final state. A light or dark mode the
             visitor chose is put back, the same one on both sites (localStorage,
@@ -46,7 +49,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;d.classList.add('js');d.dataset.landing=location.pathname;try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}}catch(e){}" +
+              "try{var d=document.documentElement;d.classList.add('js');d.dataset.landing=location.pathname;try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen||location.hash){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}}catch(e){}" +
               themeScript,
           }}
         />

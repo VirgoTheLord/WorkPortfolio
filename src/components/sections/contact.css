@@ -1,8 +1,8 @@
 /*
- * Contact (contact.tsx): the page's field, one screen tall from md, one centred
- * column: the invitation as a single quiet line (its second part, "write to
- * me.", in the accent; two lines on a phone), the departures board large in the
- * middle with its hint centred right under it, and the frame button ("Write an email") below. The orange
+ * Contact (contact.tsx): the page's field, as tall as its content, one centred
+ * column: the invitation as a single quiet line (its second part underlined in
+ * the accent; two lines on a phone), the departures board large in the
+ * middle with its hint centred right under it, and the frame button ("Write an email") below. The red
  * footer follows.
  *
  * The board's own styles are motion/contact-board.css.
@@ -11,20 +11,21 @@
 
 .contact {
   display: flex;
-  min-height: 100svh;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--spacing) * 10);
-  padding: calc(var(--spacing-header) + var(--spacing) * 10) calc(var(--spacing) * 4)
-    calc(var(--spacing) * 16);
+  gap: calc(var(--spacing) * 12);
+  /* The page's section rhythm (about.css). */
+  padding: var(--spacing-section) calc(var(--spacing) * 4);
   text-align: center;
 }
 
 /* ---- The invitation ---------------------------------------------------------- */
 
-/* One quiet line: the invitation, its second part in the accent. On a phone the
-   two parts stack. */
+/* One quiet line: the invitation, its second part underlined in the accent. The
+   words stay in ink: red text on the light page is 3.3:1, under AA for type
+   this size, and a red line marks it as well as red letters did (the compact
+   site's hand-drawn line does the same). On a phone the two parts stack. */
 .contact-statement {
   font-size: var(--text-lg);
   font-weight: 500;
@@ -32,14 +33,17 @@
   letter-spacing: -0.02em;
 }
 
-.contact-statement .headline-wipe-line:last-child {
-  color: var(--color-accent);
+.contact-statement .headline-wipe-line {
+  /* The wipe's lines fit their text; centred like the rest of the column. */
+  margin-inline: auto;
 }
 
-@media not all and (min-width: 48rem) {
-  .contact {
-    min-height: auto;
-  }
+.contact-statement .headline-wipe-line:last-child .headline-wipe-text {
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
 }
 
 @media (min-width: 48rem) {
@@ -56,14 +60,9 @@
   }
 }
 
-/* From lg the section is as tall as its content with generous room (128px above
-   the header's clearance and below): forced to a full screen, the centred column
-   left about 300px of empty dark field above it and below it. */
 @media (min-width: 64rem) {
   .contact {
-    min-height: auto;
-    padding: calc(var(--spacing-header) + var(--spacing) * 32) calc(var(--spacing) * 8)
-      calc(var(--spacing) * 32);
+    padding-inline: calc(var(--spacing) * 8);
   }
 
   .contact-statement {

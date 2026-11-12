@@ -33,7 +33,7 @@ export default function WorkbenchPage() {
         <h1 className="cp-piece-title">{workbench.title}</h1>
         <p className="cp-piece-note">{workbench.note}</p>
       </header>
-      <WorkbenchList />
+      <WorkbenchList heading="h2" />
     </article>
   )
 }

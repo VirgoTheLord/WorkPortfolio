@@ -4,7 +4,7 @@
  * Design tokens — see DESIGN.md §4.
  * Roles are fixed. Typography is settled (DESIGN.md §9.1). Color is the
  * reference's system (DESIGN.md §9.2): off-white and off-black carry canvas
- * and text, and red is the accent in both modes (it was orange in light). Components use the semantic
+ * and text, and red is the accent in both modes. Components use the semantic
  * tokens via Tailwind utilities only — never raw values.
  */
 
@@ -24,8 +24,7 @@
   --color-black: #141314; /* dark structure: dark canvas, light-mode text */
   /* Dark mode is black, red and teal (owner's direction, 24 October 2026;
      DESIGN.md §9.2): the deep black canvas, red the accent, teal the second
-     accent. Light mode uses the same red (owner's request, November 2026); the
-     orange values stay below for the /color-test reference only. */
+     accent. Light mode uses the same red (owner's request, November 2026). */
   --color-black-deep: #0a0a0a; /* the dark canvas */
   --color-red: #ef3e42; /* the accent in both modes: marks, active states, brand fields */
   --color-red-soft: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
@@ -37,10 +36,6 @@
   --color-grey-light: #818081; /* dark muted text */
   --color-charcoal: #1a1a1a; /* dark muted background */
   --color-graphite: #333333; /* dark surface */
-  --color-orange: #fb460d; /* the signature: brand fields, light accent */
-  --color-orange-bright: #fd551d; /* the accent on dark */
-  --color-orange-soft: #fd8d68; /* muted brand: marks, brand-field surface */
-  --color-orange-muted: #fd7142; /* muted background on a brand field */
 
   /* Semantic roles, light mode (the default). Dark and brand are set below.
      Rules are the reference's translucent black/white, not opaque greys. */
@@ -54,9 +49,9 @@
   --color-rule-strong: #00000033;
   /* The hero's pressed-in grid (DESIGN.md §4): the groove's shaded edge and the
      lit edge beside it, light falling from the top left. */
-  --color-groove: #00000020;
+  --color-groove: #00000012;
   --color-groove-lit: #ffffff8c;
-  --color-groove-near: #0000003b;
+  --color-groove-near: #00000026;
   --color-groove-lit-near: #ffffff;
   --color-accent: var(--color-red);
   --color-accent-secondary: var(--color-red-soft);
@@ -127,6 +122,10 @@
   /* The hero grid's cell. */
   --spacing-grid: 2rem;
   --spacing-section-y: clamp(6rem, 4rem + 8.8889vw, 12rem);
+  /* The home page's one section rhythm: the space above and below every
+     section's content (so twice this between two sections). 72px on a phone to
+     128px from about 1300px wide. */
+  --spacing-section: clamp(4.5rem, 3rem + 6vw, 8rem);
   --spacing-exhibit-y: clamp(12rem, 70svh, 48rem);
   --container-content: 90rem;
   --container-measure: 68ch;
@@ -192,7 +191,7 @@
 
 /* Modes, as the reference defines them. Light is the default above. Dark
    follows the system setting, and data-theme="light" or "dark" forces a mode on
-   the root or on any subtree (/color-test uses this). data-theme="brand" is the
+   the root or on any subtree. data-theme="brand" is the
    reference's brand field (its preloader, the footer): black on the red. It is never a
    page-wide mode. Keep the light and dark blocks in step. */
 @media (prefers-color-scheme: dark) {
@@ -247,9 +246,86 @@
 
 [data-theme='light'] {
   color-scheme: light;
-  --color-groove: #00000020;
+  --color-groove: #00000012;
   --color-groove-lit: #ffffff8c;
-  --color-groove-near: #0000003b;
+  --color-groove-near: #00000026;
+  --color-groove-lit-near: #ffffff;
+  --color-bg: var(--color-white);
+  --color-surface: var(--color-stone);
+  --color-surface-2: var(--color-paper);
+  --color-fg: var(--color-black);
+  --color-fg-muted: var(--color-grey);
+  --color-fg-subtle: var(--color-grey);
+  --color-rule: #0000001a;
+  --color-rule-strong: #00000033;
+  --color-accent: var(--color-red);
+  --color-accent-secondary: var(--color-red-soft);
+  --color-accent-fg: var(--color-black);
+  --color-focus: var(--color-black);
+  --color-selection: var(--color-red);
+  --color-selection-fg: var(--color-white);
+  --color-ink: var(--color-black);
+  --color-canvas: var(--color-white);
+}
+
+/* The opposite of the page's mode, for one surface (the About panel): dark
+   tokens while the page is light, light tokens while it is dark. Same values as
+   the blocks above; keep them in step. */
+[data-theme='invert'] {
+  color-scheme: dark;
+  --color-bg: var(--color-black-deep);
+  --color-surface: var(--color-graphite);
+  --color-surface-2: var(--color-charcoal);
+  --color-fg: var(--color-white);
+  --color-fg-muted: var(--color-grey-light);
+  --color-fg-subtle: var(--color-grey-light);
+  --color-rule: #eeeeee0d;
+  --color-rule-strong: #eeeeee1a;
+  --color-groove: #000000a0;
+  --color-groove-lit: #eeeeee15;
+  --color-groove-near: #000000d9;
+  --color-groove-lit-near: #eeeeee2f;
+  --color-accent: var(--color-red);
+  --color-accent-secondary: var(--color-teal);
+  --color-accent-fg: var(--color-black);
+  --color-focus: var(--color-white);
+  --color-selection: var(--color-red);
+  --color-selection-fg: var(--color-black);
+  --color-ink: var(--color-white);
+  --color-canvas: var(--color-black-deep);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-theme='invert'] {
+    color-scheme: light;
+    --color-groove: #00000012;
+    --color-groove-lit: #ffffff8c;
+    --color-groove-near: #00000026;
+    --color-groove-lit-near: #ffffff;
+    --color-bg: var(--color-white);
+    --color-surface: var(--color-stone);
+    --color-surface-2: var(--color-paper);
+    --color-fg: var(--color-black);
+    --color-fg-muted: var(--color-grey);
+    --color-fg-subtle: var(--color-grey);
+    --color-rule: #0000001a;
+    --color-rule-strong: #00000033;
+    --color-accent: var(--color-red);
+    --color-accent-secondary: var(--color-red-soft);
+    --color-accent-fg: var(--color-black);
+    --color-focus: var(--color-black);
+    --color-selection: var(--color-red);
+    --color-selection-fg: var(--color-white);
+    --color-ink: var(--color-black);
+    --color-canvas: var(--color-white);
+  }
+}
+
+:root[data-theme='dark'] [data-theme='invert'] {
+  color-scheme: light;
+  --color-groove: #00000012;
+  --color-groove-lit: #ffffff8c;
+  --color-groove-near: #00000026;
   --color-groove-lit-near: #ffffff;
   --color-bg: var(--color-white);
   --color-surface: var(--color-stone);
@@ -424,5 +500,147 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/* The new mode opens as a circle from the switch (lib/theme.ts), on both sites.
+   The browser's own crossfade is turned off so only the circle moves: left on,
+   the old page fades out under the circle, and for a moment the screen shows
+   neither mode (the flash). The circle is CSS, present from the transition's
+   first frame; lib/theme.ts sets its centre and radius (--vt-*). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+:root.theme-switching::view-transition-new(root) {
+  animation: theme-reveal 0.8s var(--ease-expo) both;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0));
+  }
+
+  to {
+    clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 0));
+  }
+}
+
+/* While the mode changes, nothing fades between its old and new colours: the
+   new mode is drawn final at once. The two switches keep their own motion, the
+   one thing meant to move. */
+:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-theme, .cp-theme *)),
+:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-theme, .cp-theme *))::before,
+:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-theme, .cp-theme *))::after {
+  transition: none !important;
+}
+
+/* ---- Panels ----------------------------------------------------------------
+ * A section in another tone (the red About, the inverted Work) is a folder laid
+ * on the page, as the project cards are: it opens on a tab (panel-tab) carrying
+ * the section's name, the same 45° shape as the cards' tabs, and the rest of its
+ * edges are stitched rather than cut: along the top after the tab (edge-top) and
+ * along the bottom (edge-bottom) runs a halftone in the page's own colour, two
+ * rows of squares on a 6px cell, one in every other column. The row by the edge
+ * sits on it, flush, so the section's own edge cuts the squares and no strip of
+ * panel colour runs along it like a border; the row in from it is a quarter
+ * cell. Hard-stop masks, no gradient; drawn inside the panel, over its padding,
+ * so they never touch content. The page colour is resolved on the root
+ * (--page-bg: a custom property resolves where it is declared), so inside a
+ * panel it is still the page's, in either mode. */
+:root {
+  --page-bg: var(--color-bg);
+  --edge-cell: calc(var(--spacing) * 1.5);
+  --panel-tab: calc(var(--spacing) * 7);
+  --panel-tab-width: 10rem;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --panel-tab: calc(var(--spacing) * 8);
+    --panel-tab-width: 11.5rem;
+  }
+}
+
+:is(.edge-top, .edge-bottom) {
+  position: relative;
+}
+
+/* The tab stands above the panel, so the panel clears it: the page-coloured
+   room before a folder's tab then matches the room after a folder's bottom edge
+   (each is the neighbouring section's own padding). */
+.edge-top {
+  margin-top: var(--panel-tab);
+}
+
+.edge-top::before,
+.edge-bottom::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: calc(var(--edge-cell) * 2);
+  background-color: var(--page-bg);
+  pointer-events: none;
+  mask-size: calc(var(--edge-cell) * 2) calc(var(--edge-cell) * 2);
+  mask-repeat: repeat-x;
+}
+
+/* The stitch starts at the tab's foot, so the tab rises out of a clean line. */
+.edge-top::before {
+  top: 0;
+  left: var(--panel-tab-width);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Crect x='.225' y='0' width='.55' height='.55'/%3E%3Crect x='.3625' y='.9' width='.275' height='.275'/%3E%3C/svg%3E");
+}
+
+.edge-bottom::after {
+  bottom: 0;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Crect x='.225' y='1.45' width='.55' height='.55'/%3E%3Crect x='.3625' y='.825' width='.275' height='.275'/%3E%3C/svg%3E");
+}
+
+/* The tab sits on the panel's top edge, in the panel's colour (one pixel of
+   overlap, so no seam shows between them). */
+.panel-tab {
+  position: absolute;
+  bottom: calc(100% - 1px);
+  left: 0;
+  display: flex;
+  width: var(--panel-tab-width);
+  height: calc(var(--panel-tab) + 1px);
+  align-items: center;
+  padding: calc(var(--spacing) * 0.5) var(--panel-tab) 0 calc(var(--spacing) * 4);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  clip-path: polygon(0 0, calc(100% - var(--panel-tab)) 0, 100% 100%, 0 100%);
+}
+
+/* The tab flaps up as it comes into view: it lies flat on the panel's edge
+   (edge-on, so unseen) while it is low on the screen, and stands up on its foot
+   over the next stretch of scroll. So a folder never peeks up from the bottom of
+   the screen. Tied to scroll (a view timeline), transform only; without scroll
+   timelines, or with reduced motion, it simply stands. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .panel-tab {
+      transform-origin: 50% 100%;
+      animation: panel-tab-flap linear both;
+      animation-timeline: view();
+      animation-range: entry 100% cover 30%;
+    }
+  }
+}
+
+@keyframes panel-tab-flap {
+  from {
+    transform: perspective(40rem) rotateX(-90deg);
+  }
+
+  to {
+    transform: perspective(40rem) rotateX(0deg);
   }
 }

@@ -1,45 +1,65 @@
 'use client'
 
-import { useRef, useSyncExternalStore } from 'react'
-import { NeoSwitch } from '@/components/library/cairn/neo-switch'
+import { useSyncExternalStore } from 'react'
 import { readTheme, subscribeTheme, switchTheme } from '@/lib/theme'
 
 const none = () => null
 
+/* The icon twice, in the same place: the ink one over a red impression of it
+   (site-menu.css). */
+function Icons() {
+  return (
+    <>
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="mode-key-icon mode-key-sun">
+        <circle cx="12" cy="12" r="3.5" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2" />
+      </svg>
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="mode-key-icon mode-key-moon">
+        <path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1Z" />
+      </svg>
+    </>
+  )
+}
+
 /*
- * The full site's light and dark switch: Cairn's neumorph switch, small, in the
- * bar beside "Let's Talk" (beside the menu trigger below lg; site-menu.tsx),
- * clean, without the accent cup. On is dark. The new mode opens as a circle
- * from the switch (lib/theme.ts); the choice is the compact site's too. Before
- * hydration the mode is unknown, so the switch waits to show.
+ * The full site's light and dark switch: the printed key (owner's pick, from the
+ * key and the offset print). A key face on a thin ink lip, its sun or moon
+ * printed in register over a red impression. Pressing dark latches the key down
+ * and it takes the red; light lifts it back. On every press the impression slips
+ * out of register and thumps back as the icon changes. The look is CSS on the
+ * page's mode (site-menu.css), so the key is server-rendered and right before
+ * hydration, and arrives with the rest of the bar in its entrance. Until the mode
+ * is known it is a plain button (a switch must say whether it is on). The new
+ * mode opens as a circle from the key (lib/theme.ts); the choice is the compact
+ * site's too.
  */
 export function ModeSwitch({ label }: { label: string }) {
   const theme = useSyncExternalStore(subscribeTheme, readTheme, none)
-  const ref = useRef<HTMLSpanElement>(null)
-
-  if (theme === null) return null
 
   return (
-    <span ref={ref} data-mode={theme} className="mode-switch">
-      {/* The sun and the moon say what the switch is for; the one that is on is
-          in ink. Decoration: the switch is named for assistive tech. */}
-      <svg aria-hidden="true" viewBox="0 0 24 24" className="mode-switch-sun">
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
-      </svg>
-      <NeoSwitch
-        label={label}
-        hideLabel
-        size="sm"
-        checked={theme === 'dark'}
-        onChange={() => {
-          const box = ref.current?.getBoundingClientRect()
-          switchTheme(box && { x: box.left + box.width / 2, y: box.top + box.height / 2 })
-        }}
-      />
-      <svg aria-hidden="true" viewBox="0 0 24 24" className="mode-switch-moon">
-        <path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1Z" />
-      </svg>
-    </span>
+    <button
+      type="button"
+      role={theme === null ? undefined : 'switch'}
+      aria-checked={theme === null ? undefined : theme === 'dark'}
+      aria-label={label}
+      className="mode-key"
+      onClick={(event) => {
+        const button = event.currentTarget
+        // Alternates two identical keyframes so the slip replays on every press.
+        button.dataset.pressed = button.dataset.pressed === 'a' ? 'b' : 'a'
+        const box = button.getBoundingClientRect()
+        switchTheme({ x: box.left + box.width / 2, y: box.top + box.height / 2 })
+      }}
+    >
+      <span aria-hidden="true" className="mode-key-block" />
+      <span aria-hidden="true" className="mode-key-face">
+        <span className="mode-key-layer mode-key-print">
+          <Icons />
+        </span>
+        <span className="mode-key-layer mode-key-ink">
+          <Icons />
+        </span>
+      </span>
+    </button>
   )
 }

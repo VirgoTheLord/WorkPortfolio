@@ -3,7 +3,7 @@ import { CompactSection } from './compact-section'
 
 /*
  * Experience as plain rows: what kind (work, study), the organisation and the
- * role or degree, and "Current" with the orange square where it is. No dates
+ * role or degree, and "Current" with the red square where it is. No dates
  * and no descriptions: the project holds none, and none are made up.
  */
 export function CompactExperience() {

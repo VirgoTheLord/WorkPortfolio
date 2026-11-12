@@ -9,7 +9,7 @@ const items = [menu.home, ...site.nav, compactNotice.link]
 
 /*
  * The footer, recreated from neuemontreal.com's: a solid field (here the brand
- * field, black on orange, a single surface) in the ordinary flow, with a mark at
+ * field, black on red, a single surface) in the ordinary flow, with a mark at
  * the left, four columns each headed by a line of text over a hairline with its
  * links beside a vertical hairline, a hairline across, the name set as wide as
  * the frame along the bottom edge, a hairline, and the credits. Four columns of

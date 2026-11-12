@@ -80,7 +80,7 @@ html:has(.menu[data-open='true']) {
 /* The card behind the bar: there once the page has scrolled. Opening dissolves
    it, so the bar sits straight on the frost. The page's own tone, slightly
    translucent, with a hairline edge: it reads as part of the page rather than a
-   grey toolbar over it (it was an opaque `surface` slab). It follows the theme
+   grey toolbar over it. It follows the theme
    the bar takes, so over the dark contact section it is dark. */
 .menu-surface {
   background-color: color-mix(in srgb, var(--color-bg) 92%, transparent);
@@ -424,40 +424,212 @@ html:has(.menu[data-open='true']) {
 
 /* ---- The light/dark switch ---------------------------------------------- */
 
-/* Cairn's neumorph switch (interactive/mode-switch.tsx) in the bar: beside the
-   call to action from lg, beside the trigger below it (one or the other is
-   shown, so it is in the tab order once). Moulded from the page under the bar,
-   and kept clean: no accent cup. From lg it goes with the call to action while
-   the menu is open. */
-.menu-mode {
-  --wui-neo-surface: var(--color-bg);
+/* The printed key (interactive/mode-switch.tsx), in the bar: beside the call to
+   action from lg, beside the trigger below it (one or the other is shown, so it
+   is in the tab order once). As tall as the compact call to action beside it (a
+   40px row; 32px on smaller screens): a face on a 2px ink lip, the page's tone
+   with a 2px ink outline, its
+   icon ink over a red impression in register. Hover lifts the face a pixel,
+   pressing pushes it onto the lip, and dark leaves it latched there in the
+   accent. Each press the impression slips out of register and thumps back. The
+   state is keyed off the page's mode, not script, so the key is right before
+   hydration and enters with the bar. Colours are the bar's tokens, so it follows
+   the section under the bar. */
+.mode-key {
+  /* 32px below lg, 40px (the call to action's height) from lg. */
+  --key: calc(var(--spacing) * 8);
+  --key-depth: calc(var(--spacing) * 0.5);
+  --key-line: calc(var(--spacing) * 0.5);
+  position: relative;
+  display: block;
+  flex: none;
+  width: calc(var(--key) + var(--key-depth));
+  height: calc(var(--key) + var(--key-depth));
+  cursor: pointer;
 }
 
-.menu-mode .wui-neo-cup {
+@media (min-width: 64rem) {
+  .mode-key {
+    --key: calc(var(--spacing) * 10);
+  }
+}
+
+/* Below lg the key sits beside the menu trigger but only while the menu is
+   open: it springs out from the trigger's side as the menu opens and slides
+   back into it as the menu closes. Hidden, it is out of the tab order too. */
+@media not all and (min-width: 64rem) {
+  .menu-cell .menu-mode {
+    opacity: 0;
+    visibility: hidden;
+    translate: calc(var(--spacing) * 6) 0;
+    scale: 0.6;
+    transition:
+      opacity var(--duration-fast) var(--ease-in-out),
+      translate var(--duration-fast) var(--ease-in-out),
+      scale var(--duration-fast) var(--ease-in-out),
+      visibility 0s linear var(--duration-fast);
+  }
+
+  .menu[data-open='true'] .menu-cell .menu-mode {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    scale: 1;
+    transition:
+      opacity var(--duration-base) var(--ease-out) 120ms,
+      translate 520ms var(--ease-spring) 120ms,
+      scale 520ms var(--ease-spring) 120ms,
+      visibility 0s;
+  }
+}
+
+/* Without script the key cannot do anything, so it is not shown. */
+html:not(.js) .mode-key {
   display: none;
 }
 
-/* The sun and the moon either side of it: hairline marks in the muted text
-   colour, the one that is on in ink. */
-.mode-switch {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 2);
+/* A touch screen gets a 44px target. */
+@media (pointer: coarse) {
+  .mode-key::after {
+    content: '';
+    position: absolute;
+    inset: calc(var(--spacing) * -0.5);
+  }
 }
 
-.mode-switch svg {
+.mode-key-block {
+  position: absolute;
+  inset: var(--key-depth) 0 0 var(--key-depth);
+  background-color: var(--color-fg);
+}
+
+.mode-key-face {
+  --key-down: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: var(--key);
+  height: var(--key);
+  place-items: center;
+  border: var(--key-line) solid var(--color-fg);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  translate: var(--key-down) var(--key-down);
+  transition:
+    translate var(--duration-fast) var(--ease-spring),
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.mode-key-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* In register at rest: exactly under the ink icon, so unseen. */
+.mode-key-print {
+  color: var(--color-accent);
+}
+
+.mode-key-icon {
+  grid-area: 1 / 1;
   width: calc(var(--spacing) * 4);
   height: calc(var(--spacing) * 4);
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  color: var(--color-fg-muted);
-  transition: color var(--duration-base) var(--ease-out);
+  stroke-width: 2;
+  stroke-linecap: square;
+  transition: opacity var(--duration-instant) linear;
 }
 
-.mode-switch[data-mode='light'] .mode-switch-sun,
-.mode-switch[data-mode='dark'] .mode-switch-moon {
-  color: var(--color-fg);
+.mode-key-moon {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mode-key:hover .mode-key-face {
+    --key-down: -1px;
+  }
+}
+
+.mode-key:active .mode-key-face {
+  --key-down: var(--key-depth);
+}
+
+/* Dark: the key latched down in the accent, the moon on its face. */
+:root[data-theme='dark'] .mode-key-face {
+  --key-down: var(--key-depth);
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+:root[data-theme='dark'] .mode-key-print {
+  color: var(--color-accent-fg);
+}
+
+:root[data-theme='dark'] .mode-key-sun {
+  opacity: 0;
+}
+
+:root[data-theme='dark'] .mode-key-moon {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .mode-key-face {
+    --key-down: var(--key-depth);
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+
+  :root:not([data-theme='light']) .mode-key-print {
+    color: var(--color-accent-fg);
+  }
+
+  :root:not([data-theme='light']) .mode-key-sun {
+    opacity: 0;
+  }
+
+  :root:not([data-theme='light']) .mode-key-moon {
+    opacity: 1;
+  }
+}
+
+.mode-key[data-pressed='a'] .mode-key-print {
+  animation: mode-key-slip-a var(--duration-slow) var(--ease-out) both;
+}
+
+.mode-key[data-pressed='b'] .mode-key-print {
+  animation: mode-key-slip-b var(--duration-slow) var(--ease-out) both;
+}
+
+/* Out of register and back into it: two identical keyframes, alternated per
+   press so the slip plays every time. */
+@keyframes mode-key-slip-a {
+  35% {
+    translate: -3px 2px;
+  }
+  70% {
+    translate: 1px 0.5px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes mode-key-slip-b {
+  35% {
+    translate: -3px 2px;
+  }
+  70% {
+    translate: 1px 0.5px;
+  }
+  100% {
+    translate: 0 0;
+  }
 }

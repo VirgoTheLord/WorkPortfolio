@@ -1,5 +1,5 @@
 /*
- * The preloader: the brand field (black on orange) with a counter in a thin ring
+ * The preloader: the brand field (black on red) with a counter in a thin ring
  * at its centre. It exists only while <html> has .is-intro; the hero (hero.css)
  * sits underneath, so what the ring opens onto is the real hero.
  *
@@ -70,7 +70,7 @@ html.is-intro .intro {
   background-color: var(--color-bg);
 }
 
-/* Inside the ring the colours are inverted: the same field, dark with orange
+/* Inside the ring the colours are inverted: the same field, dark with red
    figures, over the normal one, clipped to a disc a gap (0.06em) inside the
    ring's line, so the ring is an outline around it (the island rewrites the clip
    as the ring moves; this is the ring at rest). */

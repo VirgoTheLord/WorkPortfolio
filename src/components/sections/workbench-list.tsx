@@ -16,7 +16,15 @@ const kinds = {
   library: workbench.labels.library,
 }
 
-export function WorkbenchList({ items = workbench.items }: { items?: readonly WorkbenchItem[] }) {
+/* Each name is a heading one level under the section it sits in: h3 under the
+   compact home's "Components" h2, h2 straight under the index page's h1. */
+export function WorkbenchList({
+  items = workbench.items,
+  heading: Heading = 'h3',
+}: {
+  items?: readonly WorkbenchItem[]
+  heading?: 'h2' | 'h3'
+}) {
   return (
     <ul className="cp-bench">
       {items.map((item, index) => (
@@ -24,12 +32,12 @@ export function WorkbenchList({ items = workbench.items }: { items?: readonly Wo
           <p aria-hidden="true" className="cp-bench-number font-label">
             {String(index + 1).padStart(2, '0')}
           </p>
-          <h3 className="cp-bench-name">
+          <Heading className="cp-bench-name">
             <Link href={`/compact/components/${item.slug}`} className="cp-bench-link">
               <RollText>{item.name}</RollText>
             </Link>
             <Icon name="arrow" className="cp-nudge size-3" />
-          </h3>
+          </Heading>
           <p className="cp-bench-note">{item.note}</p>
           <p className="cp-bench-kind font-label">{kinds[item.kind]}</p>
         </li>

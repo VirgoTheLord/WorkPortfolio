@@ -5,8 +5,7 @@ import { contact } from '@/content/site'
 import './contact.css'
 
 /*
- * Contact, in the page's own mode (it was always dark; now it follows the light
- * and dark switch): the email address as a departures board (the
+ * Contact, in the page's own mode (it follows the light and dark switch): the email address as a departures board (the
  * owner's choice from a set of studied contact sections and layouts: centred).
  * One column, centred, read top to bottom the way a visitor uses it: the
  * invitation, one quiet line (the heading); the address, set large as a board

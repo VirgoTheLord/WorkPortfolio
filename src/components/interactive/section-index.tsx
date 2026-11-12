@@ -11,7 +11,7 @@ type Props = {
 /*
  * The compact site's margin index (DESIGN.md §5b, after karthikponna.me's): the
  * sections in the left margin from 80rem, the one being read marked by one
- * orange square that glides from entry to entry with a little spring
+ * red square that glides from entry to entry with a little spring
  * (compact.css). Plain links without script; with it, an IntersectionObserver
  * marks the section crossing a line a third of the way down the screen. Nothing
  * scrolls by itself.

@@ -59,7 +59,7 @@
 }
 
 /* The head: a solid square at the pointer, in the accent colour (black over a brand
-   field, where orange would vanish). It is always there while the pointer is on
+   field, where red would vanish). It is always there while the pointer is on
    the page, still or moving, and goes when the pointer leaves it. */
 .pointer-head {
   position: fixed;
@@ -96,45 +96,84 @@ html[data-ink-reveal='true'] .pointer-head {
   transition: opacity 110ms ease-out;
 }
 
-/* The tag (studionamma.com's cursor over its "See all", measured at 1440: 48px
-   tall, 11px padding, tilted -7deg, growing from the pointer in 0.15s; gone at
-   once on leaving). Ours is square-cornered and orange with black capitals, the
-   site's own head square grown into a label. Its corner rides the head's
-   trailing position, offset down and right so it never covers what it names. */
+/* The tag: over anything carrying data-cursor-tag the head square grows into a
+   small red label in the site's label face (black capitals), its corner riding
+   the head's trailing position, offset down and right so it never covers what
+   it names. It springs out of the pointer, swinging from a slight tilt the
+   other way to its own -7deg and overshooting a touch, and on leaving tucks back
+   into the pointer quickly rather than blinking out. Transform and opacity only. */
 .pointer-tag {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 57;
   display: flex;
-  height: calc(var(--spacing) * 12);
+  height: calc(var(--spacing) * 7);
   align-items: center;
-  padding-inline: calc(var(--spacing) * 2.75);
-  margin: calc(var(--spacing) * 5) 0 0 calc(var(--spacing) * 8);
-  background-color: var(--color-accent);
-  font-size: var(--text-xl);
-  font-weight: var(--font-weight-semibold);
-  font-variation-settings: 'opsz' var(--opsz-title);
-  letter-spacing: -0.03em;
+  padding-inline: calc(var(--spacing) * 2.5);
+  margin: calc(var(--spacing) * 4) 0 0 calc(var(--spacing) * 5);
+  font-family: var(--font-label);
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.06em;
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
-  rotate: -7deg;
+  rotate: 8deg;
   transform-origin: 0 0;
-  scale: 0.15;
+  scale: 0.2;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   will-change: translate;
+  transition:
+    scale 160ms var(--ease-in-out),
+    rotate 160ms var(--ease-in-out),
+    opacity 120ms linear,
+    visibility 0s linear 160ms;
 }
 
 .pointer-tag[data-on='true'] {
+  rotate: -7deg;
   scale: 1;
   opacity: 1;
   visibility: visible;
   transition:
-    scale 150ms var(--ease-out),
-    opacity 80ms linear;
+    scale 420ms var(--ease-spring),
+    rotate 520ms var(--ease-spring),
+    opacity 90ms linear,
+    visibility 0s;
+}
+
+/* The tag is two cards: the red face (::after) and, behind it, a second card in
+   the page's own tone with an ink edge (::before), like the frame's paper, so it
+   reads over a dark screenshot and a light page alike. The face lands first;
+   the second card slides out from under it a moment later, on a spring, and
+   tucks back in when the tag goes. Both sit under the word inside the tag's own
+   layer (its tilt and scale make it one). */
+.pointer-tag::before,
+.pointer-tag::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.pointer-tag::after {
+  z-index: -1;
+  background-color: var(--color-accent);
+}
+
+.pointer-tag::before {
+  z-index: -2;
+  border: 1px solid var(--color-fg);
+  background-color: var(--color-bg);
+  translate: 0 0;
+  transition: translate 140ms var(--ease-in-out);
+}
+
+.pointer-tag[data-on='true']::before {
+  translate: calc(var(--spacing) * 1.5) calc(var(--spacing) * 1.5);
+  transition: translate 560ms var(--ease-spring) 90ms;
 }
 
 /* While the tag shows, it is the cursor. */

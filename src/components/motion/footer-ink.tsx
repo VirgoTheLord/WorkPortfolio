@@ -5,7 +5,7 @@ import './footer-ink.css'
 
 /* The reveal is a field of small tiles, as previewed and chosen: a disc of them
    under the pointer, through which the footer shows its inverse (the brand field's
-   orange letters on its black, the hairline and the credits too). It is an SVG mask
+   red letters on its black, the hairline and the credits too). It is an SVG mask
    of small squares over a copy of the footer's bottom: no filter, and a frame
    touches only the tiles near the pointer and those still closing. A tile belongs to
    the disc or it does not; the disc has a fixed radius and follows the pointer
@@ -155,7 +155,7 @@ export function FooterInk() {
       }
       defs.append(mask)
 
-      // The inverse copy: the field's own ink for the tiles, its own orange for the
+      // The inverse copy: the field's own ink for the tiles, its own red for the
       // letters, the hairline and the credits (the colours are the footer's tokens,
       // so a theme change follows).
       const group = el('g', { mask: `url(#${id}-m)` })

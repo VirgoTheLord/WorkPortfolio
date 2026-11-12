@@ -22,8 +22,8 @@
  *
  * Colours are the page's own: the face is the background, the outline, block and
  * label are ink, so the key is black on light and white on dark, and black on
- * the orange of a brand field. Pressed, the face takes the accent, the one place
- * orange marks it, as the system uses orange for active states.
+ * the red of a brand field. Pressed, the face takes the accent, the one place
+ * red marks it, as the system uses red for active states.
  */
 @reference '../../app/globals.css';
 

@@ -62,6 +62,7 @@ export const about = {
 export const work = {
   headline: ['Selected', 'work'],
   projectLabel: 'Project',
+  viewSite: 'View site',
 } satisfies WorkContent
 
 /*
@@ -99,7 +100,7 @@ export const loader = {
     'Kerning the numbers',
     'Negotiating with flexbox',
     'Deleting unused code',
-    'Polishing the orange',
+    'Polishing the red',
     'Almost there. Probably.',
   ],
   done: 'Hello.',

@@ -1,8 +1,8 @@
 /*
  * Hero composition (spacing, type and entrance after the good-fella.com hero, on
  * one centre line), plus the starting states the intro needs. Every intro rule is scoped to html.is-intro, which the
- * inline script in layout.tsx sets before first paint (home page, no hash, motion
- * allowed). Without it (reduced motion, no JavaScript, deep links, or after the
+ * inline script in layout.tsx sets before first paint (home page, motion
+ * allowed). Without it (reduced motion, no JavaScript, or after the
  * intro) the hero is its final state.
  */
 
@@ -384,6 +384,17 @@ html.is-enter .hero-block[data-hero-block='trail'] {
 }
 
 html.is-enter [data-hero-text] {
+  animation-name: hero-enter-on;
+  animation-duration: 0.48s;
+  animation-timing-function: step-end;
+  animation-fill-mode: both;
+  animation-delay: calc(var(--line, 0) * 0.15s);
+}
+
+/* The cells are drawn whole, at once, under the blocks (hero-cells.tsx), so they
+   wait for the same beat as the line: shown before it, the end of the name
+   stood printed ahead of the wipe, and the blocks crossed a name already there. */
+html.is-enter .hero-cells {
   animation-name: hero-enter-on;
   animation-duration: 0.48s;
   animation-timing-function: step-end;

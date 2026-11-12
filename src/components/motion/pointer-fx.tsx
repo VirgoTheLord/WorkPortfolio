@@ -18,7 +18,7 @@ import './pointer-fx.css'
    not drawn from the raw events: a follower chases the pointer on an exponential
    and is sampled once a frame, so the samples are evenly spaced in time, and a
    Catmull-Rom spline is drawn through them. The head is a small solid square in the
-   accent colour (the ink colour on a brand field, where orange would vanish) that is
+   accent colour (the ink colour on a brand field, where red would vanish) that is
    always there while the pointer is on the page, still or moving. */
 const TRAIL = {
   width: 1.8,
@@ -66,13 +66,13 @@ type Point = { x: number; y: number; age: number; color: string }
  *     idle pointer costs nothing.
  *   - a lens: over a link or a button a square, 2.8rem, grows from 0.43 under the
  *     pointer and desaturates what is beneath it (mix-blend-mode: saturation), so
- *     orange text goes grey under the pointer. It is one element moved by
+ *     red text goes grey under the pointer. It is one element moved by
  *     transform; a single delegated listener finds the targets, so no element
  *     carries a listener of its own.
  *   - a tag: over anything carrying data-cursor-tag the head becomes a small
- *     orange label with that word, tilted 7 degrees and riding the head's own
- *     trailing position (studionamma.com's cursor, measured: it grows in about
- *     0.15s and is gone the moment the pointer leaves). No trail while it shows.
+ *     red label with that word, tilted 7 degrees and riding the head's own
+ *     trailing position. It springs out of the pointer and tucks back into it
+ *     on leaving (pointer-fx.css). No trail while it shows.
  *
  * Fine pointers only (hover and precision, not a screen width), never for reduced
  * motion, and held off while the intro plays and while the full-screen menu is
@@ -326,7 +326,7 @@ export function PointerFx() {
       const lensOff = () => {
         lens.dataset.on = 'false'
       }
-      // The tag: on at once with its word, off at once, as the reference's.
+      // The tag: its word set at once; it springs in and tucks away in CSS.
       const tagOff = () => {
         tag.dataset.on = 'false'
         head.dataset.tagged = 'false'
@@ -336,7 +336,8 @@ export function PointerFx() {
         const tagged = (event.target as Element).closest?.(TAGGED)
         if (tagged && !paused()) {
           const word = tagged.getAttribute('data-cursor-tag') ?? ''
-          if (tag.textContent !== word) tag.textContent = word
+          const label = tag.firstElementChild
+          if (label && label.textContent !== word) label.textContent = word
           tag.dataset.on = 'true'
           head.dataset.tagged = 'true'
           points.length = 0
@@ -397,12 +398,9 @@ export function PointerFx() {
       <canvas ref={canvasRef} aria-hidden="true" className="pointer-trail" />
       <div ref={lensRef} aria-hidden="true" data-on="false" className="pointer-lens" />
       <div ref={headRef} aria-hidden="true" data-on="false" className="pointer-head" />
-      <div
-        ref={tagRef}
-        aria-hidden="true"
-        data-on="false"
-        className="pointer-tag font-display text-accent-fg"
-      />
+      <div ref={tagRef} aria-hidden="true" data-on="false" className="pointer-tag text-accent-fg">
+        <span />
+      </div>
     </>
   )
 }

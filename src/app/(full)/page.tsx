@@ -12,8 +12,11 @@ export default function HomePage() {
     <>
       <HeroIntro />
       <CompactNotice {...compactNotice} />
-      <Hero />
-      <About />
+      {/* The hero pins while About slides over it (about.css, "The stack"). */}
+      <div className="hero-stack">
+        <Hero />
+        <About />
+      </div>
       <Skills />
       <SelectedWork />
       <Contact />

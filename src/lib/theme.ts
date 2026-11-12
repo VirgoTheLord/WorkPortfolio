@@ -57,35 +57,78 @@ function apply(theme: Theme) {
   } catch {}
 }
 
+/* One switch at a time: the transition in flight, the mode it is going to, and
+   the mode asked for while it runs (with where it was asked from). */
+let running: { to: Theme } | null = null
+let queued: { to: Theme; origin?: { x: number; y: number } } | null = null
+
+/* Set while the mode changes. globals.css stops every colour transition under
+   it, so the new mode is drawn in its final colours at once (otherwise each
+   element fades from the old colours inside the opening circle: the flicker),
+   and gives the reveal its keyframes from the very first frame. */
+const SWITCHING = 'theme-switching'
+
 /*
  * Flips the mode. Where the browser has view transitions, the new mode opens as
  * a circle from `origin` (the switch) over the old one; with reduced motion, or
  * without them, it simply changes.
+ *
+ * The circle is a CSS animation on ::view-transition-new(root), keyed by the
+ * class above and the --vt-* variables, so it is in place on the first frame the
+ * transition paints. Started from script once the transition was ready, the new
+ * mode showed whole for a frame first: the flash.
+ *
+ * Presses while a switch is running never cut it short (cutting it snaps the
+ * half-open circle to the end: another flash). They are queued, and only the
+ * last answer counts: when the circle has finished, if the mode asked for is not
+ * the one on screen, it opens from where it was asked. An even number of presses
+ * therefore ends where it started, with nothing further to play.
+ *
+ * Returns the mode the page is going to.
  */
-export function switchTheme(origin?: { x: number; y: number }) {
-  const next: Theme = readTheme() === 'dark' ? 'light' : 'dark'
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (still || !('startViewTransition' in document)) {
-    apply(next)
+export function switchTheme(origin?: { x: number; y: number }): Theme {
+  const from = queued?.to ?? running?.to ?? readTheme()
+  const next: Theme = from === 'dark' ? 'light' : 'dark'
+  if (running) {
+    queued = { to: next, origin }
     return next
   }
+  run(next, origin)
+  return next
+}
+
+function run(next: Theme, origin?: { x: number; y: number }) {
+  const root = document.documentElement
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  root.classList.add(SWITCHING)
+
+  if (still || !('startViewTransition' in document)) {
+    apply(next)
+    // Two frames: the new colours are painted before transitions come back.
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => root.classList.remove(SWITCHING)),
+    )
+    return
+  }
+
   const x = origin?.x ?? window.innerWidth / 2
   const y = origin?.y ?? 0
   const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
+  root.style.setProperty('--vt-x', `${x}px`)
+  root.style.setProperty('--vt-y', `${y}px`)
+  root.style.setProperty('--vt-r', `${Math.ceil(radius)}px`)
+
+  running = { to: next }
   const transition = document.startViewTransition(() => apply(next))
-  // A transition the browser skips (a hidden tab, say) rejects; the mode has
-  // still changed, so there is nothing to do.
-  transition.ready
-    .then(() => {
-      document.documentElement.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-        {
-          duration: 900,
-          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-          pseudoElement: '::view-transition-new(root)',
-        },
-      )
-    })
+  // `finished` settles however the transition ends (played, or skipped by the
+  // browser in a hidden tab); the mode has changed either way.
+  transition.finished
     .catch(() => {})
-  return next
+    .finally(() => {
+      running = null
+      root.classList.remove(SWITCHING)
+      const wanted = queued
+      queued = null
+      if (wanted && wanted.to !== readTheme()) run(wanted.to, wanted.origin)
+    })
 }

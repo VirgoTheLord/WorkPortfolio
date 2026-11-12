@@ -66,6 +66,8 @@ export type WorkContent = {
   headline: readonly string[]
   /** The word on each project's tab, before its number ("Project 01"). */
   projectLabel: string
+  /** The pointer's tag over a live project's screenshot. */
+  viewSite: string
 }
 
 export type ContactContent = {

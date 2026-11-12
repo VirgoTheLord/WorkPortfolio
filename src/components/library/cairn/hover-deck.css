@@ -1,0 +1,149 @@
+/*
+ * The hover deck (hover-deck.tsx). Each card is centred in the list and placed
+ * by one transform; the script springs it, and renders the resting fan inline
+ * so the deck is right before it runs. A card's width is the deck's own:
+ * --wui-deck-width, shrunk when the container is narrower than the deck's
+ * widest arrangement (--deck-span cards across), so it never spills out. Each
+ * card is drawn in the list's perspective, scaled to the card, but they share
+ * no 3D space (no preserve-3d): the script layers them by depth, so two cards
+ * never cut through each other and the pointer always finds the card it sees.
+ */
+
+.wui-deck {
+  container-type: inline-size;
+  display: grid;
+  width: 100%;
+  justify-items: center;
+  color: var(--wui-fg);
+  font-family: var(--wui-font-sans);
+}
+
+.wui-deck-cards {
+  /* --wui-deck-width sets a card's width (13rem by default); cards are 3:2. */
+  --deck-card: min(var(--wui-deck-width, 13rem), 100cqw / var(--deck-span));
+  position: relative;
+  width: calc(var(--deck-card) * var(--deck-span));
+  height: calc(var(--deck-card) * var(--deck-height));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  perspective: calc(var(--deck-card) * 5.3);
+  perspective-origin: 50% 40%;
+}
+
+.wui-deck-item {
+  position: absolute;
+  top: calc(var(--deck-card) * (var(--deck-top) - 1 / 3));
+  left: 50%;
+  width: var(--deck-card);
+  aspect-ratio: 3 / 2;
+  margin-left: calc(var(--deck-card) / -2);
+  will-change: transform;
+}
+
+.wui-deck-card {
+  /* --wui-deck-frame sets the frame round each card: white, or dark grey in dark mode. */
+  --deck-frame: var(--wui-deck-frame, #fff);
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 3px solid var(--deck-frame);
+  border-radius: calc(var(--wui-unit) * 2.5);
+  background: var(--deck-frame);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.06),
+    0 1px 2px rgb(0 0 0 / 0.06),
+    0 12px 28px -8px rgb(0 0 0 / 0.28);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wui-deck-card:focus-visible {
+  outline: 2px solid var(--wui-accent);
+  outline-offset: calc(var(--wui-unit) * 1);
+}
+
+.wui-deck-card > :not(.wui-deck-shade) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--wui-unit) * 1.5);
+  object-fit: cover;
+}
+
+/* The side a card turns away from darkens with the turn (set by the script). */
+.wui-deck-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(0 0 0 / 0.22), transparent 45%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The name: one span per name, so an old one can blur out as a new one comes in. */
+.wui-deck-caption {
+  position: relative;
+  width: 100%;
+  height: calc(var(--wui-unit) * 6);
+  margin: calc(var(--wui-unit) * 2) 0 0;
+  font-size: var(--wui-text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.wui-deck-caption span {
+  position: absolute;
+  top: 0;
+  left: 50%;
+}
+
+/* Dark: the frame goes to a dark grey with a hairline, so a card never melts into the page. */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme='light'])) .wui-deck-card {
+    --deck-frame: var(--wui-deck-frame, #2a2a2e);
+    box-shadow:
+      0 0 0 1px var(--wui-rule),
+      0 14px 30px -8px rgb(0 0 0 / 0.7);
+  }
+}
+
+[data-theme='dark'] .wui-deck-card,
+[data-theme='light'] [data-theme='dark'] .wui-deck-card {
+  --deck-frame: var(--wui-deck-frame, #2a2a2e);
+  box-shadow:
+    0 0 0 1px var(--wui-rule),
+    0 14px 30px -8px rgb(0 0 0 / 0.7);
+}
+
+[data-theme='light'] .wui-deck-card,
+[data-theme='dark'] [data-theme='light'] .wui-deck-card {
+  --deck-frame: var(--wui-deck-frame, #fff);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.06),
+    0 1px 2px rgb(0 0 0 / 0.06),
+    0 12px 28px -8px rgb(0 0 0 / 0.28);
+}
+
+/* ---- Portfolio additions (not in Cairn) ------------------------------------
+ * Standing up (orientation="vertical"): the cards' origin is set from the left
+ * by the script (--deck-left), not centred; the name under the hand would read
+ * sideways, so it is not shown. Dealing (deal): before the script has gathered
+ * the cards into their pile they are not shown, so the server's resting fan
+ * never flashes before the pile; without script they simply rest in the fan. */
+.wui-deck[data-orientation='vertical'] .wui-deck-item {
+  left: calc(var(--deck-card) * (var(--deck-left) - 0.5));
+  margin-left: 0;
+}
+
+.wui-deck[data-orientation='vertical'] .wui-deck-caption {
+  display: none;
+}
+
+.js .wui-deck[data-deal]:not([data-dealt]) .wui-deck-item {
+  visibility: hidden;
+}

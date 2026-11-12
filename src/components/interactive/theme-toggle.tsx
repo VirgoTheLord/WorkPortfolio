@@ -23,7 +23,9 @@ export function ThemeToggle({ label }: CompactContent['theme']) {
   return (
     <button
       type="button"
-      role="switch"
+      // The mode is unknown until hydration, and a switch must say whether it
+      // is on, so it is a plain button until then.
+      role={theme === null ? undefined : 'switch'}
       aria-checked={theme === null ? undefined : theme === 'dark'}
       aria-label={label}
       onClick={(event) => {

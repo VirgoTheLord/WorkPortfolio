@@ -100,7 +100,7 @@ const COPY = 0.3
  *
  * Runs only when <html> has .is-intro (inline script in layout.tsx): once per
  * tab, so a reload or a return to the home page goes straight to the hero's own
- * entrance (it was 6.6s to the hero on every load). Any input
+ * entrance. Any input
  * (wheel, touch, key) fast-forwards it. If anything fails, the page is simply
  * shown in its final state.
  */
@@ -118,7 +118,8 @@ export function HeroIntro() {
     const root = document.documentElement
     const landed = mounts++ === 0 && root.dataset.landing === '/'
     if (landed || root.classList.contains('is-intro') || root.classList.contains('is-enter')) return
-    if (location.hash || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // A hash link still gets the entrance (layout.tsx): the hero may be on screen.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     root.classList.add('is-enter')
     startEnter()
   }, [])
@@ -248,7 +249,7 @@ export function HeroIntro() {
           </span>
         </p>
       </div>
-      {/* The same counter, inverted (a dark disc, orange figures), clipped to the
+      {/* The same counter, inverted (a dark disc, red figures), clipped to the
           ring: inside the ring the colours are inverted. */}
       <div data-intro-inverse className="intro-field intro-inverse">
         <Counter />

@@ -18,7 +18,8 @@
 
 .skills {
   container-type: inline-size;
-  padding: 0 calc(var(--spacing) * 4) calc(var(--spacing) * 12);
+  /* The page's section rhythm (about.css). */
+  padding: var(--spacing-section) calc(var(--spacing) * 4);
 }
 
 /* A line's mask: it rises out of this (motion/rise.css). */
@@ -28,7 +29,6 @@
 }
 
 .skills-rows {
-  margin-block: calc(var(--spacing) * 8);
   text-align: center;
 }
 
@@ -67,11 +67,47 @@
   opacity: 0.35;
 }
 
-@media (min-width: 48rem) {
-  .skills-rows {
-    margin-block: calc(var(--spacing) * 12);
-  }
+/* Touch, where the browser has scroll timelines: the list turns like a drum.
+   Each row is tied to its own pass through the screen (a view timeline), so it
+   comes up tipped back and small, stands square and full size at the middle of
+   the screen, and tips away above it: the row being read is always the clear
+   one, with no script on scroll. The drum replaces the touch dim above; the
+   island still marks the row at the middle. Transform and opacity only. */
+@supports (animation-timeline: view()) {
+  @media (hover: none) and (prefers-reduced-motion: no-preference) {
+    .skills-rows {
+      perspective: 60rem;
+    }
 
+    .skills-row-word {
+      animation: skills-drum linear both;
+      animation-timeline: view();
+      transform-origin: 50% 50%;
+    }
+
+    .skills-rows[data-active] .skills-row:not([data-current]) {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes skills-drum {
+  0% {
+    opacity: 0.2;
+    transform: rotateX(-55deg) scale(0.82);
+  }
+  40%,
+  60% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0.2;
+    transform: rotateX(55deg) scale(0.82);
+  }
+}
+
+@media (min-width: 48rem) {
   .skills-row-name {
     font-size: 8.5cqi;
   }
@@ -79,11 +115,7 @@
 
 @media (min-width: 64rem) {
   .skills {
-    padding: 0 calc(var(--spacing) * 8) calc(var(--spacing) * 16);
-  }
-
-  .skills-rows {
-    margin-block: calc(var(--spacing) * 16);
+    padding-inline: calc(var(--spacing) * 8);
   }
 
   .skills-row-name {

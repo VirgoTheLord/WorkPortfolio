@@ -21,8 +21,8 @@
 @reference '../../app/globals.css';
 
 .work {
-  /* Half the usual section rhythm: the headline is already a large pause. */
-  padding: calc(var(--spacing-section-y) / 2) calc(var(--spacing) * 4);
+  /* The page's section rhythm (about.css). */
+  padding: var(--spacing-section) calc(var(--spacing) * 4);
   /* The folder tone of the card, its tab and its border. */
   --work-tone: var(--color-fg);
   --work-tone-fg: var(--color-bg);
@@ -75,7 +75,7 @@
   flex-direction: column;
   gap: calc(var(--spacing) * 10);
   max-width: 77.5rem;
-  margin: calc(var(--spacing) * 12) auto 0;
+  margin: calc(var(--spacing) * 16) auto 0;
 }
 
 .work-item:nth-child(4n + 1) {
@@ -306,30 +306,57 @@
   line-height: 1;
 }
 
-/* On hover the cover is struck through with fine diagonal lines over a light
-   wash, the way a design tool marks a selected frame (the reference's hover).
-   The lines are a hard-stop pattern, not a visible gradient. */
-.work-hatch {
-  position: absolute;
-  inset: 0;
-  background-color: color-mix(in srgb, var(--color-bg) 45%, transparent);
-  background-image: repeating-linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-fg) 55%, transparent) 0 1px,
-    transparent 1px calc(var(--spacing) * 4.5)
-  );
-  opacity: 0;
-  transition: opacity var(--duration-slow) var(--ease-in-out);
+/* Hover (or keyboard focus): the frame is picked up, as a design tool's
+   selection is grabbed to resize. The handles step out from the corners and fill
+   with the accent, and the screenshot inside eases a touch closer. The cover is
+   never covered: it stays the thing being looked at. Transform and colour only. */
+.work-handle {
+  transition:
+    translate var(--duration-base) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.work-frame img {
+  transition: transform var(--duration-media) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .work-card:hover .work-hatch {
-    opacity: 1;
+  .work-card:hover .work-handle {
+    --out: calc(var(--spacing) * 1.5);
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+  }
+
+  .work-card:hover .work-frame img {
+    transform: scale(1.04);
   }
 }
 
-.work-card-inner:focus-visible .work-hatch {
-  opacity: 1;
+.work-card-inner:focus-visible .work-handle {
+  --out: calc(var(--spacing) * 1.5);
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+}
+
+.work-card-inner:focus-visible .work-frame img {
+  transform: scale(1.04);
+}
+
+.work-handle[data-corner='tl'] {
+  translate: calc(var(--out, 0px) * -1) calc(var(--out, 0px) * -1);
+}
+
+.work-handle[data-corner='tr'] {
+  translate: var(--out, 0px) calc(var(--out, 0px) * -1);
+}
+
+.work-handle[data-corner='br'] {
+  translate: var(--out, 0px) var(--out, 0px);
+}
+
+.work-handle[data-corner='bl'] {
+  translate: calc(var(--out, 0px) * -1) var(--out, 0px);
 }
 
 .work-card-inner:focus-visible {
@@ -380,6 +407,11 @@
     position: relative;
     padding-top: var(--work-top);
     padding-bottom: var(--work-gap);
+  }
+
+  /* The last card ends on the section's own rhythm, with nothing added. */
+  .work-item:last-child {
+    padding-bottom: 0;
   }
 
   /* The tabs step along the top of the card: each is 27% of its width with 45°

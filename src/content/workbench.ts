@@ -236,7 +236,7 @@ const own: readonly WorkbenchItem[] = [
   {
     slug: 'key',
     name: 'Key',
-    note: 'A key that lifts off its block on hover and presses down in orange.',
+    note: 'A key that lifts off its block on hover and presses down in red.',
     kind: 'library',
     hint: 'Hover it, then press it.',
     details: [
@@ -256,7 +256,7 @@ const own: readonly WorkbenchItem[] = [
     details: [
       'A link whose label scrambles into place letter by letter from the left while the plus changes sides.',
       'The scramble is only a visual layer: the name read out is the plain label.',
-      'Nothing runs on touch or with reduced motion. It was the hero’s call to action before the frame button.',
+      'Nothing runs on touch or with reduced motion.',
     ],
     tech: ['React', 'CSS'],
     source: 'src/components/library/scramble-button.tsx',

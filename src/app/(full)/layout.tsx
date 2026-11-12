@@ -6,7 +6,7 @@ import '@/components/library/cairn/cairn-tokens.css'
 
 /*
  * The full site's frame: the navbar, the footer, smooth scrolling and the pointer
- * effects, around the home page and /color-test. The compact site,
+ * effects, around the home page. The compact site,
  * (compact), has none of them; both share the root layout's shell.
  */
 export default function FullLayout({ children }: LayoutProps<'/'>) {

@@ -17,6 +17,13 @@ function commit() {
 }
 
 const nextConfig: NextConfig = {
+  /* Hosted as plain files on S3 behind CloudFront (ARCHITECTURE.md §2), so the
+     build must emit a static site into out/. trailingSlash gives every route a
+     folder with an index.html, which the CloudFront function maps URLs onto; the
+     default image optimizer needs a server, so images ship as built. */
+  output: 'export',
+  trailingSlash: true,
+  images: { unoptimized: true },
   poweredByHeader: false,
   env: {
     BUILD_COMMIT: commit(),

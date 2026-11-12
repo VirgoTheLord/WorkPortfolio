@@ -2,87 +2,29 @@
  * The compact site (DESIGN.md §5b): one quiet centred column on the page
  * colour, no box or ground of its own, ruled with solid hairlines. From 80rem
  * the section rail sits in the left margin and the free space on the right
- * holds the work's preview and the bunny. Deep black in dark. Orange marks only: the
- * section squares, the current state, the one hand-drawn line. Motion is short,
- * small and on the compositor.
+ * holds the work's preview and the bunny. Red marks only: the section squares,
+ * the current state, the one hand-drawn line. Motion is short, small and on the
+ * compositor.
  */
 @reference '../../app/globals.css';
 
 /* The compact site's second accent: what answers the visitor (hovers, rolls,
-   focus, the copy's check, the "Live" square, the switch's stars). The orange
-   in light; teal in dark, where the accent itself is red (globals.css). */
+   focus, the copy's check, the "Live" square, the switch's stars). The red in
+   light; teal in dark, where red stays for the marks. Selected text in dark is
+   the canvas black on red. Everything else comes from the global modes. */
 :root:has(.cp) {
   --cp-second: var(--color-accent);
 }
 
 :root[data-theme='dark']:has(.cp) {
-  --cp-second: var(--color-teal);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']):has(.cp) {
-    --cp-second: var(--color-teal);
-  }
-}
-
-/*
- * The compact site (DESIGN.md §5b): one quiet centred column on the page
- * colour, no box or ground of its own, ruled with solid hairlines. From 80rem
- * the section rail sits in the left margin and the free space on the right
- * holds the work's preview and the bunny. Deep black in dark. Orange marks only: the
- * section squares, the current state, the one hand-drawn line. Motion is short,
- * small and on the compositor.
- */
-@reference '../../app/globals.css';
-
-/* The compact site's colours beyond the shared tokens. In light it keeps the
-   full site's orange for everything. In dark (owner's direction) it is black,
-   red and teal: a deeper black than the full site's off-black for the whole
-   page (overscroll included), red for the marks (the section squares, the
-   hand-drawn lines, the mark's print, "Current", the rail's marker) and teal
-   for everything that answers the visitor (hovers, rolls, focus, the copy's
-   check, the "Live" square, the switch's stars). */
-:root:has(.cp) {
-  --cp-second: var(--color-accent);
-}
-
-:root[data-theme='dark']:has(.cp) {
-  --color-bg: var(--color-black-deep);
-  --color-accent: var(--color-red);
-  --color-selection: var(--color-red);
   --color-selection-fg: var(--color-black-deep);
   --cp-second: var(--color-teal);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']):has(.cp) {
-    --color-bg: var(--color-black-deep);
-    --color-accent: var(--color-red);
-    --color-selection: var(--color-red);
     --color-selection-fg: var(--color-black-deep);
     --cp-second: var(--color-teal);
-  }
-}
-
-/*
- * The compact site (DESIGN.md §5b): one quiet centred column on the page
- * colour, no box or ground of its own, ruled with solid hairlines. From 80rem
- * the section rail sits in the left margin and the free space on the right
- * holds the work's preview and the bunny. Deep black in dark. Orange marks only: the
- * section squares, the current state, the one hand-drawn line. Motion is short,
- * small and on the compositor.
- */
-@reference '../../app/globals.css';
-
-/* Dark, on the compact site only: a deeper black than the full site's
-   off-black (owner's direction), for the whole page, overscroll included. */
-:root[data-theme='dark']:has(.cp) {
-  --color-bg: var(--color-black-deep);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']):has(.cp) {
-    --color-bg: var(--color-black-deep);
   }
 }
 
@@ -612,14 +554,6 @@ html:not(.js) .cp-demo-replay {
   font-size: var(--text-xs);
   line-height: 1;
   color: var(--color-fg-muted);
-}
-
-/* The new mode opens as a circle from the switch (lib/theme.ts); the
-   browser's own crossfade is turned off so only the circle moves. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
 }
 
 /* The intro. */
@@ -1308,7 +1242,7 @@ html.js .cp-scribble[data-draw] {
 }
 
 /* The section rail, from 80rem: fixed in the left margin beside the column,
-   level with the reading. One orange square glides beside the entry being read. */
+   level with the reading. One red square glides beside the entry being read. */
 
 .cp-index {
   display: none;
@@ -1423,7 +1357,7 @@ html.js .cp-scribble[data-draw] {
 /* Small delights. Each answers something the visitor did; none loops at rest
    but the clock's colon, and globals.css stills them all for reduced motion. */
 
-/* The name: its letters ripple up in orange, one after another. */
+/* The name: its letters ripple up in red, one after another. */
 /* The name, offset-printed: each word carries an accent impression behind
    it, a hair down and to the right, as a second colour printed slightly out of
    register. On hover the impression slips further out while the word thumps,

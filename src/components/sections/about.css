@@ -11,7 +11,12 @@
 @reference '../../app/globals.css';
 
 .about {
-  padding-block: calc(var(--spacing) * 16);
+  position: relative;
+  z-index: 1;
+  /* The page's one section rhythm (half of --spacing-section-y above and below
+     every section), so the space between any two sections' content is the
+     same. */
+  padding-block: var(--spacing-section);
   padding-inline: calc(var(--spacing) * 4);
 }
 
@@ -20,21 +25,9 @@
   gap: calc(var(--spacing) * 6);
 }
 
-.about-label {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 2);
-  color: var(--color-fg-muted);
-}
-
-.about-square {
-  width: calc(var(--spacing) * 2);
-  height: calc(var(--spacing) * 2);
-}
-
 .about-body {
   display: grid;
-  gap: calc(var(--spacing) * 10);
+  gap: calc(var(--spacing) * 14);
 }
 
 .about-statement {
@@ -52,7 +45,7 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   align-items: baseline;
   gap: calc(var(--spacing) * 4);
-  padding-block: calc(var(--spacing) * 4);
+  padding-block: calc(var(--spacing) * 5);
   border-top: 1px solid var(--color-rule-strong);
 }
 
@@ -77,7 +70,6 @@
 
 @media (min-width: 64rem) {
   .about {
-    padding-block: calc(var(--spacing) * 32);
     padding-inline: calc(var(--spacing) * 8);
   }
 
@@ -86,14 +78,8 @@
     column-gap: calc(var(--spacing) * 8);
   }
 
-  /* Sits on the statement's first line. */
-  .about-label {
-    grid-column: 1 / span 3;
-    align-self: start;
-    padding-top: 0.6em;
-  }
-
   .about-body {
+    grid-row: 1;
     grid-column: 4 / span 9;
     gap: calc(var(--spacing) * 16);
   }
@@ -126,28 +112,158 @@
   }
 }
 
-/* ---- Entrance --------------------------------------------------------------
- * Set by the island (motion/about-reveal.tsx):
- *   no attribute  fully visible (no JS, reduced motion, or already on screen)
- *   pending       the start state: each item 16px low, unseen
- *   in            the statement, then each fact, rise in once, 0.1s apart
- *                 (1s, expo.out)
- */
-[data-reveal='pending'] [data-about-item] {
-  opacity: 0;
-  transform: translateY(calc(var(--spacing) * 4));
+/* ---- The deck ---------------------------------------------------------------
+ * From lg, the left three columns hold the name as a hand of cards, standing up
+ * (Cairn's hover deck, vertical, dealt in as the panel arrives; library/cairn).
+ * Here the cards take the site's look rather than Cairn's: square, no shadow,
+ * ink with a red edge on the red field (so overlapping cards stay apart), and a
+ * letter in the hero's face in the field's red, set upright on the turned card. */
+.about-deck {
+  display: none;
 }
 
-[data-reveal='in'] [data-about-item] {
-  transition:
-    opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: calc(var(--i, 0) * 100ms);
+@media (min-width: 64rem) {
+  .about-deck {
+    --wui-deck-width: 10rem;
+    --wui-deck-frame: var(--color-fg);
+    display: block;
+    grid-row: 1;
+    grid-column: 1 / span 3;
+    align-self: center;
+  }
+
+  /* The hand sits to the left of its column, nearer the panel's edge. */
+  .about-deck .wui-deck {
+    justify-items: start;
+  }
+
+  .about-deck .wui-deck-card {
+    border: calc(var(--spacing) * 0.5) solid var(--color-bg);
+    border-radius: 0;
+    box-shadow: none;
+    cursor: default;
+  }
+
+  .about-deck .wui-deck-card > :not(.wui-deck-shade) {
+    border-radius: 0;
+  }
+
+  /* Each card is one letter, filling it: the statement's face (Bricolage
+     Grotesque, display weight), upright on the turned card and centred, with
+     room round the widest letter (W). The hand hides most
+     of each card; pointing at one draws it out to show its letter whole. */
+  .about-deck .about-deck-face {
+    display: grid;
+    place-items: center;
+  }
+
+  .about-deck .about-deck-letter {
+    display: block;
+    color: var(--color-bg);
+    /* Sized by the widest letter: W is 0.87em across, and on the upright card
+       it runs across the short side (2/3 of a card, less the edge). At 0.56 of
+       a card it clears that side by about 12px each way. */
+    font-size: calc(var(--deck-card) * 0.56);
+    font-weight: var(--font-weight-medium);
+    font-variation-settings: 'opsz' var(--opsz-display);
+    letter-spacing: var(--text-display--letter-spacing);
+    line-height: 0.8;
+    rotate: -90deg;
+  }
+}
+
+/* ---- The stack -----------------------------------------------------------
+ * The hero and About share a wrapper (app/(full)/page.tsx). The hero pins to the
+ * top and About, a panel on the brand field (black on red), slides up over it, so the page
+ * changes colour by a sheet passing over it rather than by a cut. As it comes,
+ * the hero's contents sink back a little (a scroll timeline on About's entry,
+ * so no script runs on scroll). The pin ends with the wrapper: once About has
+ * covered the hero, both scroll on together.
+ */
+.hero-stack {
+  isolation: isolate;
+  timeline-scope: --about;
+}
+
+/* Only from lg, where About is at least a screen tall (so at the end of its
+   slide it covers the hero whole). On a phone it is half a screen: pinned, the
+   hero stayed in the top of the screen until About had passed, and the two then
+   scrolled on together with About stuck partway up. There the page simply
+   scrolls. */
+@media (min-width: 64rem) {
+  .hero-stack > .hero {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+
+  .about {
+    display: grid;
+    align-content: center;
+    min-height: 100svh;
+    view-timeline: --about block;
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-stack .hero-push {
+        animation: hero-sink linear both;
+        animation-timeline: --about;
+        animation-range: entry 0% entry 100%;
+      }
+    }
+  }
+}
+
+@keyframes hero-sink {
+  to {
+    opacity: 0.35;
+    transform: translateY(-6%) scale(0.94);
+  }
+}
+
+/* ---- Entrance --------------------------------------------------------------
+ * Each piece sits in a mask (about-mask) and rises out of it from below, as if
+ * from behind the panel's edge: no fade. The island (motion/about-reveal.tsx)
+ * gives each a step (--d): the label, then the statement line by line (words on
+ * one line share a step), then each fact's term and value. Set by the island:
+ *   no attribute  fully visible (no JS, reduced motion, or already on screen)
+ *   pending       every piece below its mask
+ *   in            each rises once, 0.11s per step (1.1s, expo out)
+ */
+.about-mask {
+  display: inline-block;
+  /* Room for ascenders and descenders inside the clip, taken back outside it so
+     the lines keep their spacing. */
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+  overflow: clip;
+  vertical-align: top;
+}
+
+.about-mask-block {
+  display: block;
+}
+
+.about-rise {
+  display: inline-block;
+}
+
+.about-mask-block > .about-rise {
+  display: block;
+}
+
+[data-reveal='pending'] [data-about-rise] {
+  transform: translateY(115%);
+}
+
+[data-reveal='in'] [data-about-rise] {
+  transition: transform 1.1s var(--ease-expo);
+  transition-delay: calc(var(--d, 0) * 110ms);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] [data-about-item] {
-    opacity: 1;
+  [data-reveal] [data-about-rise] {
     transform: none;
     transition: none;
   }

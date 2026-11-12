@@ -4,9 +4,7 @@
  * and the address reads as one word), the field's text colour with the @ in the
  * accent; letters catch the accent as they turn. Cells share the width: in one
  * row from md (--n cells), in two rows broken at the @ below it (--m, the longer
- * row), so a phone's letters stay large; never wider than 3rem. It was a row of
- * orange uppercase tiles, which made the one thing the contact section is for
- * the hardest thing on the page to read. The board is a button: it copies the
+ * row), so a phone's letters stay large; never wider than 3rem. The board is a button: it copies the
  * address (the hint under it says so).
  */
 @reference '../../app/globals.css';

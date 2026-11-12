@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 
-/* Where the reading line sits, as a share of the screen's height from the top. */
-const LINE = 0.3
+/* Where the reading line sits, as a share of the screen's height from the top:
+   the middle, where the drum (skills.css) stands a row square. */
+const LINE = 0.5
 
 /*
  * The Skills list on screens without hover (skills.css). The reference, on a

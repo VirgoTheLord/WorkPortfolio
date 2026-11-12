@@ -32,9 +32,15 @@ export function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-heading"
-      className="work scroll-mt-header text-fg"
+      data-theme="invert"
+      className="work edge-top edge-bottom scroll-mt-header bg-bg text-fg"
       style={{ '--work-count': projects.length } as CSSProperties}
     >
+      {/* The folder's tab (globals.css, Panels): decoration, the headline below
+          is the heading. */}
+      <p aria-hidden="true" className="panel-tab font-label text-label uppercase">
+        {work.headline.join(' ')}
+      </p>
       <WorkStack>
         <header className="work-head">
           <h2 id="work-heading" className="work-heading font-display">
@@ -102,7 +108,13 @@ export function SelectedWork() {
                       </ul>
                     </div>
 
-                    <div className="work-media">
+                    {/* Over a live project's screenshot the pointer's square
+                        grows into a tag naming where the card goes
+                        (motion/pointer-fx.tsx, data-cursor-tag). */}
+                    <div
+                      className="work-media"
+                      data-cursor-tag={project.href ? work.viewSite : undefined}
+                    >
                       <div className="work-frame">
                         <Image
                           src={project.cover.image}
@@ -112,7 +124,6 @@ export function SelectedWork() {
                           sizes="(min-width: 64rem) 45vw, 90vw"
                           className="object-cover object-top"
                         />
-                        <span aria-hidden="true" className="work-hatch" />
                         {/* Always ink on paper: it sits on the screenshot, not the page. */}
                         <span data-theme="light" className="work-badge font-label uppercase">
                           {project.category}

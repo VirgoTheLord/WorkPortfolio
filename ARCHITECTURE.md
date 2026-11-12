@@ -19,7 +19,7 @@ Technical decisions for the portfolio. If code and this file disagree, either fi
 | Package manager | **pnpm** (via corepack) | Strict `node_modules` prevents phantom deps, which supports the minimal-dependency rule. |
 | Lint/format | ESLint (flat config, `eslint-config-next`) + Prettier + `prettier-plugin-tailwindcss` | Standard and boring on purpose. |
 | Testing | Playwright + `@axe-core/playwright` (smoke + a11y), Lighthouse CI budgets | Added in Phase 5. Add unit tests (Vitest) only when real logic exists. |
-| Hosting | **Vercel**, every route statically prerendered | Zero-config image optimization. No servers, no database, no API routes. |
+| Hosting | **AWS S3 + CloudFront**, a static export (`output: 'export'` → `out/`) | The owner's choice (November 2026), deployed by hand. Private bucket behind CloudFront (OAC); a CloudFront function maps folder URLs to `index.html`. `next/image` runs unoptimized, so images are sized before they are committed. No servers, no database, no API routes. |
 
 **Recorded trade-off:** Astro would ship less JS by default. We chose Next.js because of preference and ecosystem, and we keep JS low through discipline: server components by default and small client islands.
 
@@ -48,7 +48,7 @@ TypeScript and ESLint follow the majors that `create-next-app` targets for our N
 /sitemap.xml, /robots.txt, OG images   Generated
 ```
 
-**Status of the checkpoint:** the site ships as one static page, `/` (the Skills page, `/skills`, was removed in November 2026 at the owner's request), plus `/compact` and `/color-test`, the noindex color reference. `/about`, `/work/[slug]`, `/colophon`, the designed 404 and the other routes above are planned and not built; there are no case studies yet, so project cards link nowhere until a project gets an `href`. The home sections are as listed below, in the order Hero, About, Skills, Selected Work, Contact, then the footer.
+**Status of the checkpoint:** the site ships as one static page, `/` (the Skills page, `/skills`, was removed in November 2026 at the owner's request), plus `/compact` and its workbench pages. `/color-test`, the noindex color reference, was removed before launch (November 2026, owner's request: no preview pages in the final build). `/about`, `/work/[slug]`, `/colophon`, the designed 404 and the other routes above are planned and not built; there are no case studies yet, so project cards link nowhere until a project gets an `href`. The home sections are as listed below, in the order Hero, About, Skills, Selected Work, Contact, then the footer.
 
 **Home section order:** Hero (name + one-sentence positioning) → Selected Work (3–4) → About (short) → Experience (compact timeline) → Contact (email + links).
 
@@ -68,7 +68,6 @@ src/
       layout.tsx               its frame: SiteHeader, <main>, SiteFooter, smooth scroll, pointer effects
       page.tsx                 home
       skills/page.tsx
-      color-test/page.tsx
     (compact)/compact/page.tsx the compact site (/compact): its own <main>, none of the full frame
     about/page.tsx
     colophon/page.tsx
@@ -291,7 +290,7 @@ Adding anything else requires a one-line justification in this section first.
 | **4. Pages** | Home sections, case study template, about, 404 | Real content everywhere, no lorem ipsum |
 | **5. Quality gates** | Metadata, OG, JSON-LD, sitemap; Playwright + axe; Lighthouse CI budgets | All budgets in §5 met in CI |
 | **6. Motion** | Hero intro, reveals, micro-interactions | Budgets still met, reduced-motion and no-JS verified |
-| **7. Launch** | Domain, Vercel, final manual a11y/perf pass | Production URL live |
+| **7. Launch** | Domain (alwxn.com), S3 + CloudFront, final manual a11y/perf pass | Production URL live |
 
 **Scoped iteration (after the Phase 2 checkpoint): the compact site.** `/compact`, in the `(compact)` route group so it has none of the full site's frame (navbar, footer, preloader, smooth scroll, pointer effects). First built as a "workbench" (intro, shelf of live library pieces, work index); then rebuilt on chanhdai.com's layout; then, replacing both, as a handmade sheet drawn from karthikponna.me, ratneshc.com and 10xshivam.dev (DESIGN.md §5b): a search field, a margin index and a margin preview, each a leaf island in `components/interactive/`; then (24 October 2026) a light/dark switch for the compact site (`lib/theme.ts`; since November 2026 one choice shared with the full site's switch, put back before paint by the root layout's inline script on every route) and the workbench pages, where each piece runs live. Static, no new dependencies, same tokens and content. Its footer prints a build stamp (commit and date), read once in `next.config.ts` (`env.BUILD_COMMIT`, `env.BUILD_DATE`: Vercel's commit, else `git rev-parse`), so the page stays static.
 
