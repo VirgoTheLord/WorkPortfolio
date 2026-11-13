@@ -115,7 +115,7 @@
 /* ---- The deck ---------------------------------------------------------------
  * From lg, the left three columns hold the name as a hand of cards, standing up
  * (Cairn's hover deck, vertical, dealt in as the panel arrives; library/cairn).
- * The cards are playing cards (owner's idea): paper with a woven texture, a
+ * The cards are playing cards (owner's idea): white with a fine grain, a
  * suit each, the index in two corners and the letter large in the middle,
  * square-cornered and without Cairn's shadow, upright on the turned card. In
  * the hand only each card's top shows: its index, as in a real hand. */
@@ -149,9 +149,8 @@
     border-radius: 0;
   }
 
-  /* A playing card (about.tsx): paper in either mode, with a faint woven
-     texture (hard-stop lines, no gradient), turned upright on the standing
-     card. The face is the card's own size the other way round, so it fills the
+  /* A playing card (about.tsx): white in either mode, with a fine dot grain
+     (hard-stop dots, no gradient), turned upright on the standing card. The face is the card's own size the other way round, so it fills the
      upright card exactly. */
   .about-deck .wui-deck-card > .about-card {
     position: absolute;
@@ -162,18 +161,14 @@
     width: calc(var(--deck-card) * 2 / 3);
     height: var(--deck-card);
     padding: calc(var(--deck-card) * 0.045);
-    background-color: var(--color-white);
-    background-image:
-      repeating-linear-gradient(
-        45deg,
-        color-mix(in srgb, var(--color-black) 5%, transparent) 0 1px,
-        transparent 1px 4px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        color-mix(in srgb, var(--color-black) 5%, transparent) 0 1px,
-        transparent 1px 4px
-      );
+    background-color: var(--color-card);
+    /* A fine grain: a tiny dot on a 3px grid, barely there, for card stock. */
+    background-image: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-black) 7%, transparent) 0 0.5px,
+      transparent 0.75px
+    );
+    background-size: 3px 3px;
     color: var(--color-black);
     translate: -50% -50%;
     rotate: -90deg;

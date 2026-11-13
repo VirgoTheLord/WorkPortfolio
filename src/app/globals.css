@@ -31,6 +31,7 @@
   --color-teal: #2ec4b6; /* the dark second accent: what answers the visitor */
   --color-white: #eeeeee; /* light structure: light canvas, dark-mode text */
   --color-paper: #f7f7f7; /* light muted background */
+  --color-card: #ffffff; /* the About hand's playing cards, in either mode */
   --color-stone: #d5d5d5; /* light surface */
   --color-grey: #696869; /* light muted text */
   --color-grey-light: #818081; /* dark muted text */
