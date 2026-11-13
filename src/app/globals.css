@@ -543,7 +543,7 @@
  * edges). */
 :root {
   /* The page's own colour, resolved here (a custom property resolves where it
-     is declared), so a panel can draw in it: About's corner notches. */
+     is declared), so a panel can draw in it. */
   --page-bg: var(--color-bg);
   --panel-tab: calc(var(--spacing) * 7);
   --panel-tab-width: 10rem;
@@ -632,7 +632,24 @@
     display: none;
   }
 
+  /* In the tab's place, its slot (owner's pick): the tab's shape bitten out
+     of the panel's top edge, sides at the tabs' 45°, so the folder still reads
+     without anything standing above it. */
   .edge-top {
+    --slot-x: calc(var(--spacing) * 5);
+    --slot-y: calc(var(--spacing) * 3);
+    --slot-w: calc(var(--spacing) * 30);
+
     margin-top: 0;
+    clip-path: polygon(
+      0 0,
+      var(--slot-x) 0,
+      calc(var(--slot-x) + var(--slot-y)) var(--slot-y),
+      calc(var(--slot-x) + var(--slot-w) - var(--slot-y)) var(--slot-y),
+      calc(var(--slot-x) + var(--slot-w)) 0,
+      100% 0,
+      100% 100%,
+      0 100%
+    );
   }
 }
