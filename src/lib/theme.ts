@@ -70,8 +70,8 @@ const SWITCHING = 'theme-switching'
 
 /*
  * Flips the mode. Where the browser has view transitions, the new mode opens as
- * a circle from `origin` (the switch) over the old one; with reduced motion, or
- * without them, it simply changes.
+ * a circle from `origin` (the switch) over the old one; with reduced motion, on
+ * a touch screen, or without them, it simply changes.
  *
  * The circle is a CSS animation on ::view-transition-new(root), keyed by the
  * class above and the --vt-* variables, so it is in place on the first frame the
@@ -97,12 +97,20 @@ export function switchTheme(origin?: { x: number; y: number }): Theme {
   return next
 }
 
+/* A touch screen gets no circle: the view transition snapshots the whole page,
+   and on a phone that page is under the menu's full-screen backdrop blur (where
+   the full site's key lives), which mobile browsers draw wrong or slowly inside
+   a snapshot (owner's phone: the reveal broke). The mode changes at once; the
+   key's own press is the feedback, and on the full site the page changes
+   behind the menu's dark field, out of sight. */
+const touch = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches
+
 function run(next: Theme, origin?: { x: number; y: number }) {
   const root = document.documentElement
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   root.classList.add(SWITCHING)
 
-  if (still || !('startViewTransition' in document)) {
+  if (still || touch() || !('startViewTransition' in document)) {
     apply(next)
     // Two frames: the new colours are painted before transitions come back.
     window.requestAnimationFrame(() =>
