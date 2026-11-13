@@ -641,3 +641,32 @@
     transform: perspective(40rem) rotateX(0deg);
   }
 }
+
+/* No tabs on a phone (owner's call): the panel meets the page on its stitched
+   edge alone, along its whole width, with no room kept for a tab. A tab that is
+   the section's heading (About) stays as a plain label at the top of the panel;
+   a decorative one (Work, aria-hidden) goes. */
+@media not all and (min-width: 48rem) {
+  .panel-tab {
+    position: static;
+    width: auto;
+    height: auto;
+    margin-bottom: calc(var(--spacing) * 8);
+    padding: 0;
+    background: none;
+    clip-path: none;
+    animation: none;
+  }
+
+  .panel-tab[aria-hidden='true'] {
+    display: none;
+  }
+
+  .edge-top {
+    margin-top: 0;
+  }
+
+  .edge-top::before {
+    left: 0;
+  }
+}

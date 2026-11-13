@@ -73,32 +73,43 @@ export function Skills() {
           {skills.swipeHint}
         </p>
         <SkillsSwipe count={count}>
-          <ul data-skills-rail className="skills-cards">
-            {skills.rows.map((row, i) => (
-              <li key={row.name} className="skills-card" data-tone={i % 3}>
-                <span aria-hidden="true" className="skills-card-marks">
-                  {row.logos.map((logo) => (
-                    <SkillLogo key={logo} name={logo} className="skills-card-mark" />
-                  ))}
-                </span>
-                <span aria-hidden="true" className="skills-card-n font-label text-label">
-                  {pad(i + 1)} / {pad(count)}
-                </span>
-                <span className="skills-card-body">
-                  <span className="skills-card-name font-display">{row.name}</span>
-                  <span className="skills-card-level font-label text-label uppercase">
-                    <span className="sr-only">: </span>
-                    {row.detail}
-                    <span aria-hidden="true" className="skills-card-lights">
-                      {[0, 1, 2].map((j) => (
-                        <i key={j} data-on={j < (lights[row.detail] ?? 0) || undefined} />
-                      ))}
+          {/* The row scrolls sideways; as a named region it can take focus and
+              be scrolled from the keyboard too, and the list keeps its role. */}
+          <div
+            data-skills-rail
+            role="region"
+            tabIndex={0}
+            // Named apart from the section (also a region) so the two are told apart.
+            aria-label={`${title}, ${skills.swipeHint.toLowerCase()}`}
+            className="skills-cards"
+          >
+            <ul className="skills-cards-list">
+              {skills.rows.map((row, i) => (
+                <li key={row.name} className="skills-card" data-tone={i % 3}>
+                  <span aria-hidden="true" className="skills-card-marks">
+                    {row.logos.map((logo) => (
+                      <SkillLogo key={logo} name={logo} className="skills-card-mark" />
+                    ))}
+                  </span>
+                  <span aria-hidden="true" className="skills-card-n font-label text-label">
+                    {pad(i + 1)} / {pad(count)}
+                  </span>
+                  <span className="skills-card-body">
+                    <span className="skills-card-name font-display">{row.name}</span>
+                    <span className="skills-card-level font-label text-label uppercase">
+                      <span className="sr-only">: </span>
+                      {row.detail}
+                      <span aria-hidden="true" className="skills-card-lights">
+                        {[0, 1, 2].map((j) => (
+                          <i key={j} data-on={j < (lights[row.detail] ?? 0) || undefined} />
+                        ))}
+                      </span>
                     </span>
                   </span>
-                </span>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
         </SkillsSwipe>
       </div>
     </section>

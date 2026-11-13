@@ -192,14 +192,20 @@
 }
 
 /* The row bleeds to the screen's edges so the next card peeks in from it. */
-.skills-cards {
+.skills-cards-list {
   display: flex;
   gap: calc(var(--spacing) * 3);
+}
+
+.skills-cards {
   margin: calc(var(--spacing) * 6) calc(var(--spacing) * -4) 0;
   padding: 0 calc(var(--spacing) * 4) calc(var(--spacing) * 4);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
+  /* Keeps the row's scrolled width inside it: without it a phone browser sized
+     the page to the whole row and zoomed out to fit it. */
+  contain: paint;
   scrollbar-width: none;
 }
 
