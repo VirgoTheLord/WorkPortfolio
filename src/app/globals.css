@@ -542,6 +542,9 @@
  * are plain, clean cuts (owner's call, after stitched, shaped and handled
  * edges). */
 :root {
+  /* The page's own colour, resolved here (a custom property resolves where it
+     is declared), so a panel can draw in it: About's corner notches. */
+  --page-bg: var(--color-bg);
   --panel-tab: calc(var(--spacing) * 7);
   --panel-tab-width: 10rem;
 }

@@ -112,6 +112,50 @@
   }
 }
 
+/* ---- Corner notches -----------------------------------------------------------
+ * A square bitten out of each corner of the panel (owner's pick), in the page's
+ * colour: the top pair is ::before, the bottom pair ::after, each a strip with a
+ * square at either end (solid fills, no gradient). From md the folder tab stands
+ * on the top-left corner, so that notch goes. Drawn rather than clipped, so the
+ * tab, which stands outside the panel, is not cut off. */
+.about {
+  --notch: calc(var(--spacing) * 4);
+}
+
+.about::before,
+.about::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: var(--notch);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--page-bg), var(--page-bg)) left / var(--notch) 100% no-repeat,
+    linear-gradient(var(--page-bg), var(--page-bg)) right / var(--notch) 100% no-repeat;
+}
+
+.about::before {
+  top: 0;
+}
+
+.about::after {
+  bottom: 0;
+}
+
+@media (min-width: 48rem) {
+  .about::before {
+    background: linear-gradient(var(--page-bg), var(--page-bg)) right / var(--notch) 100% no-repeat;
+  }
+}
+
+@media (min-width: 64rem) {
+  .about {
+    --notch: calc(var(--spacing) * 6);
+  }
+}
+
 /* ---- The deck ---------------------------------------------------------------
  * From lg, the left three columns hold the name as a hand of cards, standing up
  * (Cairn's hover deck, vertical, dealt in as the panel arrives; library/cairn).
