@@ -1,116 +1,122 @@
 /*
- * Skills, on the reference's measured layout (studionamma.com at 1440: label,
- * a centred stack of 128px capitals at 0.84 line height, the link), with the
- * space around it tightened by request: nothing above (the section before has its
- * own), 64px below, 64px inside (32px on a phone, as on the reference).
- * The reference sets an extra-condensed face; ours is Bricolage Grotesque at 600
- * with tight tracking (the shipped file has no width axis), sized from the
- * frame's width so the longest row keeps the reference's proportion.
+ * Skills (skills.tsx): the skills as a drum, one face per skill (owner's pick).
  *
- * Hover (fine pointer, from lg): the other rows fall to 15% in 200ms, the row's
- * detail rises in 38px after the word, and its screenshot opens from its centre
- * line at the frame's left edge, 384/1400 of the frame wide at 4:3, in about
- * 280ms (all measured). Touch: the row chosen by motion/skills-rows.tsx stays at
- * full strength and the others dim the same way; details and screenshots stay
- * hidden, as on the reference's phone layout.
+ * As served, and for reduced motion: a plain list, each skill on its own line
+ * between hairlines, its marks and name on the left and its level on the right.
+ *
+ * Stood up by the island (data-drum="on" on .skills-drum, motion/skills-drum.tsx):
+ * the section is a screen tall and stays put while the page scrolls through
+ * it (about two fifths of a screen of scroll per skill), and the faces sit round
+ * a cylinder seen side on, in perspective. The face square to the reader takes
+ * the accent; the rest roll over the top and under the bottom.
  */
 @reference '../../app/globals.css';
 
 .skills {
-  container-type: inline-size;
   /* The page's section rhythm (about.css). */
   padding: var(--spacing-section) calc(var(--spacing) * 4);
+  /* One face: tall enough for the name, scaled with the screen. */
+  --face: clamp(4.5rem, 3rem + 6vw, 9rem);
 }
 
-/* A line's mask: it rises out of this (motion/rise.css). */
-.skills-mask {
-  display: block;
-  overflow: hidden;
+.skills-ring {
+  max-width: var(--container-content);
+  margin: 0 auto;
 }
 
-.skills-rows {
-  text-align: center;
+.skills-face {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 6);
+  padding-block: calc(var(--spacing) * 4);
+  border-top: 1px solid var(--color-rule-strong);
 }
 
-.skills-row {
-  position: relative;
-  isolation: isolate;
-  transition: opacity 200ms var(--ease-out);
+.skills-face:last-child {
+  border-bottom: 1px solid var(--color-rule-strong);
 }
 
-.skills-row-word {
-  position: relative;
-  display: inline-block;
-}
-
-.skills-row-name {
-  display: block;
-  font-size: 12.5cqi;
+.skills-face-name {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: clamp(1.75rem, 1rem + 4.2vw, 5rem);
   font-weight: var(--font-weight-semibold);
   font-variation-settings: 'opsz' var(--opsz-display);
-  line-height: 0.84;
+  line-height: 1;
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
-  /* The mask clips at the line box; caps need a sliver of room under them. */
-  padding-bottom: 0.04em;
+  white-space: nowrap;
 }
 
-.skills-row-detail,
-.skills-row-visual {
-  display: none;
+.skills-face-marks {
+  display: flex;
+  gap: 0.12em;
 }
 
-/* On a touch screen one row is highlighted as the list passes; the others stay
-   readable (35%; the reference's 15% left six of seven rows unreadable at any
-   moment). The hover dim from lg stays at 15%: there it is a passing state. */
-.skills-rows[data-active] .skills-row:not([data-current]) {
-  opacity: 0.35;
+.skills-face-mark {
+  width: 0.62em;
+  height: 0.62em;
 }
 
-/* Touch, where the browser has scroll timelines: the list turns like a drum.
-   Each row is tied to its own pass through the screen (a view timeline), so it
-   comes up tipped back and small, stands square and full size at the middle of
-   the screen, and tips away above it: the row being read is always the clear
-   one, with no script on scroll. The drum replaces the touch dim above; the
-   island still marks the row at the middle. Transform and opacity only. */
-@supports (animation-timeline: view()) {
-  @media (hover: none) and (prefers-reduced-motion: no-preference) {
-    .skills-rows {
-      perspective: 60rem;
-    }
-
-    .skills-row-word {
-      animation: skills-drum linear both;
-      animation-timeline: view();
-      transform-origin: 50% 50%;
-    }
-
-    .skills-rows[data-active] .skills-row:not([data-current]) {
-      opacity: 1;
-    }
-  }
+.skills-face-level {
+  flex: none;
+  color: var(--color-fg-muted);
 }
 
-@keyframes skills-drum {
-  0% {
-    opacity: 0.2;
-    transform: rotateX(-55deg) scale(0.82);
-  }
-  40%,
-  60% {
-    opacity: 1;
-    transform: none;
-  }
-  100% {
-    opacity: 0.2;
-    transform: rotateX(55deg) scale(0.82);
-  }
+/* ---- The drum ---------------------------------------------------------------- */
+
+.skills-drum[data-drum='on'] {
+  /* A screen to hold the drum, and the scroll that turns it. */
+  height: calc(100svh + var(--count) * 40svh);
+  margin-block: calc(var(--spacing-section) * -1);
 }
 
-@media (min-width: 48rem) {
-  .skills-row-name {
-    font-size: 8.5cqi;
-  }
+.skills-drum[data-drum='on'] .skills-pin {
+  position: sticky;
+  top: 0;
+  display: grid;
+  height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  perspective: calc(var(--face) * 12);
+}
+
+.skills-drum[data-drum='on'] .skills-ring {
+  position: relative;
+  width: 100%;
+  height: var(--face);
+  transform-style: preserve-3d;
+}
+
+.skills-drum[data-drum='on'] .skills-face {
+  position: absolute;
+  inset: 0;
+  padding: 0 calc(var(--spacing) * 6);
+  border-block: 2px solid var(--color-fg);
+  background-color: var(--color-bg);
+  backface-visibility: hidden;
+  will-change: transform;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.skills-drum[data-drum='on'] .skills-face:last-child {
+  border-bottom-width: 2px;
+}
+
+/* The face square to the reader. */
+.skills-drum[data-drum='on'] .skills-face[data-front] {
+  border-color: var(--color-accent-fg);
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+.skills-drum[data-drum='on'] .skills-face[data-front] .skills-face-level {
+  color: var(--color-accent-fg);
 }
 
 @media (min-width: 64rem) {
@@ -118,81 +124,7 @@
     padding-inline: calc(var(--spacing) * 8);
   }
 
-  .skills-row-name {
-    font-size: 6.8cqi;
-  }
-}
-
-@media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
-  .skills-rows:has(.skills-row:hover) .skills-row:not(:hover) {
-    opacity: 0.15;
-  }
-
-  /* The detail: 38px after the word, centred on the row. On the reference it is
-     simply there on hover (fully in within 50ms) and gone on leaving. */
-  .skills-row-detail {
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    display: block;
-    margin-left: calc(var(--spacing) * 9.5);
-    color: var(--color-fg);
-    white-space: nowrap;
-    translate: 0 -50%;
-    opacity: 0;
-    transition: opacity 50ms linear;
-  }
-
-  .skills-row-visual {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    z-index: -1;
-    display: flex;
-    width: calc(100% * 384 / 1400);
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0;
-    translate: 0 -50%;
-    clip-path: inset(50% 0);
-    transition:
-      clip-path 280ms var(--ease-out),
-      opacity 200ms var(--ease-out);
-  }
-
-  .skills-row-visual {
-    align-items: center;
-    justify-content: center;
-    gap: calc(var(--spacing) * 6);
-    background-color: var(--color-bg);
-    color: var(--color-fg);
-  }
-
-  /* One mark sits large; a stack's marks share the panel. */
-  .skills-row-logo {
-    width: 40%;
-    height: auto;
-  }
-
-  .skills-row-logo:not(:only-child) {
-    width: 16%;
-  }
-
-  .skills-row:hover .skills-row-detail {
-    opacity: 1;
-  }
-
-  .skills-row:hover .skills-row-visual {
-    opacity: 1;
-    clip-path: inset(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skills-row,
-  .skills-row-detail,
-  .skills-row-visual {
-    transition: none;
+  .skills-drum[data-drum='on'] .skills-face {
+    padding-inline: calc(var(--spacing) * 10);
   }
 }

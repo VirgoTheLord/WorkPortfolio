@@ -146,9 +146,6 @@
   --ease-emphasis: cubic-bezier(0.83, 0, 0.17, 1);
   /* The navbar's standard departure: quick start, long soft landing. */
   --ease-standard: cubic-bezier(0, 0, 0.2, 1);
-  /* GSAP's power3.out: the Skills section's rise (motion/rise.css), measured on the
-     reference. */
-  --ease-cubic-out: cubic-bezier(0.215, 0.61, 0.355, 1);
   /* A rolling marker: dips back, overshoots, settles. */
   --ease-spring: cubic-bezier(0.68, -0.6, 0.32, 1.6);
   /* Expo out: a fast start and a long, soft landing. The compact site's motion. */

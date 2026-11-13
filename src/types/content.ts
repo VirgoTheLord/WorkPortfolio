@@ -36,8 +36,8 @@ export type SkillsContent = {
   /** The section label, and the menu's name for it. */
   label: string
   /**
-   * One row each: the name set large, the detail beside it on hover and the
-   * tool's mark (several for a stack, such as MERN).
+   * One face of the drum each: the name, its level (detail) and the tool's mark
+   * (several for a stack, such as MERN).
    */
   rows: readonly { name: string; detail: string; logos: readonly SkillLogo[] }[]
 }
