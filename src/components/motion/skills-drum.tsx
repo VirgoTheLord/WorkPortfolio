@@ -28,6 +28,9 @@ export function SkillsDrum({ count, children }: { count: number; children: React
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const faces = Array.from(ring.querySelectorAll<HTMLElement>('[data-skills-face]'))
+    const counter = root.querySelector<HTMLElement>('[data-skills-count]')
+    const pad = (n: number) => String(n).padStart(2, '0')
+    let front = -1
     const step = 360 / faces.length
     let radius = 0
     let frame = 0
@@ -46,6 +49,11 @@ export function SkillsDrum({ count, children }: { count: number; children: React
       const travel = box.height - window.innerHeight
       const progress = travel > 0 ? Math.min(1, Math.max(0, -box.top / travel)) : 0
       const turn = progress * (faces.length - 1) * step
+      const nearest = Math.round(turn / step)
+      if (counter && nearest !== front) {
+        counter.textContent = `${pad(nearest + 1)}/${pad(faces.length)}`
+        front = nearest
+      }
       faces.forEach((face, i) => {
         const angle = i * step - turn
         face.style.transform = `rotateX(${-angle}deg) translateZ(${radius}px)`

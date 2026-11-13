@@ -33,8 +33,10 @@ export type SkillLogo =
   | 'figma'
 
 export type SkillsContent = {
-  /** The headline over the drum, one entry per line. */
+  /** The title, one entry per line (the drum's rail sets it on one line). */
   headline: readonly string[]
+  /** The phone carousel's hint under the title. */
+  swipeHint: string
   /**
    * One face of the drum each: the name, its level (detail) and the tool's mark
    * (several for a stack, such as MERN).
