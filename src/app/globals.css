@@ -537,27 +537,16 @@
 /* ---- Panels ----------------------------------------------------------------
  * A section in another tone (the red About, the inverted Work) is a folder laid
  * on the page, as the project cards are: from md it opens on a tab (panel-tab)
- * carrying the section's name, the same 45° shape as the cards' tabs. Its
- * corners carry selection handles (owner's pick), as the project screenshots'
- * frame does: a small square in the page's colour with the page's ink edge,
- * half on the panel and half off it, on the content's margins (the panels run
- * edge to edge, so the true corners are off the screen). The top pair is
- * edge-top's ::before, the bottom pair edge-bottom's ::after: each one strip
- * between the margins with a square drawn at each end (solid fills, no
- * gradient). The page's colours are resolved on the root (a custom property
- * resolves where it is declared), so inside a panel they are still the page's. */
+ * carrying the section's name, the same 45° shape as the cards' tabs. Its edges
+ * are plain, clean cuts (owner's call, after stitched, shaped and handled
+ * edges). */
 :root {
-  --page-bg: var(--color-bg);
-  --page-fg: var(--color-fg);
-  --handle: calc(var(--spacing) * 3.5);
-  --handle-inset: calc(var(--spacing) * 4);
   --panel-tab: calc(var(--spacing) * 7);
   --panel-tab-width: 10rem;
 }
 
 @media (min-width: 64rem) {
   :root {
-    --handle-inset: calc(var(--spacing) * 8);
     --panel-tab: calc(var(--spacing) * 8);
     --panel-tab-width: 11.5rem;
   }
@@ -572,34 +561,6 @@
    (each is the neighbouring section's own padding). */
 .edge-top {
   margin-top: var(--panel-tab);
-}
-
-.edge-top::before,
-.edge-bottom::after {
-  --edge: 1.5px;
-  content: '';
-  position: absolute;
-  z-index: 2;
-  left: calc(var(--handle-inset) - var(--handle) / 2);
-  right: calc(var(--handle-inset) - var(--handle) / 2);
-  height: var(--handle);
-  pointer-events: none;
-  background:
-    linear-gradient(var(--page-bg), var(--page-bg)) left var(--edge) top var(--edge) /
-      calc(var(--handle) - var(--edge) * 2) calc(var(--handle) - var(--edge) * 2) no-repeat,
-    linear-gradient(var(--page-bg), var(--page-bg)) right var(--edge) top var(--edge) /
-      calc(var(--handle) - var(--edge) * 2) calc(var(--handle) - var(--edge) * 2) no-repeat,
-    linear-gradient(var(--page-fg), var(--page-fg)) left top / var(--handle) var(--handle) no-repeat,
-    linear-gradient(var(--page-fg), var(--page-fg)) right top / var(--handle) var(--handle)
-      no-repeat;
-}
-
-.edge-top::before {
-  top: calc(var(--handle) / -2);
-}
-
-.edge-bottom::after {
-  bottom: calc(var(--handle) / -2);
 }
 
 /* The tab sits on the panel's top edge, in the panel's colour (one pixel of
@@ -647,8 +608,8 @@
   }
 }
 
-/* No tabs on a phone (owner's call): the panel meets the page on its edge and
-   handles alone, with no room kept for a tab. */
+/* No tabs on a phone (owner's call): the panel meets the page on its edge
+   alone, with no room kept for a tab. */
 @media not all and (min-width: 48rem) {
   /* Off the screen (owner's call), but About's tab is its heading, so it stays
      for assistive tech; Work's is decoration and goes. */
