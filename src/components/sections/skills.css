@@ -182,6 +182,7 @@
 /* ---- The phone carousel ------------------------------------------------------ */
 
 .skills-swipe-title {
+  text-align: center;
   font-size: clamp(2.4rem, 11vw, 3.4rem);
   font-weight: var(--font-weight-semibold);
   line-height: 0.85;
@@ -189,7 +190,12 @@
   text-transform: uppercase;
 }
 
+.skills-swipe-title .headline-wipe-line {
+  margin-inline: auto;
+}
+
 .skills-swipe-hint {
+  text-align: center;
   margin-top: calc(var(--spacing) * 3);
   color: var(--color-fg-muted);
 }
@@ -318,21 +324,29 @@
   background-color: currentColor;
 }
 
+/* Where the deck is: one square block per skill, a hairline square for the
+   rest and the one on top filled red, a touch larger. */
 .skills-marks {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: calc(var(--spacing) * 1.25);
+  gap: calc(var(--spacing) * 2);
 }
 
 .skills-marks i {
-  width: calc(var(--spacing) * 5.5);
-  height: calc(var(--spacing) * 1);
-  background-color: var(--color-rule-strong);
-  transition: background-color var(--duration-base) var(--ease-out);
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 2);
+  box-shadow: inset 0 0 0 1.5px var(--color-rule-strong);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    scale var(--duration-base) var(--ease-spring);
 }
 
 .skills-marks i[data-on] {
   background-color: var(--color-accent);
+  box-shadow: none;
+  scale: 1.5;
 }
 
 /* ---- One layout at a time ----------------------------------------------------- */

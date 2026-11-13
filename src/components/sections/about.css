@@ -114,10 +114,9 @@
 
 /* ---- Corner notches -----------------------------------------------------------
  * A square bitten out of each corner of the panel (owner's pick), in the page's
- * colour: the top pair is ::before, the bottom pair ::after, each a strip with a
- * square at either end (solid fills, no gradient). From md the folder tab stands
- * on the top-left corner, so that notch goes. Drawn rather than clipped, so the
- * tab, which stands outside the panel, is not cut off. */
+ * colour, on a phone: the top pair is ::before, the bottom pair ::after, each a
+ * strip with a square at either end (solid fills, no gradient). From md there
+ * are none: the folder tab is the panel's one mark. */
 .about {
   --notch: calc(var(--spacing) * 4);
 }
@@ -144,15 +143,11 @@
   bottom: 0;
 }
 
+/* From md the panel's only mark is its folder tab (owner's call): no notches. */
 @media (min-width: 48rem) {
-  .about::before {
-    background: linear-gradient(var(--page-bg), var(--page-bg)) right / var(--notch) 100% no-repeat;
-  }
-}
-
-@media (min-width: 64rem) {
-  .about {
-    --notch: calc(var(--spacing) * 6);
+  .about::before,
+  .about::after {
+    display: none;
   }
 }
 
