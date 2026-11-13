@@ -115,9 +115,10 @@
 /* ---- The deck ---------------------------------------------------------------
  * From lg, the left three columns hold the name as a hand of cards, standing up
  * (Cairn's hover deck, vertical, dealt in as the panel arrives; library/cairn).
- * Here the cards take the site's look rather than Cairn's: square, no shadow,
- * ink with a red edge on the red field (so overlapping cards stay apart), and a
- * letter in the hero's face in the field's red, set upright on the turned card. */
+ * The cards are playing cards (owner's idea): paper with a woven texture, a
+ * suit each, the index in two corners and the letter large in the middle,
+ * square-cornered and without Cairn's shadow, upright on the turned card. In
+ * the hand only each card's top shows: its index, as in a real hand. */
 .about-deck {
   display: none;
 }
@@ -138,7 +139,7 @@
   }
 
   .about-deck .wui-deck-card {
-    border: calc(var(--spacing) * 0.5) solid var(--color-bg);
+    border: 1px solid var(--color-black);
     border-radius: 0;
     box-shadow: none;
     cursor: default;
@@ -148,27 +149,93 @@
     border-radius: 0;
   }
 
-  /* Each card is one letter, filling it: the statement's face (Bricolage
-     Grotesque, display weight), upright on the turned card and centred, with
-     room round the widest letter (W). The hand hides most
-     of each card; pointing at one draws it out to show its letter whole. */
-  .about-deck .about-deck-face {
+  /* A playing card (about.tsx): paper in either mode, with a faint woven
+     texture (hard-stop lines, no gradient), turned upright on the standing
+     card. The face is the card's own size the other way round, so it fills the
+     upright card exactly. */
+  .about-deck .wui-deck-card > .about-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     display: grid;
-    place-items: center;
+    grid-template-rows: auto 1fr auto;
+    width: calc(var(--deck-card) * 2 / 3);
+    height: var(--deck-card);
+    padding: calc(var(--deck-card) * 0.045);
+    background-color: var(--color-white);
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        color-mix(in srgb, var(--color-black) 5%, transparent) 0 1px,
+        transparent 1px 4px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        color-mix(in srgb, var(--color-black) 5%, transparent) 0 1px,
+        transparent 1px 4px
+      );
+    color: var(--color-black);
+    translate: -50% -50%;
+    rotate: -90deg;
   }
 
-  .about-deck .about-deck-letter {
-    display: block;
-    color: var(--color-bg);
-    /* Sized by the widest letter: W is 0.87em across, and on the upright card
-       it runs across the short side (2/3 of a card, less the edge). At 0.56 of
-       a card it clears that side by about 12px each way. */
-    font-size: calc(var(--deck-card) * 0.56);
-    font-weight: var(--font-weight-medium);
+  .about-card[data-suit='heart'],
+  .about-card[data-suit='diamond'] {
+    --suit: var(--color-red);
+  }
+
+  .about-card[data-suit='spade'],
+  .about-card[data-suit='club'] {
+    --suit: var(--color-black);
+  }
+
+  /* The index: the letter over its suit, in a corner; the second turned over. */
+  .about-card-index {
+    display: grid;
+    justify-items: center;
+    justify-self: start;
+    gap: calc(var(--deck-card) * 0.015);
+    color: var(--suit);
+    font-size: calc(var(--deck-card) * 0.13);
+    font-weight: var(--font-weight-semibold);
+    line-height: 0.9;
+  }
+
+  .about-card-index[data-flip] {
+    justify-self: end;
+    rotate: 180deg;
+  }
+
+  .about-card-index .about-card-suit {
+    width: calc(var(--deck-card) * 0.075);
+    height: calc(var(--deck-card) * 0.075);
+  }
+
+  .about-card-center {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: calc(var(--deck-card) * 0.03);
+    color: var(--suit);
+  }
+
+  /* The letter: the statement's face, sized so the widest (W, 0.87em) keeps a
+     clear margin inside the card's width. */
+  .about-card-letter {
+    font-size: calc(var(--deck-card) * 0.4);
+    font-weight: var(--font-weight-semibold);
     font-variation-settings: 'opsz' var(--opsz-display);
     letter-spacing: var(--text-display--letter-spacing);
-    line-height: 0.8;
-    rotate: -90deg;
+    line-height: 0.85;
+  }
+
+  .about-card-center .about-card-suit {
+    width: calc(var(--deck-card) * 0.1);
+    height: calc(var(--deck-card) * 0.1);
+  }
+
+  .about-card-suit {
+    fill: currentColor;
   }
 }
 
