@@ -51,7 +51,11 @@ export function SkillsDrum({ count, children }: { count: number; children: React
         face.style.transform = `rotateX(${-angle}deg) translateZ(${radius}px)`
         // Smoothstep over one face's turn either side of square on.
         const t = Math.max(0, 1 - Math.abs(angle) / step)
-        face.style.setProperty('--heat', (t * t * (3 - 2 * t)).toFixed(3))
+        const heat = t * t * (3 - 2 * t)
+        face.style.setProperty('--heat', heat.toFixed(3))
+        // The ink changes sides at half: mixed, light and dark text pass through
+        // a grey that is hard to read on a half-red face.
+        face.toggleAttribute('data-hot', heat > 0.5)
       })
     }
     const onScroll = () => {
@@ -85,6 +89,7 @@ export function SkillsDrum({ count, children }: { count: number; children: React
       faces.forEach((face) => {
         face.style.transform = ''
         face.style.removeProperty('--heat')
+        face.removeAttribute('data-hot')
       })
     }
   }, [])

@@ -23,7 +23,7 @@ export function Skills() {
         {/* The title stays with the drum while it turns: it is in the pinned
             stage, above it, wiped in as the headlines elsewhere are. */}
         <h2 id="skills-heading" className="skills-heading font-display">
-          <HeadlineWipe lines={[skills.label]} />
+          <HeadlineWipe lines={skills.headline} />
         </h2>
         <ul data-skills-ring className="skills-ring">
           {skills.rows.map((row, i) => (

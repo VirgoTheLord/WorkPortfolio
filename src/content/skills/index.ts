@@ -5,7 +5,7 @@ import type { SkillsContent } from '@/types/content'
  * portfolio listed them, each with its tool's mark (MERN shows its four).
  */
 export const skills = {
-  label: 'My skills',
+  headline: ['Stuff I’m', 'good at'],
   rows: [
     { name: 'React', detail: 'Expert', logos: ['react'] },
     { name: 'TypeScript', detail: 'Intermediate', logos: ['typescript'] },

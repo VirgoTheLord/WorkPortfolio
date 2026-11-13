@@ -119,16 +119,25 @@
   position: absolute;
   inset: 0;
   padding: 0 calc(var(--spacing) * 6);
-  /* The accent by --heat (motion/skills-drum.tsx): ink on the page colour a
-     face's turn away, the accent's black on red square on, and every mix in
-     between as the drum turns. */
+  /* The accent by --heat (motion/skills-drum.tsx): the page colour a face's
+     turn away, red square on, and every mix in between as the drum turns. The
+     ink does not mix (light and dark text pass through an unreadable grey): it
+     changes sides once the face is more red than not (data-hot), with a short
+     fade. */
   --heat-pct: calc(var(--heat, 0) * 100%);
-  border-block: 2px solid
-    color-mix(in srgb, var(--color-accent-fg) var(--heat-pct), var(--color-fg));
+  border-block: 2px solid var(--color-fg);
   background-color: color-mix(in srgb, var(--color-accent) var(--heat-pct), var(--color-bg));
-  color: color-mix(in srgb, var(--color-accent-fg) var(--heat-pct), var(--color-fg));
+  color: var(--color-fg);
   backface-visibility: hidden;
   will-change: transform;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.skills-drum[data-drum='on'] .skills-face[data-hot] {
+  border-color: var(--color-accent-fg);
+  color: var(--color-accent-fg);
 }
 
 .skills-drum[data-drum='on'] .skills-face:last-child {
@@ -136,7 +145,12 @@
 }
 
 .skills-drum[data-drum='on'] .skills-face-level {
-  color: color-mix(in srgb, var(--color-accent-fg) var(--heat-pct), var(--color-fg-muted));
+  color: var(--color-fg-muted);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.skills-drum[data-drum='on'] .skills-face[data-hot] .skills-face-level {
+  color: var(--color-accent-fg);
 }
 
 @media (min-width: 64rem) {

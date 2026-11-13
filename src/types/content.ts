@@ -33,8 +33,8 @@ export type SkillLogo =
   | 'figma'
 
 export type SkillsContent = {
-  /** The section label, and the menu's name for it. */
-  label: string
+  /** The headline over the drum, one entry per line. */
+  headline: readonly string[]
   /**
    * One face of the drum each: the name, its level (detail) and the tool's mark
    * (several for a stack, such as MERN).
