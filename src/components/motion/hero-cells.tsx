@@ -172,9 +172,13 @@ function shapeCounters(on: Uint8Array, cols: number, rows: number) {
  */
 const early = new WeakSet<HTMLCanvasElement>()
 
+/* On a phone the name is set solid, in the hero face (owner's call): the cells
+   are not laid at all there (hero.css hides the canvas below md). */
+const solid = () => window.matchMedia('(max-width: 47.99rem)').matches
+
 if (typeof window !== 'undefined') {
   const start = () => {
-    if (!document.documentElement.classList.contains('is-enter')) return
+    if (!document.documentElement.classList.contains('is-enter') || solid()) return
     document.querySelectorAll<HTMLCanvasElement>('canvas.hero-cells').forEach((canvas) => {
       if (early.has(canvas)) return
       early.add(canvas)
@@ -191,7 +195,7 @@ export function HeroCells() {
 
   useEffect(() => {
     const canvas = ref.current
-    if (!canvas || early.has(canvas)) return
+    if (!canvas || early.has(canvas) || solid()) return
     return mountCells(canvas)
   }, [])
 

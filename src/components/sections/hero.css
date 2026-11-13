@@ -135,7 +135,7 @@
 /* The name in cells (motion/hero-cells.tsx): a canvas over the line draws the
    name as squares on the hero's grid; once it has drawn, the heading's own
    glyphs go transparent (still text: read, selected, found). Without script the
-   plain name shows. */
+   plain name shows; on a phone it is always the plain name, set solid. */
 .hero-cells {
   position: absolute;
   top: 0;
@@ -155,9 +155,18 @@
    plain name shows after all; without script it is simply there. Set on the line,
    which the text inherits from, so it never competes with the text's own
    entrance animation (it did, and restarted it). */
-.js .hero-line:not([data-cells='on']) {
-  color: transparent;
-  animation: hero-name-fallback 0s 1.5s forwards;
+@media (min-width: 48rem) {
+  .js .hero-line:not([data-cells='on']) {
+    color: transparent;
+    animation: hero-name-fallback 0s 1.5s forwards;
+  }
+}
+
+/* On a phone the name is solid type, no cells (owner's call; hero-cells.tsx). */
+@media not all and (min-width: 48rem) {
+  .hero-cells {
+    display: none;
+  }
 }
 
 @keyframes hero-name-fallback {
