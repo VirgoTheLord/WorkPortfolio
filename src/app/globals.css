@@ -536,26 +536,28 @@
 
 /* ---- Panels ----------------------------------------------------------------
  * A section in another tone (the red About, the inverted Work) is a folder laid
- * on the page, as the project cards are: it opens on a tab (panel-tab) carrying
- * the section's name, the same 45° shape as the cards' tabs, and the rest of its
- * edges are stitched rather than cut: along the top after the tab (edge-top) and
- * along the bottom (edge-bottom) runs a halftone in the page's own colour, two
- * rows of squares on a 6px cell, one in every other column. The row by the edge
- * sits on it, flush, so the section's own edge cuts the squares and no strip of
- * panel colour runs along it like a border; the row in from it is a quarter
- * cell. Hard-stop masks, no gradient; drawn inside the panel, over its padding,
- * so they never touch content. The page colour is resolved on the root
- * (--page-bg: a custom property resolves where it is declared), so inside a
- * panel it is still the page's, in either mode. */
+ * on the page, as the project cards are: from md it opens on a tab (panel-tab)
+ * carrying the section's name, the same 45° shape as the cards' tabs. Its
+ * corners carry selection handles (owner's pick), as the project screenshots'
+ * frame does: a small square in the page's colour with the page's ink edge,
+ * half on the panel and half off it, on the content's margins (the panels run
+ * edge to edge, so the true corners are off the screen). The top pair is
+ * edge-top's ::before, the bottom pair edge-bottom's ::after: each one strip
+ * between the margins with a square drawn at each end (solid fills, no
+ * gradient). The page's colours are resolved on the root (a custom property
+ * resolves where it is declared), so inside a panel they are still the page's. */
 :root {
   --page-bg: var(--color-bg);
-  --edge-cell: calc(var(--spacing) * 1.5);
+  --page-fg: var(--color-fg);
+  --handle: calc(var(--spacing) * 3.5);
+  --handle-inset: calc(var(--spacing) * 4);
   --panel-tab: calc(var(--spacing) * 7);
   --panel-tab-width: 10rem;
 }
 
 @media (min-width: 64rem) {
   :root {
+    --handle-inset: calc(var(--spacing) * 8);
     --panel-tab: calc(var(--spacing) * 8);
     --panel-tab-width: 11.5rem;
   }
@@ -574,27 +576,30 @@
 
 .edge-top::before,
 .edge-bottom::after {
+  --edge: 1.5px;
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  height: calc(var(--edge-cell) * 2);
-  background-color: var(--page-bg);
+  z-index: 2;
+  left: calc(var(--handle-inset) - var(--handle) / 2);
+  right: calc(var(--handle-inset) - var(--handle) / 2);
+  height: var(--handle);
   pointer-events: none;
-  mask-size: calc(var(--edge-cell) * 2) calc(var(--edge-cell) * 2);
-  mask-repeat: repeat-x;
+  background:
+    linear-gradient(var(--page-bg), var(--page-bg)) left var(--edge) top var(--edge) /
+      calc(var(--handle) - var(--edge) * 2) calc(var(--handle) - var(--edge) * 2) no-repeat,
+    linear-gradient(var(--page-bg), var(--page-bg)) right var(--edge) top var(--edge) /
+      calc(var(--handle) - var(--edge) * 2) calc(var(--handle) - var(--edge) * 2) no-repeat,
+    linear-gradient(var(--page-fg), var(--page-fg)) left top / var(--handle) var(--handle) no-repeat,
+    linear-gradient(var(--page-fg), var(--page-fg)) right top / var(--handle) var(--handle)
+      no-repeat;
 }
 
-/* The stitch starts at the tab's foot, so the tab rises out of a clean line. */
 .edge-top::before {
-  top: 0;
-  left: var(--panel-tab-width);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Crect x='.225' y='0' width='.55' height='.55'/%3E%3Crect x='.3625' y='.9' width='.275' height='.275'/%3E%3C/svg%3E");
+  top: calc(var(--handle) / -2);
 }
 
 .edge-bottom::after {
-  bottom: 0;
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Crect x='.225' y='1.45' width='.55' height='.55'/%3E%3Crect x='.3625' y='.825' width='.275' height='.275'/%3E%3C/svg%3E");
+  bottom: calc(var(--handle) / -2);
 }
 
 /* The tab sits on the panel's top edge, in the panel's colour (one pixel of
@@ -642,19 +647,19 @@
   }
 }
 
-/* No tabs on a phone (owner's call): the panel meets the page on its stitched
-   edge alone, along its whole width, with no room kept for a tab. A tab that is
-   the section's heading (About) stays as a plain label at the top of the panel;
-   a decorative one (Work, aria-hidden) goes. */
+/* No tabs on a phone (owner's call): the panel meets the page on its edge and
+   handles alone, with no room kept for a tab. */
 @media not all and (min-width: 48rem) {
+  /* Off the screen (owner's call), but About's tab is its heading, so it stays
+     for assistive tech; Work's is decoration and goes. */
   .panel-tab {
-    position: static;
-    width: auto;
-    height: auto;
-    margin-bottom: calc(var(--spacing) * 8);
+    position: absolute;
+    width: 1px;
+    height: 1px;
     padding: 0;
-    background: none;
-    clip-path: none;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
     animation: none;
   }
 
@@ -664,9 +669,5 @@
 
   .edge-top {
     margin-top: 0;
-  }
-
-  .edge-top::before {
-    left: 0;
   }
 }
