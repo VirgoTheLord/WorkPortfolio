@@ -18,6 +18,9 @@
 @reference '../../app/globals.css';
 
 .skills {
+  /* A phone's card flicked away swings past the screen's edge: clipped there, so
+     never a sideways scroll (clip, not hidden: the desktop drum still pins). */
+  overflow-x: clip;
   /* The page's section rhythm (about.css). */
   padding: var(--spacing-section) calc(var(--spacing) * 4);
   /* One face: tall enough for the name, scaled with the screen. */
@@ -191,39 +194,62 @@
   color: var(--color-fg-muted);
 }
 
-/* The row bleeds to the screen's edges so the next card peeks in from it. */
-.skills-cards-list {
-  display: flex;
+/* The pile: cards on top of one another, the first in front, each a little
+   lower, turned and smaller (the island takes over the places, motion/skills-deck.tsx).
+   Without script the cards are simply a column. */
+.skills-pile {
+  margin-top: calc(var(--spacing) * 8);
+  outline-offset: calc(var(--spacing) * 2);
+  touch-action: pan-y;
+}
+
+.skills-pile-list {
+  display: grid;
   gap: calc(var(--spacing) * 3);
 }
 
-.skills-cards {
-  margin: calc(var(--spacing) * 6) calc(var(--spacing) * -4) 0;
-  padding: 0 calc(var(--spacing) * 4) calc(var(--spacing) * 4);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  /* Keeps the row's scrolled width inside it: without it a phone browser sized
-     the page to the whole row and zoomed out to fit it. */
-  contain: paint;
-  scrollbar-width: none;
+.js .skills-pile-list {
+  position: relative;
+  display: block;
+  width: 84%;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto calc(var(--spacing) * 10);
 }
 
-.skills-cards::-webkit-scrollbar {
-  display: none;
+.js .skills-pile-list .skills-card {
+  position: absolute;
+  inset: 0;
+  z-index: calc(100 - var(--k));
+  width: auto;
+  height: auto;
+  cursor: grab;
+  user-select: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* Before the island places them: the first four as a neat pile, the rest out of sight. */
+.js .skills-swipe > :not([data-deck]) .skills-card {
+  translate: calc(min(var(--k), 3) * 4px) calc(min(var(--k), 3) * 9px);
+}
+
+.js .skills-pile-list .skills-card:nth-child(n + 5) {
+  visibility: hidden;
+}
+
+[data-deck] .skills-pile-list .skills-card:active {
+  cursor: grabbing;
 }
 
 .skills-card {
   display: grid;
   flex: none;
   grid-template-rows: auto 1fr auto;
-  width: 80%;
-  height: min(25rem, 62svh);
+  min-height: 22rem;
   padding: calc(var(--spacing) * 5.5);
   border: 2px solid var(--color-fg);
   background-color: var(--color-bg);
   color: var(--color-fg);
-  scroll-snap-align: center;
 }
 
 .skills-card[data-tone='0'] {

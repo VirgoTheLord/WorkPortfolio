@@ -454,31 +454,33 @@ html:has(.menu[data-open='true']) {
   }
 }
 
-/* Below lg the key sits beside the menu trigger but only while the menu is
-   open: it springs out from the trigger's side as the menu opens and slides
-   back into it as the menu closes. Hidden, it is out of the tab order too. */
+/* Below lg the key shows only while the menu is open, in the middle of the
+   bar (owner's call): it drops in from above the bar on a spring as the menu
+   opens, settling with a small bounce, and lifts back out as it closes. Hidden,
+   it is out of the tab order too. It sits on the bar's row (relative), not in
+   the trigger's cell (the menu's motion transforms that), so it centres on the
+   bar. */
 @media not all and (min-width: 64rem) {
-  .menu-cell .menu-mode {
+  .menu-mode-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     opacity: 0;
     visibility: hidden;
-    translate: calc(var(--spacing) * 6) 0;
-    scale: 0.6;
+    translate: -50% calc(-50% - var(--spacing) * 16);
     transition:
       opacity var(--duration-fast) var(--ease-in-out),
-      translate var(--duration-fast) var(--ease-in-out),
-      scale var(--duration-fast) var(--ease-in-out),
-      visibility 0s linear var(--duration-fast);
+      translate var(--duration-base) var(--ease-in-out),
+      visibility 0s linear var(--duration-base);
   }
 
-  .menu[data-open='true'] .menu-cell .menu-mode {
+  .menu[data-open='true'] .menu-mode-bar {
     opacity: 1;
     visibility: visible;
-    translate: 0 0;
-    scale: 1;
+    translate: -50% -50%;
     transition:
-      opacity var(--duration-base) var(--ease-out) 120ms,
-      translate 520ms var(--ease-spring) 120ms,
-      scale 520ms var(--ease-spring) 120ms,
+      opacity var(--duration-fast) var(--ease-out) 120ms,
+      translate 620ms var(--ease-spring) 120ms,
       visibility 0s;
   }
 }

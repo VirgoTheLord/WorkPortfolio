@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { SkillsSwipe } from '@/components/interactive/skills-swipe'
 import { HeadlineWipe } from '@/components/motion/headline-wipe'
+import { SkillsDeck } from '@/components/motion/skills-deck'
 import { SkillsDrum } from '@/components/motion/skills-drum'
 import { skills } from '@/content/skills'
 import { SkillLogo } from '@/components/sections/skill-logo'
@@ -16,8 +16,9 @@ const lights: Record<string, number> = { Expert: 3, Intermediate: 2 }
  *   - from md, a drum: the skills on the faces of a cylinder turned by the
  *     scroll, the accent flowing to the face in front, the title standing on
  *     its side in a rail at the drum's left with the count (motion/skills-drum.tsx).
- *   - on a phone, a swipe carousel: one large card per skill, snapping one at a
- *     time, the next peeking in, marks under it (interactive/skills-swipe.tsx).
+ *   - on a phone, a deck: one card per skill, the top one in front; flick it
+ *     away and it swings behind the pile, the record stack's motion
+ *     (motion/skills-deck.tsx), marks under it.
  * The one heading names the section for assistive tech; the hidden layout is
  * display: none, so only the one on screen is read.
  */
@@ -72,20 +73,26 @@ export function Skills() {
         <p aria-hidden="true" className="skills-swipe-hint font-label text-label uppercase">
           {skills.swipeHint}
         </p>
-        <SkillsSwipe count={count}>
-          {/* The row scrolls sideways; as a named region it can take focus and
-              be scrolled from the keyboard too, and the list keeps its role. */}
+        <SkillsDeck>
+          {/* The pile: a named region that takes focus, so ← and → deal from
+              the keyboard; the list keeps its role for assistive tech. */}
           <div
-            data-skills-rail
+            data-skills-pile
             role="region"
             tabIndex={0}
             // Named apart from the section (also a region) so the two are told apart.
             aria-label={`${title}, ${skills.swipeHint.toLowerCase()}`}
-            className="skills-cards"
+            className="skills-pile"
           >
-            <ul className="skills-cards-list">
+            <ul className="skills-pile-list">
               {skills.rows.map((row, i) => (
-                <li key={row.name} className="skills-card" data-tone={i % 3}>
+                <li
+                  key={row.name}
+                  data-skills-card
+                  className="skills-card"
+                  data-tone={i % 3}
+                  style={{ '--k': i } as CSSProperties}
+                >
                   <span aria-hidden="true" className="skills-card-marks">
                     {row.logos.map((logo) => (
                       <SkillLogo key={logo} name={logo} className="skills-card-mark" />
@@ -110,7 +117,12 @@ export function Skills() {
               ))}
             </ul>
           </div>
-        </SkillsSwipe>
+          <div aria-hidden="true" className="skills-marks">
+            {skills.rows.map((row) => (
+              <i key={row.name} data-skills-mark />
+            ))}
+          </div>
+        </SkillsDeck>
       </div>
     </section>
   )

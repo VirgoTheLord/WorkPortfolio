@@ -515,8 +515,11 @@ export function SiteMenu({
           <div aria-hidden="true" className="menu-surface absolute inset-0" />
           <div className="menu-bar-row relative grid h-full grid-cols-2 items-center lg:grid-cols-3">
             <div className="menu-brand justify-self-start">{brand}</div>
+            {/* Below lg the key centres on the bar while the menu is open
+                (site-menu.css): it sits on the row itself, not in the trigger's
+                cell, which the menu's own motion transforms. */}
+            <span className="menu-mode menu-mode-bar flex lg:hidden">{mode}</span>
             <div className="menu-cell flex items-center gap-4 justify-self-end lg:justify-self-center">
-              <span className="menu-mode flex lg:hidden">{mode}</span>
               <button
                 ref={triggerRef}
                 type="button"

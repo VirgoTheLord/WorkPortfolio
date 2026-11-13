@@ -35,7 +35,7 @@ export type SkillLogo =
 export type SkillsContent = {
   /** The title, one entry per line (the drum's rail sets it on one line). */
   headline: readonly string[]
-  /** The phone carousel's hint under the title. */
+  /** The phone deck's hint under the title. */
   swipeHint: string
   /**
    * One face of the drum each: the name, its level (detail) and the tool's mark

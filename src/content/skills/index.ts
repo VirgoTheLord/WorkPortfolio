@@ -6,7 +6,7 @@ import type { SkillsContent } from '@/types/content'
  */
 export const skills = {
   headline: ['Stuff I’m', 'good at'],
-  swipeHint: 'Swipe',
+  swipeHint: 'Flick a card',
   rows: [
     { name: 'React', detail: 'Expert', logos: ['react'] },
     { name: 'TypeScript', detail: 'Intermediate', logos: ['typescript'] },
