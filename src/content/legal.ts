@@ -166,6 +166,7 @@ export const legal = {
     },
   ],
   footerLink: { label: 'Terms & privacy', href: '/legal' },
+  home: { label: 'Back to home', href: '/' },
 } satisfies LegalContent
 
 export const notFound = {

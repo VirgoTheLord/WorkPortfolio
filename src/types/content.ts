@@ -344,6 +344,7 @@ export type LegalContent = {
   contentsLabel: string
   parts: readonly LegalPart[]
   footerLink: NavItem
+  home: NavItem
 }
 
 /* The not-found page (app/not-found.tsx). */
