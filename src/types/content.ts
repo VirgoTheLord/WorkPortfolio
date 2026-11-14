@@ -110,6 +110,8 @@ export type MenuContent = {
   status: readonly string[]
   /** The light/dark switch's name (it sits in the open menu's corner). */
   mode: string
+  /** The handwritten note pointing to the compact site (lowercase: its face is cut to it). */
+  compactNote: string
 }
 
 export type LoaderContent = {

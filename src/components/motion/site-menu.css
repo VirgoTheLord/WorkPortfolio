@@ -635,3 +635,99 @@ html:not(.js) .mode-key {
     translate: 0 0;
   }
 }
+
+/* ---- The note ----------------------------------------------------------------
+ * Above the compact site's link at the foot of the menu, a pen's note in the
+ * accent ("psst, the short version", in Caveat) with an arrow curling down to
+ * the link (owner's pick). Once the menu has opened and its words have unfolded,
+ * the words write on from left to right, then the arrow draws, then its head.
+ * Closing takes it away at once, so it plays again next time. Clip and dash
+ * only. With reduced motion it is simply there. */
+.menu-compact {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-note {
+  position: absolute;
+  right: calc(var(--spacing) * 5);
+  bottom: calc(100% + var(--spacing) * 16);
+  color: var(--color-accent);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+  rotate: -6deg;
+  pointer-events: none;
+}
+
+.menu-note-text {
+  display: inline-block;
+  clip-path: inset(-20% 100% -20% 0);
+}
+
+.menu-note-arrow {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--spacing) * -14);
+  width: calc(var(--spacing) * 15);
+  height: calc(var(--spacing) * 20);
+  overflow: visible;
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.menu-note-arrow path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+@media (min-width: 48rem) {
+  .menu-note {
+    font-size: var(--text-xl);
+  }
+}
+
+.menu[data-open='true'] .menu-note-text {
+  animation: menu-note-write 0.9s var(--ease-in-out) 1.3s forwards;
+}
+
+.menu[data-open='true'] .menu-note-arrow path:first-child {
+  animation: menu-note-draw 0.6s var(--ease-standard) 2.15s forwards;
+}
+
+.menu[data-open='true'] .menu-note-arrow path:last-child {
+  animation: menu-note-draw 0.18s var(--ease-out) 2.7s forwards;
+}
+
+@keyframes menu-note-write {
+  to {
+    clip-path: inset(-20% 0 -20% 0);
+  }
+}
+
+@keyframes menu-note-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-note-text {
+    clip-path: none;
+  }
+
+  .menu-note-arrow path {
+    stroke-dashoffset: 0;
+  }
+
+  .menu[data-open='true'] .menu-note-text,
+  .menu[data-open='true'] .menu-note-arrow path {
+    animation: none;
+  }
+}

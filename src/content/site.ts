@@ -150,6 +150,7 @@ export const menu = {
   action: { label: "Let's Talk", href: '/#contact' },
   status: [site.role, `Portfolio ${site.year}`],
   mode: 'Dark mode',
+  compactNote: 'psst, the short version',
 } satisfies MenuContent
 
 /*

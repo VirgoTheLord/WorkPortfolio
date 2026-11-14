@@ -76,6 +76,8 @@
   --font-count: var(--font-count-face, sans-serif);
   /* The hero name only: Archivo Expanded Black, capitals (DESIGN.md §9.3). */
   --font-hero: var(--font-hero-face, sans-serif);
+  /* The hand: the menu's note to the compact site (Caveat). */
+  --font-hand: var(--font-hand-face, cursive);
 
   /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
   --text-label: clamp(0.7812rem, 0.7604rem + 0.0926vw, 0.8438rem);

@@ -86,9 +86,21 @@ export function SiteNav() {
         })}
       </ol>
       <p className="flex flex-1 items-end justify-center pt-10 font-label text-label text-ink uppercase">
-        <TextLink href={compactNotice.link.href}>
-          {compactNotice.link.label} <span aria-hidden="true">→</span>
-        </TextLink>
+        {/* The link, with a pen's note above it and an arrow drawn down to it,
+            written on once the menu has opened (site-menu.css, The note).
+            Decoration: the link says it all. */}
+        <span className="menu-compact">
+          <span aria-hidden="true" className="menu-note font-hand normal-case">
+            <span className="menu-note-text">{menu.compactNote}</span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 60 80" className="menu-note-arrow">
+            <path pathLength={1} d="M6 2C2 30 14 62 52 74" />
+            <path pathLength={1} d="M38 70l14 4-8-13" />
+          </svg>
+          <TextLink href={compactNotice.link.href}>
+            {compactNotice.link.label} <span aria-hidden="true">→</span>
+          </TextLink>
+        </span>
       </p>
     </nav>
   )
