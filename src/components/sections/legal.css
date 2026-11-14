@@ -1,22 +1,52 @@
-/* ---- Terms & privacy (app/legal) --------------------------------------
- * A page to read: a reading measure, hairlines between the parts, the site's
- * section rhythm around it. From lg the contents stand in a narrow column on
- * the left and stay in view while the text scrolls. */
+/* ---- Terms & privacy (app/legal) ---------------------------------------------
+ * The index-rail layout: a slim line across the top, then, from lg, a rail of
+ * every clause beside one reading column. A page to read: nothing moves but the
+ * rail's marker, and an in-page jump glides (unless motion is reduced). */
+@media (prefers-reduced-motion: no-preference) {
+  :root:has(.legal) {
+    scroll-behavior: smooth;
+  }
+}
+
 .legal {
+  flex: 1;
+}
+
+/* The top line: the name to the left, the way home to the right, on a hairline
+   across the screen. */
+.legal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 4);
+  padding: calc(var(--spacing) * 5) var(--spacing-gutter);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+.legal-name {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--text-3xl--letter-spacing);
+}
+
+.legal-frame {
+  display: grid;
   width: 100%;
   max-width: var(--container-content);
   margin-inline: auto;
-  padding: calc(var(--spacing) * 8) var(--spacing-gutter) var(--spacing-section);
+  padding-inline: var(--spacing-gutter);
 }
 
-.legal-home {
-  display: inline-block;
-  margin-bottom: var(--spacing-section);
+.legal-aside {
+  display: none;
 }
 
-.legal-head {
+.legal-main {
   max-width: var(--container-measure);
+  padding-block: calc(var(--spacing) * 16) var(--spacing-section);
 }
+
+/* ---- The opening ------------------------------------------------------------ */
 
 .legal-title {
   font-size: var(--text-3xl);
@@ -25,88 +55,180 @@
   letter-spacing: var(--text-3xl--letter-spacing);
 }
 
-.legal-updated {
-  margin-top: calc(var(--spacing) * 3);
+.legal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 1) calc(var(--spacing) * 6);
+  margin-top: calc(var(--spacing) * 4);
 }
 
 .legal-intro {
   margin-top: calc(var(--spacing) * 8);
   font-size: var(--text-lg);
-  line-height: 1.4;
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
-.legal-grid {
+/* In short: the three points on a faint field, the page's one filled surface. */
+.legal-summary {
   display: grid;
-  gap: calc(var(--spacing) * 12);
-  margin-top: calc(var(--spacing) * 16);
+  gap: calc(var(--spacing) * 4);
+  margin-top: calc(var(--spacing) * 10);
+  padding: calc(var(--spacing) * 6);
+  background-color: color-mix(in srgb, var(--color-fg) 5%, transparent);
 }
 
-.legal-contents ol {
+.legal-summary ul,
+.legal-clause ul {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  padding-left: calc(var(--spacing) * 5);
+  list-style: square;
+}
+
+.legal-summary li::marker,
+.legal-clause li::marker {
+  color: var(--color-accent);
+}
+
+.legal-parts ol {
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--spacing) * 2) calc(var(--spacing) * 6);
-  margin-top: calc(var(--spacing) * 3);
-}
-
-.legal-part {
-  max-width: var(--container-measure);
-  padding-top: calc(var(--spacing) * 8);
-  border-top: 1px solid var(--color-rule);
-}
-
-.legal-part + .legal-part {
-  margin-top: calc(var(--spacing) * 16);
-}
-
-.legal-part-title {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--text-3xl--line-height);
-  letter-spacing: var(--text-3xl--letter-spacing);
-}
-
-.legal-section {
   margin-top: calc(var(--spacing) * 10);
 }
 
-.legal-section-title {
+/* ---- The parts and their clauses ---------------------------------------------- */
+
+.legal-part {
+  margin-top: calc(var(--spacing) * 20);
+  scroll-margin-top: calc(var(--spacing) * 8);
+}
+
+.legal-part-title {
+  padding-bottom: calc(var(--spacing) * 4);
+  border-bottom: 1px solid var(--color-rule-strong);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--text-3xl--letter-spacing);
+}
+
+.legal-clause {
+  margin-top: calc(var(--spacing) * 8);
+  scroll-margin-top: calc(var(--spacing) * 8);
+}
+
+.legal-clause-title {
   font-size: var(--text-base);
   font-weight: var(--font-weight-semibold);
 }
 
-.legal-section p,
-.legal-section ul {
-  margin-top: calc(var(--spacing) * 3);
+.legal-clause p,
+.legal-clause ul {
+  margin-top: calc(var(--spacing) * 2.5);
   color: var(--color-fg-muted);
   line-height: 1.6;
   text-wrap: pretty;
 }
 
-.legal-section ul {
-  display: grid;
-  gap: calc(var(--spacing) * 1.5);
-  padding-left: calc(var(--spacing) * 5);
-  list-style: square;
+/* The end: the credit, and the way back up. */
+.legal-end {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 6);
+  margin-top: calc(var(--spacing) * 20);
+  padding-top: calc(var(--spacing) * 6);
+  border-top: 1px solid var(--color-rule-strong);
 }
 
-.legal-section li::marker {
-  color: var(--color-accent);
-}
-
+/* ---- The rail, from lg ----------------------------------------------------------
+ * Every part and clause, standing in view; the clauses hang off one hairline,
+ * and one red bar glides along it to the clause being read
+ * (interactive/legal-rail.tsx sets where). */
 @media (min-width: 64rem) {
-  .legal-grid {
-    grid-template-columns: calc(var(--spacing) * 56) 1fr;
-    gap: calc(var(--spacing) * 16);
+  .legal-frame {
+    grid-template-columns: calc(var(--spacing) * 60) minmax(0, 1fr);
+    gap: calc(var(--spacing) * 18);
   }
 
-  .legal-contents {
+  .legal-aside {
+    display: block;
+  }
+
+  .legal-parts {
+    display: none;
+  }
+
+  .legal-rail {
     position: sticky;
-    top: calc(var(--spacing) * 8);
-    align-self: start;
+    top: 0;
+    max-height: 100svh;
+    overflow-y: auto;
+    padding-block: calc(var(--spacing) * 16) calc(var(--spacing) * 8);
+    scrollbar-width: none;
   }
 
-  .legal-contents ol {
-    flex-direction: column;
+  .legal-rail-list {
+    position: relative;
+    display: grid;
+    gap: calc(var(--spacing) * 6);
+    margin-top: calc(var(--spacing) * 5);
+  }
+
+  .legal-rail-part {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-semibold);
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+
+  .legal-rail-part:hover {
+    color: var(--color-accent);
+  }
+
+  .legal-rail-group ol {
+    display: grid;
+    margin-top: calc(var(--spacing) * 2.5);
+    border-left: 1px solid var(--color-rule-strong);
+  }
+
+  .legal-rail-link {
+    display: block;
+    padding: calc(var(--spacing) * 1) 0 calc(var(--spacing) * 1) calc(var(--spacing) * 4);
+    color: var(--color-fg-muted);
+    font-size: var(--text-label);
+    line-height: 1.4;
+    transition: color var(--duration-instant) var(--ease-out);
+  }
+
+  .legal-rail-link:hover,
+  .legal-rail-link[aria-current] {
+    color: var(--color-fg);
+  }
+
+  /* The marker: on the clauses' hairline, level with the current link. Hidden
+     until the island has placed it, so it never shows at the top first. */
+  .legal-rail-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: var(--bar-h, 0);
+    background-color: var(--color-accent);
+    opacity: 0;
+    translate: -0.5px var(--bar-y, 0);
+  }
+
+  .legal-rail-list[data-marked] .legal-rail-bar {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .legal-rail-list[data-marked] .legal-rail-bar {
+      transition:
+        translate var(--duration-slow) var(--ease-out),
+        height var(--duration-slow) var(--ease-out),
+        opacity var(--duration-instant);
+    }
   }
 }
