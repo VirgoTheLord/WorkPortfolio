@@ -70,8 +70,8 @@ const SWITCHING = 'theme-switching'
 
 /*
  * Flips the mode. Where the browser has view transitions, the new mode opens as
- * a circle from `origin` (the switch) over the old one; with reduced motion, on
- * a touch screen, or without them, it simply changes.
+ * a circle from `origin` (the switch) over the old one; with reduced motion, or
+ * without them, it simply changes.
  *
  * The circle is a CSS animation on ::view-transition-new(root), keyed by the
  * class above and the --vt-* variables, so it is in place on the first frame the
@@ -97,20 +97,12 @@ export function switchTheme(origin?: { x: number; y: number }): Theme {
   return next
 }
 
-/* A touch screen gets no circle: the view transition snapshots the whole page,
-   and on a phone that page is under the menu's full-screen backdrop blur (where
-   the full site's key lives), which mobile browsers draw wrong or slowly inside
-   a snapshot (owner's phone: the reveal broke). The mode changes at once; the
-   key's own press is the feedback, and on the full site the page changes
-   behind the menu's dark field, out of sight. */
-const touch = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches
-
 function run(next: Theme, origin?: { x: number; y: number }) {
   const root = document.documentElement
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   root.classList.add(SWITCHING)
 
-  if (still || touch() || !('startViewTransition' in document)) {
+  if (still || !('startViewTransition' in document)) {
     apply(next)
     // Two frames: the new colours are painted before transitions come back.
     window.requestAnimationFrame(() =>
@@ -121,7 +113,14 @@ function run(next: Theme, origin?: { x: number; y: number }) {
 
   const x = origin?.x ?? window.innerWidth / 2
   const y = origin?.y ?? 0
-  const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
+  // The circle must clear the snapshot, not just the window: on a phone the
+  // snapshot also runs under the collapsing address bar, so the window's height
+  // left the bottom corners uncovered until the end, where they popped in (the
+  // owner's recording). The tallest the screen can be, plus a margin, so the
+  // edge has passed the corners well before the easing's slow tail.
+  const w = window.innerWidth
+  const h = Math.max(window.innerHeight, document.documentElement.clientHeight, window.screen.height)
+  const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y)) * 1.1
   root.style.setProperty('--vt-x', `${x}px`)
   root.style.setProperty('--vt-y', `${y}px`)
   root.style.setProperty('--vt-r', `${Math.ceil(radius)}px`)
