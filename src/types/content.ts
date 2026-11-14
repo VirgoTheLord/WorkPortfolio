@@ -318,3 +318,40 @@ export type CompactNoticeContent = {
   /** Its accessible name, for the landmark. */
   label: string
 }
+
+/* The legal page (/legal): sections of paragraphs and lists. In a section's
+   body a string is a paragraph and an array of strings is a list. */
+export type LegalBlock = string | readonly string[]
+
+export type LegalSection = {
+  id: string
+  heading: string
+  body: readonly LegalBlock[]
+}
+
+export type LegalPart = {
+  id: string
+  title: string
+  sections: readonly LegalSection[]
+}
+
+export type LegalContent = {
+  title: string
+  description: string
+  updatedLabel: string
+  updated: string
+  intro: string
+  contentsLabel: string
+  parts: readonly LegalPart[]
+  footerLink: NavItem
+}
+
+/* The not-found page (app/not-found.tsx). */
+export type NotFoundContent = {
+  title: string
+  heading: string
+  body: string
+  cards: readonly string[]
+  home: NavItem
+  compact: NavItem
+}

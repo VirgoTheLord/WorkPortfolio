@@ -1,0 +1,78 @@
+/* A playing card (playing-card.tsx), sized by --card (its height): white in
+   either mode, with a fine dot grain (hard-stop dots, no gradient). */
+.playing-card {
+  --card: calc(var(--spacing) * 48);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: calc(var(--card) * 2 / 3);
+  height: var(--card);
+  padding: calc(var(--card) * 0.045);
+  background-color: var(--color-card);
+  /* A fine grain: a tiny dot on a 3px grid, barely there, for card stock. */
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-black) 7%, transparent) 0 0.5px,
+    transparent 0.75px
+  );
+  background-size: 3px 3px;
+  color: var(--color-black);
+}
+
+.playing-card[data-suit='heart'],
+.playing-card[data-suit='diamond'] {
+  --suit: var(--color-red);
+}
+
+.playing-card[data-suit='spade'],
+.playing-card[data-suit='club'] {
+  --suit: var(--color-black);
+}
+
+/* The index: the letter over its suit, in a corner; the second turned over. */
+.playing-card-index {
+  display: grid;
+  justify-items: center;
+  justify-self: start;
+  gap: calc(var(--card) * 0.015);
+  color: var(--suit);
+  font-size: calc(var(--card) * 0.13);
+  font-weight: var(--font-weight-semibold);
+  line-height: 0.9;
+}
+
+.playing-card-index[data-flip] {
+  justify-self: end;
+  rotate: 180deg;
+}
+
+.playing-card-index .playing-card-suit {
+  width: calc(var(--card) * 0.075);
+  height: calc(var(--card) * 0.075);
+}
+
+.playing-card-center {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: calc(var(--card) * 0.03);
+  color: var(--suit);
+}
+
+/* The letter: the statement's face, sized so the widest (W, 0.87em) keeps a
+   clear margin inside the card's width. */
+.playing-card-letter {
+  font-size: calc(var(--card) * 0.4);
+  font-weight: var(--font-weight-semibold);
+  font-variation-settings: 'opsz' var(--opsz-display);
+  letter-spacing: var(--text-display--letter-spacing);
+  line-height: 0.85;
+}
+
+.playing-card-center .playing-card-suit {
+  width: calc(var(--card) * 0.1);
+  height: calc(var(--card) * 0.1);
+}
+
+.playing-card-suit {
+  fill: currentColor;
+}

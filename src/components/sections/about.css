@@ -149,88 +149,19 @@
     border-radius: 0;
   }
 
-  /* A playing card (about.tsx): white in either mode, with a fine dot grain
-     (hard-stop dots, no gradient), turned upright on the standing card. The face is the card's own size the other way round, so it fills the
-     upright card exactly. */
-  .about-deck .wui-deck-card > .about-card {
+  /* The playing card (ui/playing-card.tsx) turned upright on the standing
+     card: the face is the card's own size the other way round, so it fills
+     the upright card exactly. */
+  .about-deck .wui-deck-card > .playing-card {
+    --card: var(--deck-card);
+    /* Restated here: the deck's own rule sizes every card child to the frame. */
+    width: calc(var(--card) * 2 / 3);
+    height: var(--card);
     position: absolute;
     top: 50%;
     left: 50%;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    width: calc(var(--deck-card) * 2 / 3);
-    height: var(--deck-card);
-    padding: calc(var(--deck-card) * 0.045);
-    background-color: var(--color-card);
-    /* A fine grain: a tiny dot on a 3px grid, barely there, for card stock. */
-    background-image: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-black) 7%, transparent) 0 0.5px,
-      transparent 0.75px
-    );
-    background-size: 3px 3px;
-    color: var(--color-black);
     translate: -50% -50%;
     rotate: -90deg;
-  }
-
-  .about-card[data-suit='heart'],
-  .about-card[data-suit='diamond'] {
-    --suit: var(--color-red);
-  }
-
-  .about-card[data-suit='spade'],
-  .about-card[data-suit='club'] {
-    --suit: var(--color-black);
-  }
-
-  /* The index: the letter over its suit, in a corner; the second turned over. */
-  .about-card-index {
-    display: grid;
-    justify-items: center;
-    justify-self: start;
-    gap: calc(var(--deck-card) * 0.015);
-    color: var(--suit);
-    font-size: calc(var(--deck-card) * 0.13);
-    font-weight: var(--font-weight-semibold);
-    line-height: 0.9;
-  }
-
-  .about-card-index[data-flip] {
-    justify-self: end;
-    rotate: 180deg;
-  }
-
-  .about-card-index .about-card-suit {
-    width: calc(var(--deck-card) * 0.075);
-    height: calc(var(--deck-card) * 0.075);
-  }
-
-  .about-card-center {
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: calc(var(--deck-card) * 0.03);
-    color: var(--suit);
-  }
-
-  /* The letter: the statement's face, sized so the widest (W, 0.87em) keeps a
-     clear margin inside the card's width. */
-  .about-card-letter {
-    font-size: calc(var(--deck-card) * 0.4);
-    font-weight: var(--font-weight-semibold);
-    font-variation-settings: 'opsz' var(--opsz-display);
-    letter-spacing: var(--text-display--letter-spacing);
-    line-height: 0.85;
-  }
-
-  .about-card-center .about-card-suit {
-    width: calc(var(--deck-card) * 0.1);
-    height: calc(var(--deck-card) * 0.1);
-  }
-
-  .about-card-suit {
-    fill: currentColor;
   }
 }
 
