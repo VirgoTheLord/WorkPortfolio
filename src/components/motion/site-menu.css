@@ -638,8 +638,9 @@ html:not(.js) .mode-key {
 
 /* ---- The note ----------------------------------------------------------------
  * Above the compact site's link at the foot of the menu, a pen's note in the
- * accent ("psst, the short version", in Caveat) with an arrow curling down to
- * the link (owner's pick). Once the menu has opened and its words have unfolded,
+ * accent ("psst, the short version", in Caveat), centred over the link, and
+ * an arrow that leaves the note's start, swings out to the left and comes in
+ * level with the link, pointing at it (owner's pick). Once the menu has opened and its words have unfolded,
  * the words write on from left to right, then the arrow draws, then its head.
  * Closing takes it away at once, so it plays again next time. Clip and dash
  * only. With reduced motion it is simply there. */
@@ -650,8 +651,9 @@ html:not(.js) .mode-key {
 
 .menu-note {
   position: absolute;
-  right: calc(var(--spacing) * 22);
-  bottom: calc(100% + var(--spacing) * 9);
+  bottom: calc(100% + var(--spacing) * 11);
+  left: 50%;
+  translate: -50% 0;
   color: var(--color-accent);
   font-size: var(--text-base);
   font-weight: var(--font-weight-semibold);
@@ -669,10 +671,10 @@ html:not(.js) .mode-key {
 
 .menu-note-arrow {
   position: absolute;
-  bottom: 0;
-  left: calc(var(--spacing) * -9);
-  width: calc(var(--spacing) * 10);
-  height: calc(var(--spacing) * 13);
+  bottom: var(--spacing);
+  left: calc(var(--spacing) * -8);
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 14);
   overflow: visible;
   fill: none;
   stroke: var(--color-accent);

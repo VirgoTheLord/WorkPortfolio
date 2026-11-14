@@ -93,9 +93,9 @@ export function SiteNav() {
           <span aria-hidden="true" className="menu-note font-hand normal-case">
             <span className="menu-note-text">{menu.compactNote}</span>
           </span>
-          <svg aria-hidden="true" viewBox="0 0 60 80" className="menu-note-arrow">
-            <path pathLength={1} d="M6 2C2 30 14 62 52 74" />
-            <path pathLength={1} d="M38 70l14 4-8-13" />
+          <svg aria-hidden="true" viewBox="0 0 44 56" className="menu-note-arrow">
+            <path pathLength={1} d="M48 2C24 6 2 22 9 38c4 9 11 12 18 12" />
+            <path pathLength={1} d="M21 45l6 5-6 5" />
           </svg>
           <TextLink href={compactNotice.link.href}>
             {compactNotice.link.label} <span aria-hidden="true">→</span>
