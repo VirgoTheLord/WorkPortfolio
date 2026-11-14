@@ -161,6 +161,7 @@ export const legal = {
               'Bricolage Grotesque, © 2022 The Bricolage Grotesque Project Authors, SIL Open Font License 1.1.',
               'Azeret Mono, © 2021 The Azeret Project Authors, SIL Open Font License 1.1.',
               'Archivo, © 2020 The Archivo Project Authors, SIL Open Font License 1.1.',
+              'Caveat, © 2014 The Caveat Project Authors, SIL Open Font License 1.1.',
               'Deutsch Gothic, © 1994 J. Fordyce, used unaltered under its free-distribution terms.',
             ],
             'The Deutsch Gothic notice, as its author asks it to travel with the font: “The Deutsch Gothic font is a display font based upon an old German gothic alphabet. The font contains the upper and lower case alphabets, numbers and punctuation. This font was created using Fontographer for Windows. It is (c) 1994 by J. Fordyce but may be freely distributed provided it is not altered, no fee is charged for it, and this text file is included with it.”',

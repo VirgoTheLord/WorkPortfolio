@@ -66,10 +66,26 @@ const archivoExpandedBlack = localFont({
   fallback: ['Arial Black', 'sans-serif'],
 })
 
+/* The hand: the note in the menu that points to the compact site
+   (layout/site-nav.tsx), a pen's note in the margin. Caveat (SIL OFL 1.1,
+   src/fonts/licenses/OFL-caveat.txt), its weight-600 instance cut down to
+   lowercase and a little punctuation (14 KB), all the note uses. Not preloaded:
+   it is only seen once the menu opens. */
+const caveat = localFont({
+  src: '../fonts/caveat-note.woff2',
+  variable: '--font-hand-face',
+  weight: '600',
+  display: 'swap',
+  adjustFontFallback: false,
+  preload: false,
+  fallback: ['cursive'],
+})
+
 export const fontVariables = [
   bricolageGrotesque.variable,
   azeretMono.variable,
   deutschGothic.variable,
   archivoExpanded.variable,
   archivoExpandedBlack.variable,
+  caveat.variable,
 ].join(' ')
