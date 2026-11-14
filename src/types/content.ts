@@ -342,6 +342,10 @@ export type LegalContent = {
   updated: string
   intro: string
   contentsLabel: string
+  partsLabel: string
+  place: string
+  summary: { label: string; points: readonly string[] }
+  toTop: string
   parts: readonly LegalPart[]
   footerLink: NavItem
   home: NavItem

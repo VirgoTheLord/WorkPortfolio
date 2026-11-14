@@ -1,5 +1,5 @@
 import type { LegalContent, NotFoundContent } from '@/types/content'
-import { contact, site } from './site'
+import { contact, place, site } from './site'
 
 /*
  * The legal page (/legal): terms of use, privacy and credits, in plain words.
@@ -17,6 +17,17 @@ export const legal = {
   updated: '14 November 2026',
   intro: `${domain} is the personal portfolio of ${site.name}, a software developer based in Ernakulam, Kerala, India. This page sets out the terms for using it, what it does and doesn’t do with your data, and who made the things it’s built with.`,
   contentsLabel: 'On this page',
+  partsLabel: 'Parts of this page',
+  place: `${place}, India`,
+  summary: {
+    label: 'In short',
+    points: [
+      'Everything here is mine; please ask before you reuse it.',
+      'The site collects nothing about you: no cookies, analytics or tracking.',
+      'Think something here is yours? Email me and I’ll deal with it.',
+    ],
+  },
+  toTop: 'Back to top',
   parts: [
     {
       id: 'terms',
