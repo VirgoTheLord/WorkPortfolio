@@ -1,6 +1,7 @@
 import { FooterInk } from '@/components/motion/footer-ink'
 import { FooterScene } from '@/components/motion/footer-scene'
 import { TextLink } from '@/components/ui/text-link'
+import { legal } from '@/content/legal'
 import { compactNotice, contact, footer, hero, menu, site } from '@/content/site'
 import './site-footer.css'
 
@@ -113,6 +114,11 @@ export function SiteFooter() {
               <p className="footer-credit-mask tabular-nums">
                 <span data-footer-credit className="footer-credit">
                   © {site.year} {site.name}
+                </span>
+              </p>
+              <p className="footer-credit-mask">
+                <span data-footer-credit className="footer-credit">
+                  <TextLink href={legal.footerLink.href}>{legal.footerLink.label}</TextLink>
                 </span>
               </p>
               <p className="footer-credit-mask">

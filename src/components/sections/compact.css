@@ -1472,6 +1472,17 @@ html.js .cp-scribble[data-draw] {
   gap: calc(var(--spacing) * 1.5);
 }
 
+/* The build, then the terms, on one line. */
+.cp-foot-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
+}
+
+.cp-foot-legal {
+  color: var(--color-fg);
+}
+
 /* The workbench pages. */
 
 .cp-piece {

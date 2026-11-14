@@ -1,0 +1,83 @@
+/* ---- Not found (app/not-found.tsx) ------------------------------------------
+ * One centred column on the page's own colour: the hand, the line, the way
+ * home. The hand is three playing cards fanned from one point below them, as a
+ * hand is held; on arrival they are dealt open from a stack, once. */
+.nf {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-section) calc(var(--spacing) * 4);
+  text-align: center;
+}
+
+.nf-hand {
+  --card-h: calc(var(--spacing) * 40);
+  position: relative;
+  width: calc(var(--card-h) * 1.6);
+  height: calc(var(--card-h) * 1.1);
+  margin-bottom: calc(var(--spacing) * 12);
+}
+
+@media (min-width: 48rem) {
+  .nf-hand {
+    --card-h: calc(var(--spacing) * 52);
+  }
+}
+
+/* Each card turns about a point well below the hand, so the three spread from
+   one place like a hand of cards; the middle one sits on top. */
+.nf-slot {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: calc(2 - var(--i) * var(--i));
+  translate: calc(-50% + var(--i) * 44%) 0;
+  transform-origin: 50% 180%;
+  rotate: calc(var(--i) * 10deg);
+}
+
+.nf-card {
+  --card: var(--card-h);
+  display: grid;
+  border: 1px solid var(--color-black);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nf-slot {
+    animation: nf-deal var(--duration-slow) var(--ease-out) 0.15s both;
+  }
+}
+
+@keyframes nf-deal {
+  from {
+    translate: -50% 0;
+    rotate: 0deg;
+  }
+}
+
+.nf-heading {
+  max-width: 18ch;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--text-3xl--line-height);
+  letter-spacing: var(--text-3xl--letter-spacing);
+  text-wrap: balance;
+}
+
+.nf-body {
+  max-width: 40ch;
+  margin-top: calc(var(--spacing) * 3);
+  font-size: var(--text-base);
+  text-wrap: pretty;
+}
+
+.nf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 4) calc(var(--spacing) * 6);
+  margin-top: calc(var(--spacing) * 8);
+}

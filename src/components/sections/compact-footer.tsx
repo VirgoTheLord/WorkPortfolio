@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ShortcutKey } from '@/components/interactive/shortcut-key'
 import { Icon } from '@/components/ui/icon'
 import { compact } from '@/content/compact'
+import { legal } from '@/content/legal'
 import { footer as fullFooter } from '@/content/site'
 import { RollText } from '@/components/ui/roll-text'
 
@@ -37,11 +38,16 @@ export function CompactFooter() {
             </Fragment>
           ))}
         </p>
-        {build ? (
-          <p>
-            {footer.build} {build}
-          </p>
-        ) : null}
+        <p className="cp-foot-meta">
+          {build ? (
+            <span>
+              {footer.build} {build}
+            </span>
+          ) : null}
+          <Link href={legal.footerLink.href} className="cp-foot-legal">
+            <RollText>{legal.footerLink.label}</RollText>
+          </Link>
+        </p>
       </div>
       <div className="cp-foot-row">
         <Link href={footer.back.href} className="cp-foot-back">
