@@ -650,10 +650,10 @@ html:not(.js) .mode-key {
 
 .menu-note {
   position: absolute;
-  right: calc(var(--spacing) * 5);
-  bottom: calc(100% + var(--spacing) * 16);
+  right: calc(var(--spacing) * 22);
+  bottom: calc(100% + var(--spacing) * 9);
   color: var(--color-accent);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0;
   line-height: 1;
@@ -670,13 +670,13 @@ html:not(.js) .mode-key {
 .menu-note-arrow {
   position: absolute;
   bottom: 0;
-  left: calc(var(--spacing) * -14);
-  width: calc(var(--spacing) * 15);
-  height: calc(var(--spacing) * 20);
+  left: calc(var(--spacing) * -9);
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 13);
   overflow: visible;
   fill: none;
   stroke: var(--color-accent);
-  stroke-width: 2;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
@@ -685,12 +685,6 @@ html:not(.js) .mode-key {
 .menu-note-arrow path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-}
-
-@media (min-width: 48rem) {
-  .menu-note {
-    font-size: var(--text-xl);
-  }
 }
 
 .menu[data-open='true'] .menu-note-text {
