@@ -141,13 +141,16 @@ export function LensSearch<T extends SearchItem>({
       if (event.defaultPrevented) return
       if ((mac ? event.metaKey : event.ctrlKey) && event.key.toLowerCase() === shortcut.toLowerCase()) {
         event.preventDefault()
-        if (expand) open()
-        else input.current?.focus()
+        // Portfolio: pressed again while the field is open, it closes it.
+        if (expand) {
+          if (opened) close()
+          else open()
+        } else input.current?.focus()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [shortcut, mac, expand])
+  }, [shortcut, mac, expand, opened])
 
   // The highlight is one element that glides to the active row, so hovering
   // or arrowing through the list moves it rather than switching rows.

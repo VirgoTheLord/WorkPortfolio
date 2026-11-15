@@ -1,28 +1,12 @@
+import { StackKeys } from '@/components/interactive/stack-keys'
 import { compact } from '@/content/compact'
-import { CompactSection } from './compact-section'
+import { CompactBlock } from './compact-block'
 
-/*
- * The stack as a small technical index: a group's name in the label face, its
- * tools after it as plain, searchable words. No logos, levels or bars.
- */
+/* The stack as small key caps; typing a tool's first letter presses its key. */
 export function CompactStack() {
-  const count = compact.stack.reduce((sum, group) => sum + group.items.length, 0)
   return (
-    <CompactSection id="stack" meta={`${count} tools`}>
-      <dl className="cp-rows">
-        {compact.stack.map((group) => (
-          <div key={group.name} className="cp-row">
-            <dt className="cp-row-label font-label">{group.name}</dt>
-            <dd className="cp-row-body">
-              <ul className="cp-stack">
-                {group.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </CompactSection>
+    <CompactBlock id="stack" aside={compact.stack.hint}>
+      <StackKeys items={compact.stack.items} />
+    </CompactBlock>
   )
 }

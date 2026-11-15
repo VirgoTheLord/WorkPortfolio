@@ -81,6 +81,20 @@ const caveat = localFont({
   fallback: ['cursive'],
 })
 
+/* The signed name: the owner's name at the foot of the compact site, in a
+   quick pen hand. Kristi (SIL OFL 1.1, src/fonts/licenses/OFL-kristi.txt), cut
+   down to the alphabet and a little punctuation (12 KB). Not preloaded: it is
+   only seen at the foot of the page. */
+const kristi = localFont({
+  src: '../fonts/kristi-name.woff2',
+  variable: '--font-sign-face',
+  weight: '400',
+  display: 'swap',
+  adjustFontFallback: false,
+  preload: false,
+  fallback: ['cursive'],
+})
+
 export const fontVariables = [
   bricolageGrotesque.variable,
   azeretMono.variable,
@@ -88,4 +102,5 @@ export const fontVariables = [
   archivoExpanded.variable,
   archivoExpandedBlack.variable,
   caveat.variable,
+  kristi.variable,
 ].join(' ')

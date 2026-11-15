@@ -230,8 +230,8 @@ export type CompactIcon =
 /** A profile link with its icon (the search's commands). */
 export type ChipLink = NavItem & { icon: CompactIcon }
 
-/** The compact site's sections, in page order; the order numbers them. */
-export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | 'about' | 'contact'
+/** The compact site's sections, in page order. */
+export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | 'desk'
 
 /** What a search result does when chosen. */
 export type PaletteAction =
@@ -251,50 +251,65 @@ export type PaletteCommand = {
   action: PaletteAction
 }
 
-/** The compact site (/compact): the portfolio in short, for a visitor in a hurry. */
+/** A part of the opening sentence: words, or one of the chips riding in it. */
+export type LedePart = string | { chip: 'job' | 'work' }
+
+/**
+ * The compact site (/compact): the portfolio in short, as a few plain sentences
+ * and rows (owner's direction, November 2026).
+ */
 export type CompactContent = {
   meta: { title: string; description: string }
-  back: NavItem
-  /** The way back typed as a command beside the AW mark on hover: the prompt, then what it types. */
-  terminal: { prompt: string; command: string }
-  /** In page order; `number` is the order, written "01"; `short` names it in the bar. */
-  sections: readonly { id: CompactSectionId; title: string; short?: string; number: string }[]
+  /** In page order; `title` is the section's small heading. */
+  sections: readonly { id: CompactSectionId; title: string }[]
   intro: {
-    /** The line above the name: where, and the time there. */
+    /** The profile picture: original art, not a photo. */
+    avatar: { image: StaticImageData; alt: string }
+    /** The place, short, beside its time. */
     place: string
-    /** The place's coordinates, which the place rolls over to on hover. */
-    coords: string
     time: { zone: string; fallback: string }
     role: string
-    /** The statement; `mark` is the words the hand-drawn line underlines. */
-    statement: { before: string; mark: string; after: string }
-    note: string
-    /** The way-out sentence: plain text with chips between. */
-    /** A sentence with the ways out set in it as small drawn chips. */
+    /** Beside the role, with a red dot: the owner's own word on it. */
+    status: string
+    /** The greeting, set in the text colour; the rest of the sentence after it. */
+    hello: string
+    lede: readonly LedePart[]
+    /** The way-out sentence: plain text with ballpoint chips between. */
     reach: readonly (string | NavItem)[]
   }
-  work: { note: string; view: string; source: string }
-  workbench: { note: string; open: string }
-  experience: readonly { kind: string; org: string; role: string; current?: boolean }[]
-  stack: readonly { name: string; items: readonly string[] }[]
-  about: { paragraphs: readonly string[]; signoff: string }
-  contact: {
-    lead: string
-    copy: { label: string; done: string }
-    write: string
-    /** The label before the owner's local time. */
-    time: string
-    profiles: readonly ChipLink[]
+  work: {
+    /** The rows for what is not out yet: a name, and what it says instead of a year. */
+    soon: { items: readonly string[]; note: string; state: string }
+  }
+  workbench: {
+    /** The pieces shown, by slug, in order; the rest are a link away in Cairn. */
+    featured: readonly string[]
+    all: { label: (count: number) => string; href: string }
+  }
+  experience: readonly { org: string; role: string; when: string }[]
+  stack: { items: readonly string[]; hint: string }
+  /** The desk: things left lying about. Each one's words, and its name for assistive tech. */
+  desk: {
+    hint: string
+    label: string
+    film: { caption: string; label: string }
+    note: { text: string; label: string }
+    todo: { title: string; items: readonly { text: string; done: boolean }[]; label: string }
+    stamp: { value: string; country: string; label: string }
+    ticket: { order: string; title: string; state: string; label: string }
+    key: { text: string; label: string }
+    card: { mark: string; label: string }
+    sticker: { text: string; label: string }
+    pencil: { label: string }
   }
   footer: {
-    note: string
-    build: string
-    top: string
+    made: string
     back: NavItem
-    tip: { before: string; after: string }
   }
   search: {
     label: string
+    /** After the shortcut's keys in the top line ("⌘ K to search"). */
+    hint: string
     placeholder: string
     /** What the idle field suggests, in turn. */
     empty: string
@@ -303,12 +318,8 @@ export type CompactContent = {
   /** The switch's name ("Dark mode"); it is on in dark. */
   theme: { label: string }
   ui: {
-    current: string
-    sections: string
-    index: string
+    /** The workbench pages' way back to the compact home. */
     home: string
-    /** The bunny's name as a button ("Pet the bunny"). */
-    bunny: string
   }
 }
 

@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import { SectionIndex } from '@/components/interactive/section-index'
-import { CompactAbout } from '@/components/sections/compact-about'
-import { CompactContact } from '@/components/sections/compact-contact'
+import { CompactDesk } from '@/components/sections/compact-desk'
 import { CompactExperience } from '@/components/sections/compact-experience'
-import { CompactIntro } from '@/components/sections/compact-intro'
+import { CompactLede } from '@/components/sections/compact-lede'
 import { CompactStack } from '@/components/sections/compact-stack'
 import { CompactWork } from '@/components/sections/compact-work'
 import { CompactWorkbench } from '@/components/sections/compact-workbench'
@@ -16,21 +14,20 @@ export const metadata: Metadata = {
 }
 
 /*
- * The compact site's home: the portfolio in short, with the section index in
- * the left margin and the work's preview in the right one when there is room.
- * The frame is layout.tsx.
+ * The compact site's home: the portfolio in short (owner's direction, November
+ * 2026, after chloemaillot.fr, wlovedaypowell.com and nachi.design): one
+ * sentence, then the work, the pieces, the experience and the stack as plain
+ * rows, and the desk. The frame is layout.tsx.
  */
 export default function CompactPage() {
   return (
     <>
-      <CompactIntro />
+      <CompactLede />
       <CompactWork />
       <CompactWorkbench />
       <CompactExperience />
       <CompactStack />
-      <CompactAbout />
-      <CompactContact />
-      <SectionIndex label={compact.ui.index} items={compact.sections} />
+      <CompactDesk />
     </>
   )
 }

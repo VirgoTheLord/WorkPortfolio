@@ -22,13 +22,12 @@
      never altered for contrast. When a value cannot do a job, its role changes.
      Prefer the semantic tokens below to these raw ones. */
   --color-black: #141314; /* dark structure: dark canvas, light-mode text */
-  /* Dark mode is black, red and teal (owner's direction, 24 October 2026;
-     DESIGN.md §9.2): the deep black canvas, red the accent, teal the second
-     accent. Light mode uses the same red (owner's request, November 2026). */
+  /* Red, white and black only (owner's direction, November 2026; the dark
+     mode's teal second accent is gone): the deep black canvas in dark, red the
+     accent in both modes. */
   --color-black-deep: #0a0a0a; /* the dark canvas */
   --color-red: #ef3e42; /* the accent in both modes: marks, active states, brand fields */
   --color-red-soft: color-mix(in srgb, var(--color-red) 70%, var(--color-white));
-  --color-teal: #2ec4b6; /* the dark second accent: what answers the visitor */
   --color-white: #eeeeee; /* light structure: light canvas, dark-mode text */
   --color-paper: #f7f7f7; /* light muted background */
   --color-card: #ffffff; /* the About hand's playing cards, in either mode */
@@ -78,6 +77,8 @@
   --font-hero: var(--font-hero-face, sans-serif);
   /* The hand: the menu's note to the compact site (Caveat). */
   --font-hand: var(--font-hand-face, cursive);
+  /* The signed name at the compact site's foot (Kristi). */
+  --font-sign: var(--font-sign-face, cursive);
 
   /* Fluid type scale: 17px × 1.25 at 360px → 19px × 1.333 at 1440px. */
   --text-label: clamp(0.7812rem, 0.7604rem + 0.0926vw, 0.8438rem);
@@ -210,7 +211,7 @@
     --color-groove-near: #000000d9;
     --color-groove-lit-near: #eeeeee2f;
     --color-accent: var(--color-red);
-    --color-accent-secondary: var(--color-teal);
+    --color-accent-secondary: var(--color-red);
     --color-accent-fg: var(--color-black);
     --color-focus: var(--color-white);
     --color-selection: var(--color-red);
@@ -235,7 +236,7 @@
   --color-groove-near: #000000d9;
   --color-groove-lit-near: #eeeeee2f;
   --color-accent: var(--color-red);
-  --color-accent-secondary: var(--color-teal);
+  --color-accent-secondary: var(--color-red);
   --color-accent-fg: var(--color-black);
   --color-focus: var(--color-white);
   --color-selection: var(--color-red);
@@ -286,7 +287,7 @@
   --color-groove-near: #000000d9;
   --color-groove-lit-near: #eeeeee2f;
   --color-accent: var(--color-red);
-  --color-accent-secondary: var(--color-teal);
+  --color-accent-secondary: var(--color-red);
   --color-accent-fg: var(--color-black);
   --color-focus: var(--color-white);
   --color-selection: var(--color-red);
@@ -540,9 +541,9 @@
 /* While the mode changes, nothing fades between its old and new colours: the
    new mode is drawn final at once. The two switches keep their own motion, the
    one thing meant to move. */
-:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-theme, .cp-theme *)),
-:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-theme, .cp-theme *))::before,
-:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-theme, .cp-theme *))::after {
+:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-contour, .cp-contour *)),
+:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-contour, .cp-contour *))::before,
+:root.theme-switching :where(*:not(.mode-key, .mode-key *, .cp-contour, .cp-contour *))::after {
   transition: none !important;
 }
 

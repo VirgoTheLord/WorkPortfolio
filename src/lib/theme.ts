@@ -1,7 +1,7 @@
 /*
  * Light and dark, chosen by the visitor (DESIGN.md §9), one choice for the
  * whole site: the full site's switch (interactive/mode-switch.tsx) and the
- * compact site's (interactive/theme-toggle.tsx) read and write the same
+ * compact site's (interactive/contour-switch.tsx) read and write the same
  * value, so a change on one is the mode on the other.
  *
  * Where it lives:
@@ -119,7 +119,11 @@ function run(next: Theme, origin?: { x: number; y: number }) {
   // owner's recording). The tallest the screen can be, plus a margin, so the
   // edge has passed the corners well before the easing's slow tail.
   const w = window.innerWidth
-  const h = Math.max(window.innerHeight, document.documentElement.clientHeight, window.screen.height)
+  const h = Math.max(
+    window.innerHeight,
+    document.documentElement.clientHeight,
+    window.screen.height,
+  )
   const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y)) * 1.1
   root.style.setProperty('--vt-x', `${x}px`)
   root.style.setProperty('--vt-y', `${y}px`)
