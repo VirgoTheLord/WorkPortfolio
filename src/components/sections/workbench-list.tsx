@@ -2,13 +2,13 @@ import Link from 'next/link'
 import { Icon } from '@/components/ui/icon'
 import { workbench } from '@/content/workbench'
 import type { WorkbenchItem } from '@/types/content'
-import { RollText } from '@/components/ui/roll-text'
+import { FlapText } from '@/components/ui/flap-text'
 
 /*
  * The workbench pieces as a grid of cells, two to a row from 36rem: number,
- * name, one line, and where it comes from (Cairn, the site, or kept). Each
- * whole cell is the link to the piece's own page (the name's link, stretched),
- * where it runs live.
+ * name, one line, and where it comes from. Each whole cell is the link to the
+ * piece's own page (the name's link, stretched), where it runs live; on hover
+ * its name flips over letter by letter (ui/flap-text.tsx).
  */
 const kinds = {
   cairn: workbench.labels.cairn,
@@ -34,7 +34,7 @@ export function WorkbenchList({
           </p>
           <Heading className="cp-bench-name">
             <Link href={`/compact/components/${item.slug}`} className="cp-bench-link">
-              <RollText>{item.name}</RollText>
+              <FlapText>{item.name}</FlapText>
             </Link>
             <Icon name="arrow" className="cp-nudge size-3" />
           </Heading>
