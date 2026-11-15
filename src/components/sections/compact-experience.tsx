@@ -1,31 +1,19 @@
 import { compact } from '@/content/compact'
-import { CompactSection } from './compact-section'
+import { CompactBlock } from './compact-block'
 
-/*
- * Experience as plain rows: what kind (work, study), the organisation and the
- * role or degree, and "Current" with the red square where it is. No dates
- * and no descriptions: the project holds none, and none are made up.
- */
+/* Experience as two plain rows: where, what, and when. Only verified facts. */
 export function CompactExperience() {
   return (
-    <CompactSection id="experience">
-      <ol className="cp-rows">
+    <CompactBlock id="experience">
+      <ul className="cp-list">
         {compact.experience.map((entry) => (
-          <li key={entry.org} className="cp-row">
-            <p className="cp-row-label font-label">{entry.kind}</p>
-            <div className="cp-row-body">
-              <h3 className="cp-row-title">{entry.org}</h3>
-              <p className="cp-row-text">{entry.role}</p>
-            </div>
-            {entry.current ? (
-              <p className="cp-row-status font-label">
-                <span aria-hidden="true" className="cp-square" />
-                {compact.ui.current}
-              </p>
-            ) : null}
+          <li key={entry.org} className="cp-line cp-line-plain">
+            <span>{entry.org}</span>
+            <span className="cp-line-note">{entry.role}</span>
+            <span className="cp-meta">{entry.when}</span>
           </li>
         ))}
-      </ol>
-    </CompactSection>
+      </ul>
+    </CompactBlock>
   )
 }

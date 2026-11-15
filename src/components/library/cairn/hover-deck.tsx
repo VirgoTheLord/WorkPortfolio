@@ -414,7 +414,8 @@ export function HoverDeck({
       <ul ref={listRef} aria-label={decorative ? undefined : label} aria-hidden={decorative || undefined} className="wui-deck-cards">
         {items.map((item, i) => (
           // Rendered in the resting fan, so the deck is right before hydration.
-          <li key={item.title} className="wui-deck-item" style={{ transform: transform(rest[i]!, card, vertical), zIndex: Math.round(rest[i]!.z * 1000) + 1000 }}>
+          // Portfolio: keyed by place, so two cards may share a title.
+          <li key={i} className="wui-deck-item" style={{ transform: transform(rest[i]!, card, vertical), zIndex: Math.round(rest[i]!.z * 1000) + 1000 }}>
             {decorative ? (
               <span className="wui-deck-card">
                 {item.art}
