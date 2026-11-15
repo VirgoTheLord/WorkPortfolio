@@ -6,8 +6,9 @@ import galenCover from './galen/cover.png'
  * Selected work (owner's choice, November 2026): Cairn, the owner's library
  * (live at w-ui.vercel.app; the repository is private, so no source link), and
  * Galen AI's landing page, freelance work from the resume (live at
- * galenai.io, a Next.js site). No placeholder projects. The sections render
- * however many are listed, in this order.
+ * galenai.io, a Next.js site; the compact site only). No placeholder projects.
+ * The sections render however many they list, in this order; the full site
+ * reads `fullSiteProjects`.
  */
 export const projects: readonly ProjectMeta[] = [
   {
@@ -27,6 +28,9 @@ export const projects: readonly ProjectMeta[] = [
   {
     slug: 'galen-ai',
     title: 'Galen AI',
+    /* Freelance work: in the compact site's list, not the full site's
+       selected work (owner's call, November 2026). */
+    compactOnly: true,
     summary:
       'The landing page for GalenAI, an AI mentor for medical exams: built freelance for clean UI and conversion, with an interactive product demo for onboarding.',
     category: 'Landing page',
@@ -39,3 +43,6 @@ export const projects: readonly ProjectMeta[] = [
     },
   },
 ]
+
+/* The full site's selected work: everything not kept for the compact site. */
+export const fullSiteProjects = projects.filter((project) => !project.compactOnly)

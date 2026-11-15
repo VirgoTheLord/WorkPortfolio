@@ -61,6 +61,8 @@ export type ProjectMeta = {
   href?: string
   /** The public source repository, when there is one. */
   source?: string
+  /** Listed on the compact site only, not in the full site's selected work. */
+  compactOnly?: boolean
 }
 
 export type WorkContent = {
