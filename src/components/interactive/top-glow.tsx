@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react'
 
 const VERTEX = 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }'
 
-/* A red glow coming down from the top edge: a broad, soft bloom from the top
-   centre, a few slower wisps hanging out of it (noise, stretched downward),
-   and a fine grain so the long fall-off never bands. DARK raises it on the
-   black page; on white it is a softer blush. Premultiplied alpha, so it lays
-   over the page colour. */
+/* A red glow coming down from the top edge, in grain (owner's pick of four
+   textures, November 2026): a broad, soft bloom from the top centre, a few
+   slower wisps in it, and the whole broken up by an uneven film grain, like a
+   photograph of red light. Light: a faint blush on white, a little more on
+   black (DARK). Premultiplied alpha, so it lays over the page colour. */
 const FRAGMENT = `precision mediump float;
 uniform vec2 R; uniform vec3 RED; uniform float DARK, D;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -24,12 +24,11 @@ void main(){
   float bloom = exp(-(x * x * .8 + y * y * 7.));
   float wide = exp(-(x * x * .15 + y * y * 14.)) * .45;
   float wisp = fbm(vec2(x * 1.4, y * .9) + vec2(3.1, 7.7));
-  float streak = smoothstep(.42, .82, fbm(vec2(x * 3.2, y * .6) + 11.3));
-  float a = (bloom * (.7 + .3 * wisp) + wide + streak * exp(-y * 6.) * .18);
-  a *= mix(.22, .42, DARK) * smoothstep(.75, .1, y);
-  vec3 col = mix(RED, RED * vec3(1., .62, .55), smoothstep(.0, .8, y) * DARK);
-  a = clamp(a + (hash(gl_FragCoord.xy / D) - .5) * .012, 0., 1.);
-  gl_FragColor = vec4(col * a, a);
+  float glow = clamp((bloom * (.7 + .3 * wisp) + wide) * smoothstep(.75, .1, y), 0., 1.);
+  float grain = hash(floor(gl_FragCoord.xy / (1.5 * D)));
+  float clump = fbm(gl_FragCoord.xy / (6. * D));
+  float a = glow * mix(.1, .2, DARK) * (.55 + .9 * grain * clump);
+  gl_FragColor = vec4(RED * a, a);
 }`
 
 /*
@@ -96,8 +95,8 @@ export function TopGlow() {
     let raf = 0
     const draw = () => {
       raf = 0
-      // Half the pixels is plenty for a glow this soft; the grain hides it.
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.5) * 0.5
+      // Full pixels (to 1.5×): the grain is the texture, and it is drawn once.
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
       const width = Math.max(1, Math.round(cv.clientWidth * ratio))
       const height = Math.max(1, Math.round(cv.clientHeight * ratio))
       if (cv.width !== width || cv.height !== height) {
