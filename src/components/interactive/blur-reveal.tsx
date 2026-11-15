@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 
 /* What arrives with a blur (keep in step with compact.css, "Arrival"). */
 const ARRIVING = [
-  '.cp-scene',
   '.cp-who',
   '.cp-contour',
   '.cp-top-meta',

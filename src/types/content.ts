@@ -266,8 +266,6 @@ export type CompactContent = {
   intro: {
     /** The profile picture: original art, not a photo. */
     avatar: { image: StaticImageData; alt: string }
-    /** The photo at the top of the home, and what it shows. */
-    scene: { image: StaticImageData; alt: string }
     /** The place, short, beside its time. */
     place: string
     time: { zone: string; fallback: string }
