@@ -169,13 +169,6 @@ export const legal = {
           ],
         },
         {
-          id: 'photograph',
-          heading: 'Photograph',
-          body: [
-            'The sunset at the top of the compact site is by Szymon Shields, on Unsplash, used under the Unsplash License.',
-          ],
-        },
-        {
           id: 'inspiration',
           heading: 'Inspiration',
           body: [
