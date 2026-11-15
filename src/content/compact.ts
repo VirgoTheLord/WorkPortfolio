@@ -155,7 +155,6 @@ export const compact = {
     place: place.split(',')[0] ?? place,
     time: { zone: 'Asia/Kolkata', fallback: 'IST, UTC+05:30' },
     role: site.role,
-    status: 'Open to work',
     hello: `Hey, I'm ${site.name.split(' ')[0]}.`,
     lede: [
       ' I test software at ',

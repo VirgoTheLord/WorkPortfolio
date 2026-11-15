@@ -11,8 +11,7 @@ const { intro } = compact
 
 /*
  * The compact site's top line (chloemaillot.fr's): the picture and the name,
- * which leads home, the role and that the owner is open to work, and the
- * light/dark switch; under them a quiet line with the place and its time, and
+ * which leads home, and the role, and the light/dark switch; under them a quiet line with the place and its time, and
  * how to search (⌘K).
  */
 export function CompactTop() {
@@ -21,13 +20,7 @@ export function CompactTop() {
       <Link href="/compact" className="cp-who">
         <HoodAvatar {...intro.avatar} />
         <span>
-          <span className="cp-name block">
-            {site.name}
-            <span className="cp-status">
-              <span aria-hidden="true" className="cp-status-dot" />
-              {intro.status}
-            </span>
-          </span>
+          <span className="cp-name block">{site.name}</span>
           <span className="block">{intro.role}</span>
         </span>
       </Link>

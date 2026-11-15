@@ -269,8 +269,6 @@ export type CompactContent = {
     place: string
     time: { zone: string; fallback: string }
     role: string
-    /** Beside the role, with a red dot: the owner's own word on it. */
-    status: string
     /** The greeting, set in the text colour; the rest of the sentence after it. */
     hello: string
     lede: readonly LedePart[]
