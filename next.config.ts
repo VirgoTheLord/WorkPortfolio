@@ -18,11 +18,13 @@ function commit() {
 
 const nextConfig: NextConfig = {
   /* Hosted as plain files on S3 behind CloudFront (ARCHITECTURE.md §2), so the
-     build must emit a static site into out/. trailingSlash gives every route a
-     folder with an index.html, which the CloudFront function maps URLs onto; the
-     default image optimizer needs a server, so images ship as built. */
+     build must emit a static site into out/. Addresses carry no trailing slash
+     (owner's call, November 2026: /compact, not /compact/), so each route is a
+     file, compact.html, which the CloudFront function (infra/cloudfront-url.js)
+     maps the bare address onto; the default image optimizer needs a server, so
+     images ship as built. */
   output: 'export',
-  trailingSlash: true,
+  trailingSlash: false,
   images: { unoptimized: true },
   poweredByHeader: false,
   env: {
