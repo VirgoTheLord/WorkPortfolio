@@ -565,16 +565,36 @@ html:not(.js) .cp-hint {
   color: var(--color-fg-muted);
 }
 
-a.cp-line {
-  transition: padding var(--duration-base) var(--ease-expo);
+/* Pointing at a row brings it into focus: the other rows of its list soften
+   out of focus and step back (owner's pick, November 2026), so the one under
+   the pointer or the keyboard stands sharp; nothing moves sideways. */
+.cp-list > li {
+  transition:
+    filter 0.45s var(--ease-expo),
+    opacity 0.45s var(--ease-expo);
 }
 
-a.cp-line:hover {
-  padding-left: calc(var(--spacing) * 2);
+.cp-list:has(a.cp-line:is(:hover, :focus-visible))
+  > li:not(:has(a.cp-line:is(:hover, :focus-visible))) {
+  opacity: 0.4;
+  filter: blur(2px);
 }
 
-a.cp-line:hover > :first-child {
+a.cp-line:is(:hover, :focus-visible) > :first-child {
   color: var(--color-accent);
+}
+
+/* The same on the workbench index's grid of pieces. */
+.cp-bench-item {
+  transition:
+    filter 0.45s var(--ease-expo),
+    opacity 0.45s var(--ease-expo);
+}
+
+.cp-bench:has(.cp-bench-item:hover, .cp-bench-link:focus-visible)
+  .cp-bench-item:not(:hover, :has(.cp-bench-link:focus-visible)) {
+  opacity: 0.4;
+  filter: blur(2px);
 }
 
 a.cp-line:focus-visible {
