@@ -1,4 +1,5 @@
 import type { Viewport } from 'next'
+import { BlurReveal } from '@/components/interactive/blur-reveal'
 import { CompactFoot } from '@/components/layout/compact-foot'
 import { CompactTop } from '@/components/layout/compact-top'
 import '@/components/library/cairn/cairn-tokens.css'
@@ -29,6 +30,7 @@ export default function CompactLayout({ children }: LayoutProps<'/compact'>) {
         </main>
         <CompactFoot />
       </div>
+      <BlurReveal />
     </div>
   )
 }

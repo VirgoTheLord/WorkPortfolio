@@ -9,21 +9,38 @@ const none = () => null
 const VERTEX = 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }'
 
 /* A sun drawn in contour lines, in red inside the shape and the text colour
-   outside; a second disc slides across and cuts it to a crescent (S, 0 light
-   to 1 dark). K is how many lines a unit holds, set so they stay about four
+   outside, with a solid core and eight short rays; a second disc slides
+   across and cuts it to a crescent as the rays draw in (S, 0 light to 1
+   dark). K is how many lines a unit holds, set so they stay about four
    CSS pixels apart at any size; H drifts them while the pointer rests. */
 const FRAGMENT = `precision mediump float;
 uniform vec2 R; uniform float S, H, D, K; uniform vec3 FG, RED;
 void main(){
   vec2 p = (gl_FragCoord.xy - .5 * R) / R.y;
-  float sun = length(p) - .3;
+  float r = length(p);
+  float sun = r - .3;
   float cut = length(p - vec2(mix(.9, .16, S), .1)) - .27;
   float f = max(sun, -cut);
   float line = abs(fract(f * K - H * .6) - .5);
   float w = .55 * D * K / R.y, aa = .6 * D * K / R.y;
   float m = smoothstep(w + aa, w - aa, line) * smoothstep(.2, .1, abs(f + .02));
   vec3 col = f < 0. ? RED : FG;
-  gl_FragColor = vec4(col * m, m);
+  float alpha = m;
+  // The sun's own: a solid core, and eight short rays round it, which draw in
+  // as the moon comes (and turn a little while the pointer rests).
+  float px = D / R.y;
+  float lit = 1. - smoothstep(0., .55, S);
+  float core = smoothstep(.13 * lit + px, .13 * lit - px, r);
+  float ang = atan(p.y, p.x) + H * .35;
+  float k = 8.;
+  float arc = abs(fract(ang / 6.28318 * k) - .5) * 6.28318 / k * r;
+  float reach = mix(.47, .36, S);
+  float ray = smoothstep(1.1 * px + px, 1.1 * px - px, arc)
+    * smoothstep(.36, .38, r) * smoothstep(reach + px, reach - px, r) * lit;
+  float sunny = max(core, ray);
+  col = mix(col, RED, sunny);
+  alpha = max(alpha, sunny);
+  gl_FragColor = vec4(col * alpha, alpha);
 }`
 
 /* The pointer must rest on the switch this long before the lines drift. */
@@ -274,8 +291,12 @@ export function ContourSwitch({ label }: CompactContent['theme']) {
       {/* Before the first frame, and without WebGL: the same shape, still. */}
       <svg aria-hidden="true" viewBox="0 0 32 32" className="cp-contour-still">
         <circle cx="16" cy="16" r="9.6" className="cp-contour-sun" />
-        <circle cx="16" cy="16" r="12.6" />
         <circle cx="16" cy="16" r="6.4" className="cp-contour-sun" />
+        <circle cx="16" cy="16" r="4.2" className="cp-contour-core" />
+        <path
+          d="M16 1.5v3M16 27.5v3M1.5 16h3M27.5 16h3M5.7 5.7l2.1 2.1M24.2 24.2l2.1 2.1M5.7 26.3l2.1-2.1M24.2 7.8l2.1-2.1"
+          className="cp-contour-rays"
+        />
         <circle cx="21.1" cy="12.8" r="8.6" className="cp-contour-cut" />
       </svg>
     </button>
