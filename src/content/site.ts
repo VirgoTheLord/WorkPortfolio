@@ -28,16 +28,29 @@ export const tagline =
   'Crafting immersive digital experiences with a blend of creativity and technology.'
 
 /*
- * The owner's role, degree and city, from the owner's LinkedIn profile (October
- * 2026). The one record of them: the full site's About and the compact site both
- * read these. No dates are held, so none are shown.
+ * The owner's roles, study and city, from the owner's resume (November 2026),
+ * newest first. The one record of them: the full site's About and the compact
+ * site both read these.
  */
 export const experience = [
-  { org: 'SOTI', role: 'Software Engineer in Test', current: true },
+  {
+    org: 'SOTI',
+    role: 'Software Development Engineer in Test',
+    current: true,
+    when: 'Aug 2026 – Now',
+  },
+  { org: 'NeSt Digital', role: 'Software Engineer', when: 'Jun – Jul 2026' },
+  { org: 'Galen AI', role: 'Freelance Frontend Developer', when: 'Mar – Apr 2026' },
+  { org: 'Stealth startup', role: 'Founding Frontend Engineer', when: 'Aug – Oct 2025' },
 ] as const satisfies readonly ExperienceItem[]
 
 export const education = [
-  { school: 'MITS', degree: 'B.Tech', field: 'Computer Science' },
+  {
+    school: 'MITS',
+    degree: 'B.Tech',
+    field: 'Computer Science, Honours in Machine Learning',
+    when: '2022 – 2026',
+  },
 ] as const satisfies readonly EducationItem[]
 
 export const place = 'Ernakulam, Kerala'
@@ -129,7 +142,7 @@ export const site = {
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/alwin-aby-mathew/' },
     { label: 'GitHub', href: 'https://github.com/VirgoTheLord' },
   ],
-  role: 'Software developer',
+  role: 'Software Engineer',
   year: '2026',
   nav: [
     { label: 'About', href: '/#about' },
