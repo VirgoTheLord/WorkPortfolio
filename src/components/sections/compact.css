@@ -581,12 +581,33 @@ html:not(.js) .cp-hint {
   filter: blur(2px);
 }
 
-/* The pieces: a name flips over letter by letter like a departures board
-   (the links' flap, ui/flap-text.tsx), on its row or its cell. */
-@media (prefers-reduced-motion: no-preference) {
-  :is(a.cp-line, .cp-bench-item):is(:hover, :focus-within) .cp-flap-ch {
-    animation: cp-flap 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 22ms) both;
-  }
+/* The pieces (owner's pick): a faint band fades in behind the row, a little
+   wider than it; nothing moves. */
+.cp-list-band {
+  isolation: isolate;
+}
+
+.cp-list-band a.cp-line {
+  position: relative;
+}
+
+.cp-list-band a.cp-line::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--spacing) * -2.5);
+  z-index: -1;
+  border-radius: calc(var(--spacing) * 1.5);
+  background-color: var(--cp-raise);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-expo);
+}
+
+.cp-list-band a.cp-line:is(:hover, :focus-visible)::before {
+  opacity: 1;
+}
+
+.cp-list-band a.cp-line:is(:hover, :focus-visible) > :first-child {
+  color: inherit;
 }
 
 a.cp-line:is(:hover, :focus-visible) > :first-child {

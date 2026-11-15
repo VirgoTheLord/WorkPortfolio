@@ -24,13 +24,11 @@ export function CompactWorkbench() {
         </a>
       }
     >
-      <ul className="cp-list">
+      <ul className="cp-list cp-list-band">
         {workbench.items.map((item) => (
           <li key={item.slug}>
             <Link href={`/compact/components/${item.slug}`} className="cp-line cp-line-wide">
-              <span>
-                <FlapText>{item.name}</FlapText>
-              </span>
+              <span>{item.name}</span>
               <span className="cp-line-note">{item.note}</span>
             </Link>
           </li>
