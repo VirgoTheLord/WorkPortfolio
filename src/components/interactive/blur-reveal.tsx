@@ -25,9 +25,11 @@ const ARRIVING = [
   '.cp-bench-item',
 ].join(',')
 
-/* The gap between things arriving together, and the most any one waits. */
-const STAGGER = 70
-const MOST = 560
+/* The gap between things arriving together, and the most any one waits;
+   the first arrival waits a beat for the page to settle. */
+const STAGGER = 120
+const MOST = 1800
+const FIRST = 150
 
 /*
  * The compact site's arrival (owner's pick: blur, then sharp): everything
@@ -48,6 +50,7 @@ export function BlurReveal() {
     const waiting = [...root.querySelectorAll<HTMLElement>(ARRIVING)].filter(
       (el) => !el.hasAttribute('data-in'),
     )
+    let first = FIRST
     const seen = new IntersectionObserver(
       (entries) => {
         const arriving = entries
@@ -57,15 +60,24 @@ export function BlurReveal() {
             a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
           )
         arriving.forEach((el, i) => {
-          el.style.setProperty('--cp-in-delay', `${Math.min(i * STAGGER, MOST)}ms`)
+          el.style.setProperty('--cp-in-delay', `${Math.min(first + i * STAGGER, MOST)}ms`)
           el.setAttribute('data-in', '')
           seen.unobserve(el)
         })
+        // Only the page's first arrival waits; later ones come as they scroll in.
+        first = 0
       },
       { rootMargin: '0px 0px -6% 0px', threshold: 0.12 },
     )
-    waiting.forEach((el) => seen.observe(el))
-    return () => seen.disconnect()
+    // Start once the type is in, so nothing arrives and then reflows.
+    let alive = true
+    void document.fonts.ready.then(() => {
+      if (alive) waiting.forEach((el) => seen.observe(el))
+    })
+    return () => {
+      alive = false
+      seen.disconnect()
+    }
   }, [path])
 
   return null
