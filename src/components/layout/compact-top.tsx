@@ -29,7 +29,7 @@ export function CompactTop() {
         <p>
           {intro.place} · <LocalTime zone={intro.time.zone} fallback={intro.time.fallback} />
         </p>
-        <SearchHint label={compact.search.hint} />
+        <SearchHint label={compact.search.hint} touch={compact.search.touch} />
         {/* The palette itself: its trigger out of sight and out of the tab
             order; the hint and the shortcut open it. */}
         <div inert className="cp-search-hidden">
