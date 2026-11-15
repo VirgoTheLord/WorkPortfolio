@@ -1605,38 +1605,36 @@ a.cp-line:hover > .cp-meta {
   stroke-width: 1;
 }
 
-.cp-contour-still .cp-contour-sun,
-.cp-contour-still .cp-contour-rays {
+.cp-contour-still .cp-contour-sun {
   stroke: var(--color-red);
   stroke-linecap: round;
 }
 
-.cp-contour-still .cp-contour-core {
-  stroke: none;
-  fill: var(--color-red);
+/* The still drawing: the sunrise by day, the crescent by night. */
+.cp-contour-night {
+  display: none;
 }
 
 .cp-contour-cut {
   stroke: none;
   fill: var(--color-bg);
-  visibility: hidden;
 }
 
-:root[data-theme='dark'] .cp-contour-cut {
-  visibility: visible;
+:root[data-theme='dark'] .cp-contour-night {
+  display: inline;
 }
 
-:root[data-theme='dark'] :is(.cp-contour-rays, .cp-contour-core) {
-  visibility: hidden;
+:root[data-theme='dark'] .cp-contour-day {
+  display: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .cp-contour-cut {
-    visibility: visible;
+  :root:not([data-theme='light']) .cp-contour-night {
+    display: inline;
   }
 
-  :root:not([data-theme='light']) :is(.cp-contour-rays, .cp-contour-core) {
-    visibility: hidden;
+  :root:not([data-theme='light']) .cp-contour-day {
+    display: none;
   }
 }
 

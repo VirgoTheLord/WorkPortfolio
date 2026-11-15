@@ -8,38 +8,36 @@ const none = () => null
 
 const VERTEX = 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }'
 
-/* A sun drawn in contour lines, in red inside the shape and the text colour
-   outside, with a solid core and eight short rays; a second disc slides
-   across and cuts it to a crescent as the rays draw in (S, 0 light to 1
-   dark). K is how many lines a unit holds, set so they stay about four
-   CSS pixels apart at any size; H drifts them while the pointer rests. */
+/* The sunrise (owner's pick of four, November 2026): half a sun drawn in red
+   contour lines over a sea of contour lines, a red horizon between. For the
+   night the horizon sinks away, the sun rises whole and a second disc slides
+   across to cut it to the crescent (S, 0 light to 1 dark). K is how many lines
+   a unit holds, set so they stay about four CSS pixels apart at any size; H
+   drifts the lines and rocks the sea while the pointer rests. */
 const FRAGMENT = `precision mediump float;
 uniform vec2 R; uniform float S, H, D, K; uniform vec3 FG, RED;
+float lines(float f, float shift){
+  float l = abs(fract(f * K - shift) - .5);
+  float w = .55 * D * K / R.y, aa = .6 * D * K / R.y;
+  return smoothstep(w + aa, w - aa, l);
+}
 void main(){
   vec2 p = (gl_FragCoord.xy - .5 * R) / R.y;
   float r = length(p);
-  float sun = r - .3;
   float cut = length(p - vec2(mix(.9, .16, S), .1)) - .27;
-  float f = max(sun, -cut);
-  float line = abs(fract(f * K - H * .6) - .5);
-  float w = .55 * D * K / R.y, aa = .6 * D * K / R.y;
-  float m = smoothstep(w + aa, w - aa, line) * smoothstep(.2, .1, abs(f + .02));
+  float f = max(r - .3, -cut);
+  float m = lines(f, H * .4) * smoothstep(.22, .1, abs(f + .02));
+  float horizon = mix(-.02, -.6, S);
+  float above = smoothstep(horizon - .004, horizon + .004, p.y);
+  float sea = (1. - above) * (1. - S)
+    * lines(p.y * 1.6 - sin(p.x * 12. + H) * .01, 0.)
+    * step(abs(p.x), .44 - (horizon - p.y) * .3);
   vec3 col = f < 0. ? RED : FG;
-  float alpha = m;
-  // The sun's own: a solid core, and eight short rays round it, which draw in
-  // as the moon comes (and turn a little while the pointer rests).
-  float px = D / R.y;
-  float lit = 1. - smoothstep(0., .55, S);
-  float core = smoothstep(.13 * lit + px, .13 * lit - px, r);
-  float ang = atan(p.y, p.x) + H * .35;
-  float k = 8.;
-  float arc = abs(fract(ang / 6.28318 * k) - .5) * 6.28318 / k * r;
-  float reach = mix(.47, .36, S);
-  float ray = smoothstep(1.1 * px + px, 1.1 * px - px, arc)
-    * smoothstep(.36, .38, r) * smoothstep(reach + px, reach - px, r) * lit;
-  float sunny = max(core, ray);
-  col = mix(col, RED, sunny);
-  alpha = max(alpha, sunny);
+  float alpha = max(m * above, sea);
+  col = mix(col, FG, sea);
+  float edge = smoothstep(1.5 * D / R.y, 0., abs(p.y - horizon)) * step(abs(p.x), .46) * (1. - S);
+  alpha = max(alpha, edge);
+  col = mix(col, RED, edge);
   gl_FragColor = vec4(col * alpha, alpha);
 }`
 
@@ -290,14 +288,19 @@ export function ContourSwitch({ label }: CompactContent['theme']) {
       <canvas ref={canvas} aria-hidden="true" className="cp-contour-canvas" />
       {/* Before the first frame, and without WebGL: the same shape, still. */}
       <svg aria-hidden="true" viewBox="0 0 32 32" className="cp-contour-still">
-        <circle cx="16" cy="16" r="9.6" className="cp-contour-sun" />
-        <circle cx="16" cy="16" r="6.4" className="cp-contour-sun" />
-        <circle cx="16" cy="16" r="4.2" className="cp-contour-core" />
-        <path
-          d="M16 1.5v3M16 27.5v3M1.5 16h3M27.5 16h3M5.7 5.7l2.1 2.1M24.2 24.2l2.1 2.1M5.7 26.3l2.1-2.1M24.2 7.8l2.1-2.1"
-          className="cp-contour-rays"
-        />
-        <circle cx="21.1" cy="12.8" r="8.6" className="cp-contour-cut" />
+        <g className="cp-contour-day">
+          <path
+            d="M6.4 15.7a9.6 9.6 0 0 1 19.2 0M9.6 15.7a6.4 6.4 0 0 1 12.8 0"
+            className="cp-contour-sun"
+          />
+          <path d="M2.6 15.7h26.8" className="cp-contour-sun" />
+          <path d="M5 19.5h22M7.4 23.3h17.2M9.8 27.1h12.4" />
+        </g>
+        <g className="cp-contour-night">
+          <circle cx="16" cy="16" r="9.6" className="cp-contour-sun" />
+          <circle cx="16" cy="16" r="6.4" className="cp-contour-sun" />
+          <circle cx="21.1" cy="12.8" r="8.6" className="cp-contour-cut" />
+        </g>
       </svg>
     </button>
   )
