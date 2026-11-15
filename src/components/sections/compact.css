@@ -167,9 +167,7 @@
 }
 
 /* Controls that need script are not there without it. */
-html:not(.js) .cp-search,
-html:not(.js) .cp-demo-replay,
-html:not(.js) .cp-replay-button {
+html:not(.js) .cp-search {
   display: none;
 }
 
@@ -1386,82 +1384,6 @@ a.cp-line:hover > .cp-meta {
 
 .cp-demo-wide {
   width: 100%;
-}
-
-.cp-demo-headline {
-  font-family: var(--font-display);
-  /* Its lines never wrap (headline-wipe.css), so it is sized to the stage. */
-  font-size: min(var(--text-2xl), 5.4cqw);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-}
-
-.cp-replay {
-  display: grid;
-  justify-items: center;
-  gap: calc(var(--spacing) * 8);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cp-replay-button,
-  .cp-demo-replay {
-    display: none;
-  }
-}
-
-/* Cairn's pieces on the stage. The ballpoint's face is filled with the page
-   colour so its hatching hides behind it; on the stage that is the mat. */
-.cp-stage {
-  --wui-ballpoint-paper: var(--cp-raise);
-  --wui-neo-surface: var(--cp-raise);
-}
-
-.cp-demo-column {
-  display: grid;
-  justify-items: start;
-  gap: calc(var(--spacing) * 6);
-}
-
-.cp-demo-stack {
-  display: grid;
-  justify-items: center;
-  gap: calc(var(--spacing) * 14);
-  padding-block: calc(var(--spacing) * 6);
-}
-
-.cp-demo-field,
-.cp-demo-search {
-  width: min(100%, 24rem);
-}
-
-/* The lens search's results lie over what follows, so the stage keeps room. */
-.cp-demo-search {
-  align-self: start;
-  min-height: calc(var(--spacing) * 80);
-}
-
-/* The pixel mark, at stage size: a larger mark and larger cells, the word
-   centred on the mark rather than hung from its left edge as in a bar. */
-.pixel-mark.cp-demo-pixel {
-  --pixel-cell: calc(var(--spacing) * 2);
-  --pixel-gap: calc(var(--spacing) * 0.5);
-}
-
-.cp-demo-pixel .pixel-mark-ink {
-  font-size: var(--text-3xl);
-}
-
-.cp-demo-pixel .pixel-mark-cells {
-  left: 50%;
-  translate: -50% -50%;
-}
-
-.cp-demo-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: calc(var(--spacing) * 5);
 }
 
 /* How it behaves: numbered steps. */

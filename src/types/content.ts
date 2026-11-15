@@ -169,13 +169,8 @@ export type WorkbenchContent = {
   items: readonly WorkbenchItem[]
   /** The words the pieces are given on their stages. */
   demo: {
-    key: string
-    /** What the pixel mark spells on hover. */
-    pixel: string
     /** The Cairn pieces' words on their stages. */
     cairn: {
-      switches: readonly string[]
-      checks: readonly string[]
       segments: { label: string; options: readonly string[]; value: string }
       cards: {
         label: string
@@ -183,10 +178,6 @@ export type WorkbenchContent = {
         value: string
       }
       slider: string
-      field: { label: string; placeholder: string }
-      search: string
-      code: { label: string; value: string }
-      ballpoint: { label: string; replay: string }
       records: {
         label: string
         items: readonly { title: string; artist: string; duration: number }[]
@@ -279,11 +270,8 @@ export type CompactContent = {
     /** The rows for what is not out yet: a name, and what it says instead of a year. */
     soon: { items: readonly string[]; note: string; state: string }
   }
-  workbench: {
-    /** The pieces shown, by slug, in order; the rest are a link away in Cairn. */
-    featured: readonly string[]
-    all: { label: (count: number) => string; href: string }
-  }
+  /** The pieces are the workbench's (content/workbench.ts); the rest are a link away in Cairn. */
+  workbench: { all: NavItem }
   experience: readonly { org: string; role: string; when: string }[]
   stack: { items: readonly string[]; hint: string }
   /** The desk: things left lying about. Each one's words, and its name for assistive tech. */
