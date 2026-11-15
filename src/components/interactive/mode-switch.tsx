@@ -29,8 +29,8 @@ function Icons() {
  * out of register and thumps back as the icon changes. The look is CSS on the
  * page's mode (site-menu.css), so the key is server-rendered and right before
  * hydration, and arrives with the rest of the bar in its entrance. Until the mode
- * is known it is a plain button (a switch must say whether it is on). The new
- * mode opens as a circle from the key (lib/theme.ts); the choice is the compact
+ * is known it is a plain button (a switch must say whether it is on). The page
+ * dips through the new mode's colour (lib/theme.ts); the choice is the compact
  * site's too.
  */
 export function ModeSwitch({ label }: { label: string }) {
@@ -47,8 +47,7 @@ export function ModeSwitch({ label }: { label: string }) {
         const button = event.currentTarget
         // Alternates two identical keyframes so the slip replays on every press.
         button.dataset.pressed = button.dataset.pressed === 'a' ? 'b' : 'a'
-        const box = button.getBoundingClientRect()
-        switchTheme({ x: box.left + box.width / 2, y: box.top + box.height / 2 })
+        switchTheme()
       }}
     >
       <span aria-hidden="true" className="mode-key-block" />

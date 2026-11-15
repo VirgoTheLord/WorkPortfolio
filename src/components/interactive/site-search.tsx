@@ -84,8 +84,7 @@ export function SiteSearch({ commands, label, placeholder, empty }: CompactConte
       return
     }
     if (action.kind === 'theme') {
-      const box = wrap.current?.getBoundingClientRect()
-      const next = switchTheme(box && { x: box.left + box.width / 2, y: box.top + box.height / 2 })
+      const next = switchTheme()
       say(next === 'dark' ? 'Lights off' : 'Lights on')
       return
     }

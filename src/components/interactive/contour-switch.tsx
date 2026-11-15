@@ -53,8 +53,8 @@ const INTENT = 180
  * eases toward its target, keeps its last frame, and stops off screen. A real
  * switch (role="switch") once the mode is known; before that, and without
  * WebGL, a still CSS drawing of the same shape stands in (compact.css, keyed
- * off <html>'s mode). One choice with the full site's switch (lib/theme.ts);
- * the new mode opens as a circle from the switch.
+ * off <html>'s mode). One choice with the full site's switch (lib/theme.ts),
+ * whose change dips the page through the new colour.
  */
 export function ContourSwitch({ label }: CompactContent['theme']) {
   const theme = useSyncExternalStore(subscribeTheme, readTheme, none)
@@ -279,10 +279,7 @@ export function ContourSwitch({ label }: CompactContent['theme']) {
       role={theme === null ? undefined : 'switch'}
       aria-checked={theme === null ? undefined : theme === 'dark'}
       aria-label={label}
-      onClick={(event) => {
-        const box = event.currentTarget.getBoundingClientRect()
-        switchTheme({ x: box.left + box.width / 2, y: box.top + box.height / 2 })
-      }}
+      onClick={() => switchTheme()}
       className="cp-contour"
     >
       <canvas ref={canvas} aria-hidden="true" className="cp-contour-canvas" />

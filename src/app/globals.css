@@ -504,25 +504,9 @@
   }
 }
 
-/* The new mode opens as a circle from the switch (lib/theme.ts), on both sites.
-   The browser's own crossfade is turned off so only the circle moves: left on,
-   the old page fades out under the circle, and for a moment the screen shows
-   neither mode (the flash). The circle is CSS, present from the transition's
-   first frame; lib/theme.ts sets its centre and radius (--vt-*). */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-:root.theme-switching::view-transition-new(root) {
-  animation: theme-reveal 0.8s var(--ease-expo) both;
-}
-
-/* On a touch screen there is no circle: lib/theme.ts dips through the new
-   mode's page colour with this veil instead (the snapshot the circle needs
-   misbehaved on phones). The veil is the colour of the page being switched to;
-   the compact site's light page is white. */
+/* The theme change (lib/theme.ts): the screen dips through this veil, the
+   colour of the page being switched to (the compact site's light page is
+   white), while the mode changes under it. */
 .theme-veil {
   position: fixed;
   inset: -10vh 0;
@@ -538,16 +522,6 @@
 
 :root:has(.cp) .theme-veil[data-to='light'] {
   background-color: var(--color-card);
-}
-
-@keyframes theme-reveal {
-  from {
-    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0));
-  }
-
-  to {
-    clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 0));
-  }
 }
 
 /* While the mode changes, nothing fades between its old and new colours: the
