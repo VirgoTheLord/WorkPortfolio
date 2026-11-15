@@ -273,11 +273,25 @@ export type CompactContent = {
     /** The greeting, set in the text colour; the rest of the sentence after it. */
     hello: string
     lede: readonly LedePart[]
-    /** The toolbar on the selected words: its name, the faces, the two inks. */
+    /** The toolbar on the selected words: a small editor for three words. */
     restyle: {
       label: string
-      faces: readonly { id: 'display' | 'hand' | 'sign' | 'mono'; label: string }[]
+      /** Each face's name, set in that face (so only in glyphs its cut has). */
+      faces: readonly {
+        id: 'display' | 'hand' | 'sign' | 'mono' | 'gothic' | 'wide'
+        label: string
+      }[]
+      /** What each style toggle is called, and the letter it shows. */
+      styles: readonly {
+        id: 'bold' | 'italic' | 'underline' | 'strike'
+        label: string
+        glyph: string
+      }[]
+      size: { smaller: string; larger: string }
       inks: readonly { id: 'ink' | 'red'; label: string }[]
+      /** The desk's highlighters, behind the words. */
+      marks: readonly { id: 'yellow' | 'pink' | 'blue'; label: string }[]
+      reset: string
     }
     /** The way-out sentence: plain text with ballpoint chips between. */
     reach: readonly (string | NavItem)[]

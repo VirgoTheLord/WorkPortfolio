@@ -171,18 +171,35 @@ export const compact = {
       { select: 'one thing well' },
       '.',
     ],
+    /* Each face's button is set in that face, so its name has to be in the
+       face's cut: Caveat's is lowercase only, the hero's Archivo capitals only. */
     restyle: {
       label: 'Restyle these words',
       faces: [
         { id: 'display', label: 'Bricolage' },
-        { id: 'hand', label: 'Caveat' },
+        { id: 'hand', label: 'caveat' },
         { id: 'sign', label: 'Kristi' },
         { id: 'mono', label: 'Mono' },
+        { id: 'gothic', label: 'Gothic' },
+        { id: 'wide', label: 'WIDE' },
       ],
+      styles: [
+        { id: 'bold', label: 'Bold', glyph: 'B' },
+        { id: 'italic', label: 'Italic', glyph: 'I' },
+        { id: 'underline', label: 'Underline', glyph: 'U' },
+        { id: 'strike', label: 'Strike through', glyph: 'S' },
+      ],
+      size: { smaller: 'Smaller', larger: 'Larger' },
       inks: [
         { id: 'ink', label: 'Ink' },
         { id: 'red', label: 'Red' },
       ],
+      marks: [
+        { id: 'yellow', label: 'Yellow highlighter' },
+        { id: 'pink', label: 'Pink highlighter' },
+        { id: 'blue', label: 'Blue highlighter' },
+      ],
+      reset: 'Reset',
     },
     reach: [
       'Find me on ',
