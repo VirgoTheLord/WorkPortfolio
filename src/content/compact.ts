@@ -159,10 +159,31 @@ export const compact = {
     lede: [
       ' I test software at ',
       { chip: 'job' },
-      ' by day, and by night I build ',
+      ' ',
+      { light: 'day', text: 'by day' },
+      ', and ',
+      { light: 'night', text: 'by night' },
+      ' I build ',
       { chip: 'work' },
-      ', a library of interface pieces that each do one thing well.',
+      ', a library of ',
+      { tiles: ['interface', 'pieces'] },
+      ' that each do ',
+      { select: 'one thing well' },
+      '.',
     ],
+    restyle: {
+      label: 'Restyle these words',
+      faces: [
+        { id: 'display', label: 'Bricolage' },
+        { id: 'hand', label: 'Caveat' },
+        { id: 'sign', label: 'Kristi' },
+        { id: 'mono', label: 'Mono' },
+      ],
+      inks: [
+        { id: 'ink', label: 'Ink' },
+        { id: 'red', label: 'Red' },
+      ],
+    },
     reach: [
       'Find me on ',
       profiles[0],
