@@ -245,7 +245,15 @@ export type PaletteCommand = {
 }
 
 /** A part of the opening sentence: words, or one of the chips riding in it. */
-export type LedePart = string | { chip: 'job' | 'work' }
+export type LedePart =
+  | string
+  | { chip: 'job' | 'work' }
+  /** Words that, pointed at, put the sentence in that light. */
+  | { light: 'day' | 'night'; text: string }
+  /** Words as key-cap tiles to pick up and drop; they spring back. */
+  | { tiles: readonly string[] }
+  /** Words shown selected, as in an editor, with a toolbar to restyle them. */
+  | { select: string }
 
 /**
  * The compact site (/compact): the portfolio in short, as a few plain sentences
@@ -265,6 +273,12 @@ export type CompactContent = {
     /** The greeting, set in the text colour; the rest of the sentence after it. */
     hello: string
     lede: readonly LedePart[]
+    /** The toolbar on the selected words: its name, the faces, the two inks. */
+    restyle: {
+      label: string
+      faces: readonly { id: 'display' | 'hand' | 'sign' | 'mono'; label: string }[]
+      inks: readonly { id: 'ink' | 'red'; label: string }[]
+    }
     /** The way-out sentence: plain text with ballpoint chips between. */
     reach: readonly (string | NavItem)[]
   }
