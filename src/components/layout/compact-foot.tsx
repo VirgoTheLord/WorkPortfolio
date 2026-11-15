@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FlapText } from '@/components/ui/flap-text'
 import { compact } from '@/content/compact'
 import { legal } from '@/content/legal'
 import { site } from '@/content/site'
@@ -18,14 +19,14 @@ export function CompactFoot() {
         <p className="cp-meta">{footer.made}</p>
       </div>
       <nav aria-label={footer.label} className="cp-foot-nav">
-        <Link href={footer.back.href} className="cp-link">
-          {footer.back.label}
+        <Link href={footer.back.href} className="cp-flap-link">
+          <FlapText>{footer.back.label}</FlapText>
         </Link>
-        <Link href={legal.footerLink.href} className="cp-link">
-          {legal.footerLink.label}
+        <Link href={legal.footerLink.href} className="cp-flap-link">
+          <FlapText>{legal.footerLink.label}</FlapText>
         </Link>
-        <a href="#top" className="cp-link">
-          {footer.top}
+        <a href="#top" className="cp-flap-link">
+          <FlapText>{footer.top}</FlapText>
         </a>
       </nav>
     </footer>
