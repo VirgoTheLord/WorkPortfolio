@@ -57,52 +57,39 @@ function apply(theme: Theme) {
   } catch {}
 }
 
-/* One switch at a time: the transition in flight, the mode it is going to, and
-   the mode asked for while it runs (with where it was asked from). */
+/* One switch at a time: the change in flight, the mode it is going to, and
+   the mode asked for while it runs. */
 let running: { to: Theme } | null = null
-let queued: { to: Theme; origin?: { x: number; y: number } } | null = null
+let queued: { to: Theme } | null = null
 
 /* Set while the mode changes. globals.css stops every colour transition under
-   it, so the new mode is drawn in its final colours at once (otherwise each
-   element fades from the old colours inside the opening circle: the flicker),
-   and gives the reveal its keyframes from the very first frame. */
+   it, so the new mode is drawn in its final colours at once under the veil. */
 const SWITCHING = 'theme-switching'
 
 /*
- * Flips the mode. Where the browser has view transitions, the new mode opens as
- * a circle from `origin` (the switch) over the old one; on a touch screen it
- * dips through the new page colour instead (`dip`); with reduced motion, or
- * without view transitions, it simply changes.
- *
- * The circle is a CSS animation on ::view-transition-new(root), keyed by the
- * class above and the --vt-* variables, so it is in place on the first frame the
- * transition paints. Started from script once the transition was ready, the new
- * mode showed whole for a frame first: the flash.
- *
- * Presses while a switch is running never cut it short (cutting it snaps the
- * half-open circle to the end: another flash). They are queued, and only the
- * last answer counts: when the circle has finished, if the mode asked for is not
- * the one on screen, it opens from where it was asked. An even number of presses
- * therefore ends where it started, with nothing further to play.
+ * Flips the mode: the screen dips through the new page colour (`dip`); with
+ * reduced motion it simply changes. Presses while a change is running never
+ * cut it short; they are queued, and only the last answer counts: when the dip
+ * has finished, if the mode asked for is not the one on screen, it runs again.
+ * An even number of presses therefore ends where it started.
  *
  * Returns the mode the page is going to.
  */
-export function switchTheme(origin?: { x: number; y: number }): Theme {
+export function switchTheme(): Theme {
   const from = queued?.to ?? running?.to ?? readTheme()
   const next: Theme = from === 'dark' ? 'light' : 'dark'
   if (running) {
-    queued = { to: next, origin }
+    queued = { to: next }
     return next
   }
-  run(next, origin)
+  run(next)
   return next
 }
 
-/* Phones and tablets: a dip. The screen fades to the new mode's page colour,
-   the mode changes under it, and it fades away. The circle (a view
-   transition) snapshots the page, and on phones the snapshot misbehaves
-   under the collapsing address bar; a plain veil cannot. Timings in ms. */
-const touch = '(hover: none) and (pointer: coarse)'
+/* The change itself, everywhere (owner's call, November 2026): a dip. The
+   screen fades to the new mode's page colour, the mode changes under it, and
+   it fades away. It replaced a circle opening from the switch (a view
+   transition), whose snapshot of the page misbehaved on phones. Timings in ms. */
 const DIP_IN = 180
 const DIP_OUT = 340
 
@@ -119,7 +106,7 @@ function dip(next: Theme) {
     root.classList.remove(SWITCHING)
     const wanted = queued
     queued = null
-    if (wanted && wanted.to !== readTheme()) run(wanted.to, wanted.origin)
+    if (wanted && wanted.to !== readTheme()) run(wanted.to)
   }
   const show = veil.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: DIP_IN,
@@ -145,17 +132,10 @@ function dip(next: Theme) {
   }
 }
 
-function run(next: Theme, origin?: { x: number; y: number }) {
+function run(next: Theme) {
   const root = document.documentElement
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   root.classList.add(SWITCHING)
-
-  if (!still && window.matchMedia(touch).matches) {
-    dip(next)
-    return
-  }
-
-  if (still || !('startViewTransition' in document)) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     apply(next)
     // Two frames: the new colours are painted before transitions come back.
     window.requestAnimationFrame(() =>
@@ -163,36 +143,5 @@ function run(next: Theme, origin?: { x: number; y: number }) {
     )
     return
   }
-
-  const x = origin?.x ?? window.innerWidth / 2
-  const y = origin?.y ?? 0
-  // The circle must clear the snapshot, not just the window: on a phone the
-  // snapshot also runs under the collapsing address bar, so the window's height
-  // left the bottom corners uncovered until the end, where they popped in (the
-  // owner's recording). The tallest the screen can be, plus a margin, so the
-  // edge has passed the corners well before the easing's slow tail.
-  const w = window.innerWidth
-  const h = Math.max(
-    window.innerHeight,
-    document.documentElement.clientHeight,
-    window.screen.height,
-  )
-  const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y)) * 1.1
-  root.style.setProperty('--vt-x', `${x}px`)
-  root.style.setProperty('--vt-y', `${y}px`)
-  root.style.setProperty('--vt-r', `${Math.ceil(radius)}px`)
-
-  running = { to: next }
-  const transition = document.startViewTransition(() => apply(next))
-  // `finished` settles however the transition ends (played, or skipped by the
-  // browser in a hidden tab); the mode has changed either way.
-  transition.finished
-    .catch(() => {})
-    .finally(() => {
-      running = null
-      root.classList.remove(SWITCHING)
-      const wanted = queued
-      queued = null
-      if (wanted && wanted.to !== readTheme()) run(wanted.to, wanted.origin)
-    })
+  dip(next)
 }

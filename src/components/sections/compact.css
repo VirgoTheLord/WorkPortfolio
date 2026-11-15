@@ -67,9 +67,32 @@
   scroll-margin-top: calc(var(--spacing) * 6);
 }
 
+/* The glow from the top edge (interactive/top-glow.tsx): behind everything,
+   the page's width, fading in on its first frame. */
+.cp {
+  position: relative;
+  isolation: isolate;
+}
+
+.cp-glow {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  width: 100%;
+  height: clamp(calc(var(--spacing) * 64), 48vh, calc(var(--spacing) * 120));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.6s var(--ease-expo);
+}
+
+.cp-glow[data-gl='on'] {
+  opacity: 1;
+}
+
 /* The column. */
 .cp-col {
   position: relative;
+  z-index: 1;
   max-width: var(--cp-col);
   margin-inline: auto;
 }
@@ -250,36 +273,6 @@ html:not(.js) .cp-replay-button {
 
 html:not(.js) .cp-hint {
   display: none;
-}
-
-/* On a phone the top line is a bar: flush with the top of the screen (under
-   the notch's safe area), the full width with its rules edge to edge, and
-   pinned while the page scrolls, so the column starts at once instead of
-   under a band of empty space. */
-@media (width < 36rem) {
-  .cp {
-    padding-top: 0;
-  }
-
-  .cp-top {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    margin-inline: calc(var(--cp-pad) * -1);
-    padding: calc(env(safe-area-inset-top, 0px) + var(--spacing) * 3) var(--cp-pad) 0;
-    border-bottom: var(--cp-dash);
-    background-color: var(--color-bg);
-  }
-
-  .cp-top-meta {
-    flex-basis: calc(100% + var(--cp-pad) * 2);
-    margin-inline: calc(var(--cp-pad) * -1);
-    padding: calc(var(--spacing) * 2.5) var(--cp-pad);
-  }
-
-  .cp-main {
-    margin-top: calc(var(--spacing) * 10);
-  }
 }
 
 /* The picture (interactive/hood-avatar.tsx): the drawing under the canvas
