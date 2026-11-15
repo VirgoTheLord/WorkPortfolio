@@ -1,5 +1,6 @@
 import type { ChipLink, CompactContent, PaletteCommand } from '@/types/content'
 import hood from './profile/hood.svg'
+import sunset from './scene/sunset.jpg'
 import { projects } from './projects'
 import { contact, education, experience, place, site } from './site'
 import { workbench } from './workbench'
@@ -151,6 +152,13 @@ export const compact = {
     avatar: {
       image: hood,
       alt: 'An illustrated figure in a red hood with long rabbit ears, its face in shadow.',
+    },
+    /* The picture at the top of the home (owner's pick, November 2026): a
+       photo by Szymon Shields, Unsplash License, credited on /legal. Cropped
+       to 3:2 around the sun; made alive by interactive/sunset-scene.tsx. */
+    scene: {
+      image: sunset,
+      alt: 'A red sun setting behind thin cloud over the dark outline of a city.',
     },
     place: place.split(',')[0] ?? place,
     time: { zone: 'Asia/Kolkata', fallback: 'IST, UTC+05:30' },
