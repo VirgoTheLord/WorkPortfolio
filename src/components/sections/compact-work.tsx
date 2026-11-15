@@ -14,7 +14,7 @@ const { soon } = compact.work
 export function CompactWork() {
   return (
     <CompactBlock id="work">
-      <ul className="cp-list">
+      <ul className="cp-list cp-list-focus">
         {projects.map((project) => (
           <li key={project.slug}>
             <a

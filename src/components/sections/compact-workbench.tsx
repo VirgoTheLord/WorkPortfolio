@@ -28,7 +28,9 @@ export function CompactWorkbench() {
         {workbench.items.map((item) => (
           <li key={item.slug}>
             <Link href={`/compact/components/${item.slug}`} className="cp-line cp-line-wide">
-              <span>{item.name}</span>
+              <span>
+                <FlapText>{item.name}</FlapText>
+              </span>
               <span className="cp-line-note">{item.note}</span>
             </Link>
           </li>
