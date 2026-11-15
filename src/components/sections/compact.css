@@ -458,43 +458,34 @@ html:not(.js) .cp-hint {
 
 .cp-block-head {
   display: flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 3);
+  align-items: flex-end;
+  border-bottom: 2px solid var(--color-fg);
 }
 
 /* Type, largest to smallest: the opening sentence (base, display), each
-   section's heading (base, display, heavier, with the red square), the rows'
-   names (small, the text colour), their notes (small, muted), and the facts
-   (extra small, mono). The heading also draws a rule to its aside, so a
-   section's start reads at a glance. */
+   section's heading, the rows' names (small, the text colour), their notes
+   (small, muted), and the facts (extra small, mono).
+
+   A section's heading is a folder tab (owner's pick, November 2026; the full
+   site's folders, small): the word on a dark tab cut at 45° on its right,
+   standing on the folder's edge, a rule the full width of the column, with
+   the aside above it at the right; a section's start reads at a glance. */
 .cp-block-title {
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 2.5);
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 5) calc(var(--spacing) * 1.25)
+    calc(var(--spacing) * 2.75);
+  background-color: var(--color-fg);
+  color: var(--color-bg);
   font-family: var(--font-display);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--color-fg);
-}
-
-.cp-block-title::before {
-  content: '';
-  width: calc(var(--spacing) * 1.75);
-  height: calc(var(--spacing) * 1.75);
-  background-color: var(--color-red);
-}
-
-.cp-block-head::after {
-  content: '';
-  order: 1;
-  flex: 1;
-  height: 1px;
-  background-color: var(--cp-tint);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  clip-path: polygon(0 0, calc(100% - var(--spacing) * 3.5) 0, 100% 100%, 0 100%);
 }
 
 .cp-block-head > .cp-meta {
-  order: 2;
+  margin-left: auto;
+  padding: 0 0 calc(var(--spacing) * 1.5) calc(var(--spacing) * 3);
 }
 
 .cp-list {
