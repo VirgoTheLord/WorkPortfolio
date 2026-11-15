@@ -70,8 +70,9 @@ const SWITCHING = 'theme-switching'
 
 /*
  * Flips the mode. Where the browser has view transitions, the new mode opens as
- * a circle from `origin` (the switch) over the old one; with reduced motion, or
- * without them, it simply changes.
+ * a circle from `origin` (the switch) over the old one; on a touch screen it
+ * dips through the new page colour instead (`dip`); with reduced motion, or
+ * without view transitions, it simply changes.
  *
  * The circle is a CSS animation on ::view-transition-new(root), keyed by the
  * class above and the --vt-* variables, so it is in place on the first frame the
@@ -97,10 +98,62 @@ export function switchTheme(origin?: { x: number; y: number }): Theme {
   return next
 }
 
+/* Phones and tablets: a dip. The screen fades to the new mode's page colour,
+   the mode changes under it, and it fades away. The circle (a view
+   transition) snapshots the page, and on phones the snapshot misbehaves
+   under the collapsing address bar; a plain veil cannot. Timings in ms. */
+const touch = '(hover: none) and (pointer: coarse)'
+const DIP_IN = 180
+const DIP_OUT = 340
+
+function dip(next: Theme) {
+  const root = document.documentElement
+  const veil = document.createElement('div')
+  veil.className = 'theme-veil'
+  veil.dataset.to = next
+  veil.setAttribute('aria-hidden', 'true')
+  document.body.append(veil)
+  running = { to: next }
+  const settle = () => {
+    running = null
+    root.classList.remove(SWITCHING)
+    const wanted = queued
+    queued = null
+    if (wanted && wanted.to !== readTheme()) run(wanted.to, wanted.origin)
+  }
+  const show = veil.animate([{ opacity: 0 }, { opacity: 1 }], {
+    duration: DIP_IN,
+    easing: 'cubic-bezier(0.4, 0, 1, 1)',
+    fill: 'forwards',
+  })
+  show.onfinish = () => {
+    apply(next)
+    // Two frames: the new mode is painted under the veil before it lifts.
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => {
+        const hide = veil.animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: DIP_OUT,
+          easing: 'cubic-bezier(0, 0, 0.2, 1)',
+          fill: 'forwards',
+        })
+        hide.onfinish = () => {
+          veil.remove()
+          settle()
+        }
+      }),
+    )
+  }
+}
+
 function run(next: Theme, origin?: { x: number; y: number }) {
   const root = document.documentElement
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   root.classList.add(SWITCHING)
+
+  if (!still && window.matchMedia(touch).matches) {
+    dip(next)
+    return
+  }
 
   if (still || !('startViewTransition' in document)) {
     apply(next)
