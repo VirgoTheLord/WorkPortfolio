@@ -289,8 +289,11 @@ export type CompactContent = {
     pencil: { label: string }
   }
   footer: {
+    /** The foot's links, named for assistive tech. */
+    label: string
     made: string
     back: NavItem
+    top: string
   }
   search: {
     label: string

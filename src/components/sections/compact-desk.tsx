@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { DeskBoard } from '@/components/interactive/desk-board'
+import { ShortcutModifier } from '@/components/interactive/shortcut-label'
 import { compact } from '@/content/compact'
 import { projects } from '@/content/projects'
 import { contact, site } from '@/content/site'
@@ -135,7 +136,12 @@ export function CompactDesk() {
             y: 66,
             turn: -10,
             label: desk.key.label,
-            node: <kbd className="cp-keycap cp-keycap-big">{desk.key.text}</kbd>,
+            node: (
+              <kbd className="cp-keycap cp-keycap-big">
+                <ShortcutModifier />
+                {desk.key.text}
+              </kbd>
+            ),
           },
           {
             id: 'pencil',

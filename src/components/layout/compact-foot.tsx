@@ -3,23 +3,31 @@ import { compact } from '@/content/compact'
 import { legal } from '@/content/legal'
 import { site } from '@/content/site'
 
-/* The foot: the name in a quick pen hand (Kristi); under it where it was made,
-   and on the right, small, the ways out. */
+const { footer } = compact
+
+/*
+ * The foot, read as two sides under a rule: on the left who made it, the name
+ * in a quick pen hand (Kristi) and where it was made; on the right where to go
+ * next, one link to a line: the full site, the terms, back to the top.
+ */
 export function CompactFoot() {
   return (
     <footer className="cp-foot">
-      <p className="cp-sign">{site.name}</p>
-      <div className="cp-foot-row cp-meta">
-        <p>{compact.footer.made}</p>
-        <p className="cp-foot-links">
-          <Link href={compact.footer.back.href} className="cp-link">
-            {compact.footer.back.label}
-          </Link>
-          <Link href={legal.footerLink.href} className="cp-link">
-            {legal.footerLink.label}
-          </Link>
-        </p>
+      <div className="cp-foot-sign">
+        <p className="cp-sign">{site.name}</p>
+        <p className="cp-meta">{footer.made}</p>
       </div>
+      <nav aria-label={footer.label} className="cp-foot-nav">
+        <Link href={footer.back.href} className="cp-link">
+          {footer.back.label}
+        </Link>
+        <Link href={legal.footerLink.href} className="cp-link">
+          {legal.footerLink.label}
+        </Link>
+        <a href="#top" className="cp-link">
+          {footer.top}
+        </a>
+      </nav>
     </footer>
   )
 }

@@ -242,13 +242,15 @@ export const compact = {
       state: '● cooking',
       label: 'A kitchen ticket: order 02, in the oven',
     },
-    key: { text: '⌘K', label: 'A loose key cap, command K: press it to search' },
+    key: { text: 'K', label: 'A loose key cap, the search shortcut: press it to search' },
     card: { mark: 'AW', label: 'My business card' },
     sticker: { text: 'open to work', label: 'A round red sticker: open to work' },
     pencil: { label: 'A pencil' },
   },
   footer: {
+    label: 'Footer',
     made: `Made in ${place.split(',')[0]}, ${site.year}`,
+    top: 'Back to top',
     back: { label: 'The full site', href: '/' },
   },
   search: {
