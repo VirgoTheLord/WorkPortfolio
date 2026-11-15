@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { WorkStack } from '@/components/motion/work-stack'
-import { projects } from '@/content/projects'
+import { fullSiteProjects as projects } from '@/content/projects'
 import { work } from '@/content/site'
 import './work.css'
 
