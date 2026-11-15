@@ -308,6 +308,8 @@ export type CompactContent = {
     label: string
     /** After the shortcut's keys in the top line ("⌘ K to search"). */
     hint: string
+    /** The same, on a touch screen, where there are no keys. */
+    touch: string
     placeholder: string
     /** What the idle field suggests, in turn. */
     empty: string

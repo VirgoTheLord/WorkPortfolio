@@ -253,6 +253,7 @@ export const compact = {
   search: {
     label: 'Search the site',
     hint: 'to search',
+    touch: 'Search',
     placeholder: 'Search…',
     empty: 'Nothing here. Try “stack”, “email” or “key”.',
     commands,
