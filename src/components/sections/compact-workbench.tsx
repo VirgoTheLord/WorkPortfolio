@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FlapText } from '@/components/ui/flap-text'
 import { compact } from '@/content/compact'
 import { workbench } from '@/content/workbench'
 import { CompactBlock } from './compact-block'
@@ -13,8 +14,13 @@ export function CompactWorkbench() {
     <CompactBlock
       id="workbench"
       aside={
-        <a href={compact.workbench.all.href} target="_blank" rel="noreferrer" className="cp-link">
-          {compact.workbench.all.label}
+        <a
+          href={compact.workbench.all.href}
+          target="_blank"
+          rel="noreferrer"
+          className="cp-flap-link"
+        >
+          <FlapText>{compact.workbench.all.label}</FlapText>
         </a>
       }
     >
