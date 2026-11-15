@@ -1,7 +1,7 @@
 import type { ChipLink, CompactContent, PaletteCommand } from '@/types/content'
 import hood from './profile/hood.svg'
 import { projects } from './projects'
-import { contact, education, experience, place, site, tagline } from './site'
+import { contact, education, experience, place, site } from './site'
 import { workbench } from './workbench'
 
 const [job] = experience
@@ -140,8 +140,8 @@ const commands: readonly PaletteCommand[] = [
 export const compact = {
   meta: {
     /* The whole tab title (it replaces the root template). */
-    title: `${site.name} · ${site.role}, in short`,
-    description: `${site.role} in ${place}. ${tagline} The work, a few live interface pieces, the stack and how to reach me, on one page.`,
+    title: `${site.name} — ${site.role}`,
+    description: `${site.name}, ${site.role.toLowerCase()} in ${place}, India. Software Development Engineer in Test at ${job.org}; frontend work in Next.js, React and TypeScript; and Cairn, a React component library.`,
   },
   sections,
   intro: {
@@ -175,7 +175,7 @@ export const compact = {
   },
   work: {
     soon: {
-      items: ['What comes next', 'And after that'],
+      items: ['What comes next'],
       note: 'Currently cooking',
       state: 'Soon',
     },
@@ -188,23 +188,28 @@ export const compact = {
     },
   },
   experience: [
-    { org: job.org, role: job.role, when: job.current ? 'Now' : 'Work' },
-    { org: degree.school, role: `${degree.degree}, ${degree.field}`, when: 'Study' },
+    ...experience.map((item) => ({ org: item.org, role: item.role, when: item.when })),
+    { org: degree.school, role: `${degree.degree}, ${degree.field}`, when: degree.when },
   ],
   stack: {
     items: [
       'TypeScript',
       'JavaScript',
+      'Python',
+      'Go',
       'HTML',
       'CSS',
       'React',
       'Next.js',
       'Tailwind CSS',
       'GSAP',
+      'Framer Motion',
       'Lenis',
       'Node.js',
       'Express',
       'MongoDB',
+      'PostgreSQL',
+      'Prisma',
       'Git',
       'pnpm',
       'ESLint',

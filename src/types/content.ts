@@ -133,10 +133,10 @@ export type SiteConfig = {
 }
 
 /** A role held at an organisation. Only verified facts; dates when known. */
-export type ExperienceItem = { org: string; role: string; current?: boolean }
+export type ExperienceItem = { org: string; role: string; current?: boolean; when?: string }
 
 /** A course of study. Only verified facts; dates when known. */
-export type EducationItem = { school: string; degree: string; field: string }
+export type EducationItem = { school: string; degree: string; field: string; when?: string }
 
 /**
  * A piece of the interface, with its own page on the compact site's workbench

@@ -1,11 +1,13 @@
 import type { ProjectMeta } from '@/types/content'
 import cairnCover from './cairn/cover.png'
+import galenCover from './galen/cover.png'
 
 /*
- * Selected work. Only Cairn for now (owner's choice, November 2026): its live
- * site is w-ui.vercel.app; the repository is private, so no source link. No
- * placeholder projects: the compact site says more is on the way in one line.
- * The section renders however many are listed, in this order.
+ * Selected work (owner's choice, November 2026): Cairn, the owner's library
+ * (live at w-ui.vercel.app; the repository is private, so no source link), and
+ * Galen AI's landing page, freelance work from the resume (live at
+ * galenai.io, a Next.js site). No placeholder projects. The sections render
+ * however many are listed, in this order.
  */
 export const projects: readonly ProjectMeta[] = [
   {
@@ -20,6 +22,20 @@ export const projects: readonly ProjectMeta[] = [
     cover: {
       image: cairnCover,
       alt: 'The Cairn home page: "Interface details, stacked with care." set large in white over a red, scan-lined backdrop, above a Browse components button and an npm install command.',
+    },
+  },
+  {
+    slug: 'galen-ai',
+    title: 'Galen AI',
+    summary:
+      'The landing page for GalenAI, an AI mentor for medical exams: built freelance for clean UI and conversion, with an interactive product demo for onboarding.',
+    category: 'Landing page',
+    year: '2026',
+    stack: ['Next.js', 'React'],
+    href: 'https://galenai.io',
+    cover: {
+      image: galenCover,
+      alt: 'The GalenAI home page: "Your personal AI companion for daily medical learning." in black and orange, above Try GalenAI and Download Now For Free buttons and a row of medical college logos.',
     },
   },
 ]
