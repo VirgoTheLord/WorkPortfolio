@@ -1,11 +1,8 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
+import { ShortcutModifier } from './shortcut-label'
 
 type Props = { label: string; touch: string }
-
-const noop = () => () => {}
-const apple = () => /mac|iphone|ipad|ipod/i.test(navigator.platform)
 
 /*
  * The search, said rather than shown (owner's call, November 2026): a small
@@ -14,8 +11,6 @@ const apple = () => /mac|iphone|ipad|ipod/i.test(navigator.platform)
  * search's own trigger, which stays mounted out of sight (compact.css).
  */
 export function SearchHint({ label, touch }: Props) {
-  const mac = useSyncExternalStore(noop, apple, () => null)
-
   return (
     <button
       type="button"
@@ -25,7 +20,9 @@ export function SearchHint({ label, touch }: Props) {
       }
     >
       <span className="cp-hint-keys">
-        <kbd className="cp-hint-key">{mac === false ? 'Ctrl' : '⌘'}</kbd>
+        <kbd className="cp-hint-key">
+          <ShortcutModifier />
+        </kbd>
         <kbd className="cp-hint-key">K</kbd>
         <span>{label}</span>
       </span>
