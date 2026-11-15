@@ -21,14 +21,14 @@ export function CompactTop() {
       <Link href="/compact" className="cp-who">
         <HoodAvatar {...intro.avatar} />
         <span>
-          <span className="cp-name block">{site.name}</span>
-          <span className="block">
-            {intro.role}
+          <span className="cp-name block">
+            {site.name}
             <span className="cp-status">
               <span aria-hidden="true" className="cp-status-dot" />
               {intro.status}
             </span>
           </span>
+          <span className="block">{intro.role}</span>
         </span>
       </Link>
       <ContourSwitch {...compact.theme} />

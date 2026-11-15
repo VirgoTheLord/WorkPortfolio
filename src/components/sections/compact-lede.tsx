@@ -30,7 +30,7 @@ export function CompactLede() {
             )
           if (!project) return null
           return (
-            <a key={i} href={project.href ?? '#work'} className="cp-chip">
+            <a key={i} href={project.href ?? '#work'} className="cp-chip cp-chip-work">
               <span aria-hidden="true" className="cp-chip-mark">
                 {project.title[0]}
               </span>

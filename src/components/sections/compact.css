@@ -183,27 +183,53 @@ html:not(.js) .cp-replay-button {
   border-top: var(--cp-dash);
 }
 
-/* "Open to work", after the role: the owner's word, with a red dot that
-   breathes. */
+/* "Open to work": a small badge after the name, tinted red, its dot sending
+   out a ring now and then like a radio light. */
 .cp-status {
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--spacing) * 1.5);
+  gap: calc(var(--spacing) * 1.75);
   margin-left: calc(var(--spacing) * 2.5);
-  color: var(--color-fg);
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2.5) calc(var(--spacing) * 0.5)
+    calc(var(--spacing) * 2);
+  border: 1px solid color-mix(in oklab, var(--color-red) 35%, transparent);
+  border-radius: 999px;
+  background-color: color-mix(in oklab, var(--color-red) 10%, transparent);
+  color: color-mix(in oklab, var(--color-red), var(--color-fg) 45%);
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1.5;
+  vertical-align: 0.1em;
 }
 
 .cp-status-dot {
+  position: relative;
   width: calc(var(--spacing) * 1.5);
   height: calc(var(--spacing) * 1.5);
   border-radius: 50%;
   background-color: var(--color-red);
-  animation: cp-breathe 2.4s var(--ease-in-out) infinite;
 }
 
-@keyframes cp-breathe {
-  50% {
-    opacity: 0.35;
+.cp-status-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--color-red);
+  border-radius: 50%;
+  animation: cp-ping 2.6s var(--ease-expo) infinite;
+}
+
+@keyframes cp-ping {
+  0% {
+    opacity: 0.9;
+    scale: 1;
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    scale: 3.2;
   }
 }
 
@@ -293,7 +319,7 @@ html:not(.js) .cp-hint {
    colour, the rest a step back; the job and the work ride in it as chips. */
 .cp-lede {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   line-height: 1.38;
   letter-spacing: -0.015em;
 }
@@ -318,6 +344,11 @@ html:not(.js) .cp-hint {
   transition:
     rotate var(--duration-base) var(--cp-spring),
     translate var(--duration-base) var(--cp-spring);
+}
+
+/* Room before the comma that follows the work's chip. */
+.cp-chip-work {
+  margin-right: 0.25em;
 }
 
 .cp-chip:hover,
@@ -947,10 +978,18 @@ a.cp-line:hover > .cp-meta {
   color: var(--color-fg);
 }
 
-.cp-foot-links {
+.cp-foot-row {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(var(--spacing) * 5);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 5);
+}
+
+.cp-foot-links {
+  display: flex;
+  gap: calc(var(--spacing) * 4);
+  font-size: 0.85em;
 }
 
 /* The layout grid (the search's one small secret): the column's eight
@@ -974,8 +1013,9 @@ a.cp-line:hover > .cp-meta {
     animation: none;
   }
 
-  .cp-status-dot {
+  .cp-status-dot::after {
     animation: none;
+    opacity: 0;
   }
 
   .cp-chip,
@@ -1620,8 +1660,15 @@ a.cp-line:hover > .cp-meta {
   stroke-width: 1;
 }
 
-.cp-contour-still .cp-contour-sun {
+.cp-contour-still .cp-contour-sun,
+.cp-contour-still .cp-contour-rays {
   stroke: var(--color-red);
+  stroke-linecap: round;
+}
+
+.cp-contour-still .cp-contour-core {
+  stroke: none;
+  fill: var(--color-red);
 }
 
 .cp-contour-cut {
@@ -1634,8 +1681,64 @@ a.cp-line:hover > .cp-meta {
   visibility: visible;
 }
 
+:root[data-theme='dark'] :is(.cp-contour-rays, .cp-contour-core) {
+  visibility: hidden;
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .cp-contour-cut {
     visibility: visible;
+  }
+
+  :root:not([data-theme='light']) :is(.cp-contour-rays, .cp-contour-core) {
+    visibility: hidden;
+  }
+}
+
+/* Arrival (interactive/blur-reveal.tsx, owner's pick): each thing comes in
+   out of a blur and settles, a step after the one before; below the screen,
+   as it scrolls in. Hidden only once script is known to run (the root layout
+   sets `js` before first paint) and never with reduced motion. The motion is
+   an animation filling backwards, so once played it leaves every element's
+   own transforms and transitions as they were. Keep the list in step with the
+   component's. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js
+    .cp
+    :is(
+      .cp-who,
+      .cp-contour,
+      .cp-top-meta,
+      .cp-lede,
+      .cp-reach,
+      .cp-block-head,
+      .cp-list > li,
+      .cp-keycaps > li,
+      .cp-thing,
+      .cp-foot > *,
+      .cp-crumbs,
+      .cp-piece-head > *,
+      .cp-stage,
+      .cp-head,
+      .cp-steps > li,
+      .cp-rows > div,
+      .cp-pager,
+      .cp-bench-item
+    ) {
+    &:not([data-in]) {
+      opacity: 0;
+    }
+
+    &[data-in] {
+      animation: cp-arrive 0.9s var(--ease-expo) var(--cp-in-delay, 0ms) backwards;
+    }
+  }
+}
+
+@keyframes cp-arrive {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    translate: 0 calc(var(--spacing) * 2);
   }
 }
