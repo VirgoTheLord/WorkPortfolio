@@ -19,7 +19,7 @@ Technical decisions for the portfolio. If code and this file disagree, either fi
 | Package manager | **pnpm** (via corepack) | Strict `node_modules` prevents phantom deps, which supports the minimal-dependency rule. |
 | Lint/format | ESLint (flat config, `eslint-config-next`) + Prettier + `prettier-plugin-tailwindcss` | Standard and boring on purpose. |
 | Testing | Playwright + `@axe-core/playwright` (smoke + a11y), Lighthouse CI budgets | Added in Phase 5. Add unit tests (Vitest) only when real logic exists. |
-| Hosting | **AWS S3 + CloudFront**, a static export (`output: 'export'` → `out/`) | The owner's choice (November 2026), deployed by hand. Private bucket behind CloudFront (OAC); a CloudFront function maps folder URLs to `index.html`. `next/image` runs unoptimized, so images are sized before they are committed. No servers, no database, no API routes. |
+| Hosting | **AWS S3 + CloudFront**, a static export (`output: 'export'` → `out/`) | The owner's choice (November 2026), deployed by hand. Private bucket behind CloudFront (OAC); addresses carry no trailing slash (`/compact`), each route is a file (`compact.html`), and a CloudFront viewer-request function (`infra/cloudfront-url.js`) maps the bare address onto it and sends old slashed links to the bare one. `next/image` runs unoptimized, so images are sized before they are committed. No servers, no database, no API routes. |
 
 **Recorded trade-off:** Astro would ship less JS by default. We chose Next.js because of preference and ecosystem, and we keep JS low through discipline: server components by default and small client islands.
 
