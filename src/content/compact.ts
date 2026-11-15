@@ -181,11 +181,7 @@ export const compact = {
     },
   },
   workbench: {
-    featured: ['foil-cards', 'chrome-upload', 'flap-segments', 'waveform-slider', 'record-stack'],
-    all: {
-      label: (count) => `All ${count} in Cairn`,
-      href: 'https://w-ui.vercel.app/components',
-    },
+    all: { label: 'Browse all in Cairn', href: 'https://w-ui.vercel.app/components' },
   },
   experience: [
     ...experience.map((item) => ({ org: item.org, role: item.role, when: item.when })),
