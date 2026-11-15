@@ -519,13 +519,25 @@
   animation: theme-reveal 0.8s var(--ease-expo) both;
 }
 
-/* On a touch screen, shorter and without expo's long tail: the circle's edge
-   crept along the bottom of a phone for half a second (owner's recording). */
-@media (hover: none) and (pointer: coarse) {
-  :root.theme-switching::view-transition-new(root) {
-    animation-duration: 0.6s;
-    animation-timing-function: var(--ease-in-out);
-  }
+/* On a touch screen there is no circle: lib/theme.ts dips through the new
+   mode's page colour with this veil instead (the snapshot the circle needs
+   misbehaved on phones). The veil is the colour of the page being switched to;
+   the compact site's light page is white. */
+.theme-veil {
+  position: fixed;
+  inset: -10vh 0;
+  z-index: 2147483647;
+  background-color: var(--color-white);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-veil[data-to='dark'] {
+  background-color: var(--color-black-deep);
+}
+
+:root:has(.cp) .theme-veil[data-to='light'] {
+  background-color: var(--color-card);
 }
 
 @keyframes theme-reveal {
