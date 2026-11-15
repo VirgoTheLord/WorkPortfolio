@@ -1673,7 +1673,7 @@ a.cp-line:hover > .cp-meta {
     }
 
     &[data-in] {
-      animation: cp-arrive 1.2s var(--ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1))
+      animation: cp-arrive var(--cp-in-time, 1.4s) cubic-bezier(0.22, 1, 0.36, 1)
         var(--cp-in-delay, 0ms) backwards;
     }
   }

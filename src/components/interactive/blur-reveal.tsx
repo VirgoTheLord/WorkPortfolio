@@ -25,20 +25,30 @@ const ARRIVING = [
   '.cp-bench-item',
 ].join(',')
 
-/* The gap between things arriving together, and the most any one waits;
-   the first arrival waits a beat for the page to settle. */
-const STAGGER = 120
-const MOST = 1800
-const FIRST = 150
+/* The opening sequence (what is on screen on arrival): it waits a beat, then
+   each thing starts a step after the one before and takes a little longer
+   than it, so the page settles slowly. What scrolls in later comes in at the
+   opening's first pace. In ms. */
+const BEAT = 200
+const STEP = 140
+const LONGEST_WAIT = 2400
+const FIRST_TAKES = 1400
+const EACH_LONGER = 90
+const LONGEST_TAKES = 2600
 
 /*
  * The compact site's arrival (owner's pick: blur, then sharp): everything
- * comes in out of a blur, a little after the thing before it; what is below
- * the screen does the same as it scrolls into view, once. The hidden state is
- * CSS, keyed off the `js` class the root layout sets before first paint, so
- * nothing shows and then vanishes; this only says when each thing is in.
- * Runs again on each page of the compact site. With reduced motion CSS never
- * hides anything, and this does nothing.
+ * comes in out of a blur, one thing after another; what is below the screen
+ * does the same as it scrolls into view, once. The hidden state is CSS, keyed
+ * off the `js` class the root layout sets before first paint, so nothing
+ * shows and then vanishes; this only says when each thing is in, and how
+ * long it takes.
+ *
+ * It starts over on every arrival: a page load, a link, and the browser's
+ * back and forward too, whether the router keeps the page or the browser
+ * restores it from its back-forward cache (`pageshow`). Without starting
+ * over, a page brought back half-revealed played half an entrance. With
+ * reduced motion CSS never hides anything, and this does nothing.
  */
 export function BlurReveal() {
   const path = usePathname()
@@ -47,36 +57,54 @@ export function BlurReveal() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const root = document.querySelector('.cp')
     if (!root) return
-    const waiting = [...root.querySelectorAll<HTMLElement>(ARRIVING)].filter(
-      (el) => !el.hasAttribute('data-in'),
-    )
-    let first = FIRST
-    const seen = new IntersectionObserver(
-      (entries) => {
-        const arriving = entries
-          .filter((entry) => entry.isIntersecting)
-          .map((entry) => entry.target as HTMLElement)
-          .sort((a, b) =>
-            a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
-          )
-        arriving.forEach((el, i) => {
-          el.style.setProperty('--cp-in-delay', `${Math.min(first + i * STAGGER, MOST)}ms`)
-          el.setAttribute('data-in', '')
-          seen.unobserve(el)
-        })
-        // Only the page's first arrival waits; later ones come as they scroll in.
-        first = 0
-      },
-      { rootMargin: '0px 0px -6% 0px', threshold: 0.12 },
-    )
-    // Start once the type is in, so nothing arrives and then reflows.
+
+    let seen: IntersectionObserver | null = null
     let alive = true
+
+    const start = () => {
+      seen?.disconnect()
+      const all = [...root.querySelectorAll<HTMLElement>(ARRIVING)]
+      all.forEach((el) => el.removeAttribute('data-in'))
+      let opening = true
+      seen = new IntersectionObserver(
+        (entries) => {
+          const arriving = entries
+            .filter((entry) => entry.isIntersecting)
+            .map((entry) => entry.target as HTMLElement)
+            .sort((a, b) =>
+              a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
+            )
+          arriving.forEach((el, i) => {
+            const wait = opening ? Math.min(BEAT + i * STEP, LONGEST_WAIT) : i * STEP
+            const takes = opening
+              ? Math.min(FIRST_TAKES + i * EACH_LONGER, LONGEST_TAKES)
+              : FIRST_TAKES
+            el.style.setProperty('--cp-in-delay', `${wait}ms`)
+            el.style.setProperty('--cp-in-time', `${takes}ms`)
+            el.setAttribute('data-in', '')
+            seen?.unobserve(el)
+          })
+          // Only the first batch is the opening; later ones come as they scroll in.
+          if (arriving.length) opening = false
+        },
+        { rootMargin: '0px 0px -6% 0px', threshold: 0.12 },
+      )
+      all.forEach((el) => seen?.observe(el))
+    }
+
+    // Start once the type is in, so nothing arrives and then reflows.
     void document.fonts.ready.then(() => {
-      if (alive) waiting.forEach((el) => seen.observe(el))
+      if (alive) start()
     })
+    const restored = (event: PageTransitionEvent) => {
+      if (event.persisted) start()
+    }
+    window.addEventListener('pageshow', restored)
+
     return () => {
       alive = false
-      seen.disconnect()
+      seen?.disconnect()
+      window.removeEventListener('pageshow', restored)
     }
   }, [path])
 
