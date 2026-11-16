@@ -8,6 +8,101 @@
  */
 @reference '../../app/globals.css';
 
+/* The restyle toolbar's faces (interactive/lede-select.tsx; owner's ask: every
+   button has to work): six families with real weights and, but for the hand,
+   real italics, so bold and italic are the face's own. Each is cut down to the
+   letters of "one thing well" and the faces' names (src/fonts/restyle), so a
+   face is a few KB; an italic loads only once italic is chosen. SIL OFL 1.1:
+   Instrument Sans, Fraunces, Azeret Mono, Caveat, Bitter, Archivo
+   (src/fonts/licenses). */
+@font-face {
+  font-family: 'Restyle Sans';
+  src: url('../../fonts/restyle/sans-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Sans';
+  src: url('../../fonts/restyle/sans-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Serif';
+  src: url('../../fonts/restyle/serif-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Serif';
+  src: url('../../fonts/restyle/serif-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Mono';
+  src: url('../../fonts/restyle/mono-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Mono';
+  src: url('../../fonts/restyle/mono-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Slab';
+  src: url('../../fonts/restyle/slab-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Slab';
+  src: url('../../fonts/restyle/slab-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Wide';
+  src: url('../../fonts/restyle/wide-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Wide';
+  src: url('../../fonts/restyle/wide-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Hand';
+  src: url('../../fonts/restyle/hand-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 :root:has(.cp) {
   --cp-second: var(--color-accent);
 }
@@ -591,42 +686,44 @@ html:not(.js) .cp-hint {
   bottom: -4px;
 }
 
-/* The toolbar's settings on the words. Each face carries its own size (the
-   hands are small for their size, the mono large); the size steps multiply it. */
+/* The toolbar's settings on the words. Each face carries its own size, so the
+   words keep about the same width whatever the face (and stay on one line);
+   the size steps multiply it. */
 .cp-select {
   --cp-face-size: 1em;
+  font-family: 'Restyle Sans', var(--font-text);
   font-size: calc(var(--cp-face-size) * var(--cp-select-size, 1));
+  white-space: nowrap;
 }
 
-.cp-select[data-face='hand'] {
-  --cp-face-size: 1.25em;
-  font-family: var(--font-hand);
-}
-
-.cp-select[data-face='sign'] {
-  --cp-face-size: 1.3em;
-  font-family: var(--font-sign);
+.cp-select[data-face='serif'] {
+  --cp-face-size: 0.98em;
+  font-family: 'Restyle Serif', serif;
 }
 
 .cp-select[data-face='mono'] {
-  --cp-face-size: 0.82em;
-  font-family: var(--font-label);
+  --cp-face-size: 0.71em;
+  font-family: 'Restyle Mono', var(--font-label);
 }
 
-.cp-select[data-face='gothic'] {
-  --cp-face-size: 1.15em;
-  font-family: var(--font-mark);
+.cp-select[data-face='hand'] {
+  --cp-face-size: 1.38em;
+  font-family: 'Restyle Hand', var(--font-hand);
 }
 
-/* The hero's Archivo is cut to capitals. */
+.cp-select[data-face='slab'] {
+  --cp-face-size: 0.98em;
+  font-family: 'Restyle Slab', serif;
+}
+
 .cp-select[data-face='wide'] {
-  --cp-face-size: 0.78em;
-  font-family: var(--font-hero);
+  --cp-face-size: 0.62em;
+  font-family: 'Restyle Wide', var(--font-hero);
   text-transform: uppercase;
 }
 
 .cp-select[data-bold] {
-  font-weight: 700;
+  font-weight: 750;
 }
 
 .cp-select[data-italic] {
@@ -805,30 +902,31 @@ html:not(.js) .cp-hint {
 }
 
 /* Each face's name in that face. */
-.cp-select-face[data-face='display'] {
-  font-family: var(--font-text);
+.cp-select-face[data-face='sans'] {
+  font-family: 'Restyle Sans', var(--font-text);
+}
+
+.cp-select-face[data-face='serif'] {
+  font-family: 'Restyle Serif', serif;
+  font-size: 1.05em;
+}
+
+.cp-select-face[data-face='mono'] {
+  font-family: 'Restyle Mono', var(--font-label);
 }
 
 .cp-select-face[data-face='hand'] {
-  font-family: var(--font-hand);
+  font-family: 'Restyle Hand', var(--font-hand);
   font-size: 1.3em;
   line-height: 1;
 }
 
-.cp-select-face[data-face='sign'] {
-  font-family: var(--font-sign);
-  font-size: 1.35em;
-  line-height: 1;
-}
-
-.cp-select-face[data-face='gothic'] {
-  font-family: var(--font-mark);
-  font-size: 1.2em;
-  line-height: 1;
+.cp-select-face[data-face='slab'] {
+  font-family: 'Restyle Slab', serif;
 }
 
 .cp-select-face[data-face='wide'] {
-  font-family: var(--font-hero);
+  font-family: 'Restyle Wide', var(--font-hero);
   font-size: 0.85em;
 }
 
