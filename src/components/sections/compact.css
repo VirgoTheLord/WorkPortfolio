@@ -3,7 +3,7 @@
  * 2026, after chloemaillot.fr, wlovedaypowell.com and nachi.design): one narrow
  * column of plain sentences on white (or the deep black), a small top line
  * with the owner's picture, name and clock, sections as a quiet heading over
- * plain rows, and one odd thing, the desk, whose objects can be moved by hand.
+ * plain rows, and one odd thing, a strip of instant photos that develop.
  * Red marks only. Motion answers the visitor and is short.
  */
 @reference '../../app/globals.css';
@@ -1026,6 +1026,10 @@ html:not(.js) .cp-hint {
   clip-path: var(--cp-tab);
 }
 
+.cp-block-title {
+  white-space: nowrap;
+}
+
 .cp-block-head > .cp-meta {
   margin-left: auto;
   padding: 0 0 calc(var(--spacing) * 0.75) calc(var(--spacing) * 3);
@@ -1234,370 +1238,238 @@ a.cp-line:hover > .cp-meta {
   color: var(--color-accent);
 }
 
-/* The desk (interactive/desk-board.tsx): a dotted board with a coffee ring on
-   it, and on it things left lying about, each picked up and moved by hand.
-   The one place on the site with colour beyond red, black and white (owner's
-   call, November 2026): its own small palette, the paper of real stationery. */
-.cp-desk {
-  --desk-blue-line: #7fb6e6;
-  --desk-sky: #fde8c8;
-  --desk-sea: #2a63b0;
-  --desk-coffee: #8a5a33;
-  --desk-wood: #e9b77f;
+/* Stuff that brings me alive (interactive/polaroid-strip.tsx, owner's pick):
+   instant photos in a row that scrolls and swipes sideways and snaps one to
+   the middle, which straightens and grows; the rest lean and step back. The
+   photo's paper is real paper's colour in either mode. */
+.cp-strip {
+  --cp-pol-w: clamp(calc(var(--spacing) * 34), 30vw, calc(var(--spacing) * 42));
+  --cp-pol-paper: #fbfbf8;
+  --cp-pol-back: #f7f6f1;
   position: relative;
-  height: calc(var(--spacing) * 124);
-  margin-top: calc(var(--spacing) * 4);
-  overflow: hidden;
-  border: 1px solid var(--cp-tint);
-  border-radius: calc(var(--spacing) * 3);
-  background-color: var(--cp-raise);
-  background-image:
-    radial-gradient(
-      circle at 70% 34%,
-      transparent 0 calc(var(--spacing) * 13),
-      color-mix(in oklab, var(--desk-coffee) 22%, transparent) calc(var(--spacing) * 13)
-        calc(var(--spacing) * 14),
-      transparent calc(var(--spacing) * 14.5)
-    ),
-    radial-gradient(circle, var(--cp-tint) 1px, transparent 1.4px);
-  background-size:
-    100% 100%,
-    16px 16px;
+  /* The strip runs the width of the screen, past the column's edges. */
+  margin-top: calc(var(--spacing) * 2);
+  margin-inline: calc(50% - 50vw);
 }
 
-.cp-thing {
-  position: absolute;
-  rotate: var(--r);
+.cp-strip-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 5);
+  padding: calc(var(--spacing) * 10) calc(50% - var(--cp-pol-w) / 2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
   cursor: grab;
-  touch-action: none;
-  user-select: none;
-  filter: drop-shadow(0 2px 3px color-mix(in oklab, var(--color-black) 18%, transparent));
-  transition:
-    rotate var(--duration-base) var(--cp-spring),
-    scale var(--duration-base) var(--cp-spring);
 }
 
-.cp-thing:hover {
-  scale: 1.03;
+.cp-strip-row::-webkit-scrollbar {
+  display: none;
 }
 
-.cp-thing:active {
+.cp-strip-row[data-dragging] {
+  scroll-snap-type: none;
   cursor: grabbing;
-  rotate: 0deg;
-  scale: 1.07;
 }
 
-.cp-thing:focus-visible {
+.cp-strip-slot {
+  flex: 0 0 var(--cp-pol-w);
+  scroll-snap-align: center;
+}
+
+.cp-pol {
+  --cp-tilt: -4deg;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1.22;
+  perspective: 900px;
+  scale: 0.86;
+  rotate: var(--cp-tilt);
+  opacity: 0.7;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    scale 0.5s var(--cp-spring),
+    rotate 0.5s var(--cp-spring),
+    opacity 0.4s;
+}
+
+.cp-strip-slot:nth-child(even) .cp-pol {
+  --cp-tilt: 3deg;
+}
+
+.cp-strip-slot:nth-child(3n) .cp-pol {
+  --cp-tilt: -2deg;
+}
+
+.cp-strip-slot[data-on] .cp-pol {
+  scale: 1.06;
+  rotate: 0deg;
+  opacity: 1;
+}
+
+.cp-pol:focus-visible {
+  outline: none;
+}
+
+.cp-pol:focus-visible .cp-pol-face {
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 
-/* The things are printed matter: the same paper and ink in either mode. */
-.cp-film,
-.cp-ticket {
-  border: 1px solid var(--color-rule-strong);
-  background-color: var(--color-card);
-  color: var(--color-black);
-}
-
-.cp-film {
+.cp-pol-in {
   position: relative;
-  width: calc(var(--spacing) * 40);
-  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 1.5) calc(var(--spacing) * 6.5);
-}
-
-.cp-film img {
   display: block;
   width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s var(--cp-spring);
+}
+
+.cp-pol[data-turned] .cp-pol-in {
+  transform: rotateY(180deg);
+}
+
+.cp-pol-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 5.5% 5.5% 0;
+  background-color: var(--cp-pol-paper);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.14),
+    0 4px 12px rgb(0 0 0 / 0.1);
+  backface-visibility: hidden;
+}
+
+.cp-strip-slot[data-on] .cp-pol-face {
+  box-shadow:
+    0 2px 3px rgb(0 0 0 / 0.14),
+    0 18px 32px rgb(0 0 0 / 0.16);
+}
+
+.cp-pol-window {
+  position: relative;
+  display: block;
   aspect-ratio: 1;
+  overflow: hidden;
+  background-color: var(--color-black);
+}
+
+.cp-pol-photo,
+.cp-pol-print {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   pointer-events: none;
 }
 
-.cp-film figcaption {
-  margin-top: calc(var(--spacing) * 1.5);
-  text-align: center;
-  font-family: var(--font-hand);
-  font-size: var(--text-base);
+/* The developing print covers the photo once it has been drawn. */
+.cp-pol-print {
+  opacity: 0;
 }
 
-/* A strip of pink washi tape holding the photo down. */
-.cp-tape {
-  position: absolute;
-  top: calc(var(--spacing) * -2.5);
-  left: 50%;
-  z-index: 1;
-  width: calc(var(--spacing) * 18);
-  height: calc(var(--spacing) * 5);
-  translate: -50% 0;
-  rotate: -4deg;
-  background-color: color-mix(in oklab, var(--desk-pink) 80%, transparent);
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 6px,
-    color-mix(in oklab, var(--color-white) 30%, transparent) 6px 9px
-  );
+.cp-strip[data-gl] .cp-pol-print[data-on] {
+  opacity: 1;
 }
 
-.cp-sticky {
-  width: calc(var(--spacing) * 34);
-  min-height: calc(var(--spacing) * 30);
-  padding: calc(var(--spacing) * 3.5) calc(var(--spacing) * 3);
-  background-color: var(--desk-yellow);
-  color: var(--color-black);
-  font-family: var(--font-hand);
-  font-size: var(--text-lg);
-  line-height: 1.1;
-  clip-path: polygon(0 0, 100% 0, 100% 88%, 88% 100%, 0 100%);
-}
-
-/* A blue index card, ruled, with the to-do list in the hand; done is ticked in red. */
-.cp-todo {
-  width: calc(var(--spacing) * 48);
-  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3.5) calc(var(--spacing) * 4);
-  background-color: var(--desk-blue);
-  background-image: linear-gradient(transparent calc(100% - 1px), var(--desk-blue-line) 0);
-  background-size: 100% calc(var(--spacing) * 6.5);
-  background-position: 0 calc(var(--spacing) * 2.5);
-  color: var(--color-black);
-  font-family: var(--font-hand);
-  font-size: var(--text-base);
-  line-height: calc(var(--spacing) * 6.5);
-}
-
-.cp-todo-title {
-  color: var(--color-red);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.cp-todo li {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--spacing) * 2);
-}
-
-.cp-todo-box {
-  position: relative;
-  flex-shrink: 0;
-  width: calc(var(--spacing) * 3);
-  height: calc(var(--spacing) * 3);
-  border: 1.5px solid var(--color-black);
-  border-radius: 2px;
-}
-
-.cp-todo li[data-done] {
-  text-decoration: line-through;
-  text-decoration-color: var(--color-red);
-}
-
-.cp-todo li[data-done] .cp-todo-box::after {
-  content: '';
-  position: absolute;
-  left: 18%;
-  top: -40%;
-  width: 45%;
-  height: 110%;
-  border: solid var(--color-red);
-  border-width: 0 2.5px 2.5px 0;
-  rotate: 40deg;
-}
-
-/* A stamp from home: perforated edge, a palm, the sea, a red sun. */
-.cp-stamp {
-  position: relative;
-  width: calc(var(--spacing) * 22);
-  padding: calc(var(--spacing) * 2);
-  /* The perforated edge: paper with a row of holes all round; the middle is
-     covered by the paper below (::before), so only the edge shows them. */
-  background: radial-gradient(circle, transparent 3px, var(--color-card) 3.5px) -4px -4px / 8px 8px;
-}
-
-.cp-stamp::before {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  background-color: var(--color-card);
-}
-
-.cp-stamp-art,
-.cp-stamp-text {
-  position: relative;
-}
-
-.cp-stamp-art {
-  display: block;
-  width: 100%;
-}
-
-.cp-stamp-sky {
-  fill: var(--desk-sky);
-}
-
-.cp-stamp-sun {
-  fill: var(--color-red);
-}
-
-.cp-stamp-sea {
-  fill: var(--desk-sea);
-}
-
-.cp-stamp-wave {
-  fill: none;
-  stroke: var(--desk-blue);
-  stroke-width: 1.5;
-}
-
-.cp-stamp-trunk {
-  fill: none;
-  stroke: var(--color-black);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-}
-
-.cp-stamp-palm {
-  fill: var(--color-black);
-}
-
-.cp-stamp-text {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 0.5) 0;
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  color: var(--color-black);
-}
-
-.cp-stamp-text strong {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  color: var(--color-red);
-}
-
-.cp-ticket {
-  display: grid;
-  gap: calc(var(--spacing) * 1);
-  width: calc(var(--spacing) * 34);
-  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3) calc(var(--spacing) * 4);
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 92%,
-    90% 100%,
-    80% 92%,
-    70% 100%,
-    60% 92%,
-    50% 100%,
-    40% 92%,
-    30% 100%,
-    20% 92%,
-    10% 100%,
-    0 92%
-  );
-}
-
-.cp-ticket strong {
-  font-family: var(--font-display);
-  font-size: var(--text-base);
-  font-weight: 600;
-}
-
-/* The red on paper, darkened to read at this size. */
-.cp-ticket-state {
-  color: color-mix(in oklab, var(--color-red), var(--color-black) 30%);
-}
-
-.cp-keycap-big {
-  display: inline-flex;
-  gap: 0.25em;
-  padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 3.5) calc(var(--spacing) * 3);
-  border-bottom-width: 5px;
-  font-size: var(--text-base);
-  cursor: pointer;
-}
-
-.cp-card {
-  display: grid;
-  gap: calc(var(--spacing) * 0.5);
-  width: max-content;
-  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3.5);
-  outline: 1px solid color-mix(in oklab, var(--color-white) 14%, transparent);
-  outline-offset: -1px;
-  background-color: var(--color-black);
-  color: var(--color-white);
-  font-size: var(--text-xs);
-}
-
-.cp-card-mark {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  color: var(--color-red);
-}
-
-.cp-card-mail {
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  opacity: 0.75;
-}
-
-/* A round sticker; the words are black on the red, to read. */
-.cp-sticker {
+.cp-pol-title {
+  flex: 1;
   display: grid;
   place-items: center;
-  width: calc(var(--spacing) * 22);
-  aspect-ratio: 1;
-  padding: calc(var(--spacing) * 3);
-  border: 3px solid var(--color-card);
-  border-radius: 50%;
-  background-color: var(--color-red);
   color: var(--color-black);
+  font-family: var(--font-hand);
+  font-size: calc(var(--cp-pol-w) * 0.12);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.cp-pol-back {
+  gap: calc(var(--spacing) * 2);
+  padding: 9%;
+  background-color: var(--cp-pol-back);
+  text-align: left;
+  transform: rotateY(180deg);
+}
+
+.cp-pol-note {
+  color: var(--color-black);
+  font-family: var(--font-hand);
+  font-size: calc(var(--cp-pol-w) * 0.115);
+  line-height: 1.15;
+}
+
+.cp-pol-stamp {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  color: var(--color-grey-light);
+  font-family: var(--font-label);
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+}
+
+.cp-pol-stamp b {
+  color: var(--color-red);
+  font-weight: 500;
+}
+
+.cp-strip-ctrls {
+  margin-top: calc(var(--spacing) * 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+}
+
+.cp-strip-key {
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2.5) calc(var(--spacing) * 1.25);
+  border: 1px solid var(--cp-tint);
+  border-bottom-width: 3px;
+  border-radius: calc(var(--radius-sm) * 2);
+  background-color: var(--color-bg);
   font-family: var(--font-label);
   font-size: var(--text-xs);
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  transition:
+    translate 70ms,
+    border-bottom-width 70ms,
+    margin 70ms,
+    opacity var(--duration-fast);
 }
 
-.cp-pencil {
-  display: block;
-  width: calc(var(--spacing) * 52);
+.cp-strip-key:is(:hover, :focus-visible, :active):not(:disabled) {
+  translate: 0 2px;
+  margin-bottom: -2px;
+  border-bottom-width: 1px;
 }
 
-.cp-pencil-body {
-  fill: var(--desk-yellow);
+.cp-strip-key:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
-.cp-pencil-line {
-  stroke: color-mix(in oklab, var(--desk-yellow), var(--color-black) 18%);
-  stroke-width: 0.8;
+.cp-strip-dots {
+  display: flex;
+  gap: calc(var(--spacing) * 1.5);
 }
 
-.cp-pencil-wood {
-  fill: var(--desk-wood);
+.cp-strip-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--cp-tint);
+  transition:
+    background-color 0.3s,
+    scale 0.3s var(--cp-spring);
 }
 
-.cp-pencil-lead,
-.cp-pencil-band {
-  fill: var(--color-black);
-}
-
-.cp-pencil-eraser {
-  fill: var(--desk-pink);
-}
-
-@media (width < 34rem) {
-  .cp-desk {
-    height: calc(var(--spacing) * 150);
-  }
-
-  .cp-thing {
-    zoom: 0.72;
-  }
+.cp-strip-dots i[data-on] {
+  background-color: var(--color-red);
+  scale: 1.3;
 }
 
 /* The foot (layout/compact-foot.tsx): two sides under a rule, who made it on
@@ -1666,7 +1538,7 @@ a.cp-line:hover > .cp-meta {
   .cp-chip,
   .cp-peek,
   .cp-thumb,
-  .cp-thing,
+  .cp-pol,
   .cp-avatar {
     transition: none;
   }
@@ -2389,7 +2261,7 @@ a.cp-line:hover > .cp-meta {
       .cp-block-head,
       .cp-list > li,
       .cp-keycaps > li,
-      .cp-thing,
+      .cp-strip,
       .cp-foot > *,
       .cp-crumbs,
       .cp-piece-head > *,
@@ -2408,29 +2280,12 @@ a.cp-line:hover > .cp-meta {
         var(--cp-in-delay, 0ms) backwards;
     }
   }
-
-  /* The desk's things keep their shadow while they arrive. */
-  html.js .cp .cp-desk .cp-thing[data-in] {
-    animation-name: cp-arrive-thing;
-  }
 }
 
 @keyframes cp-arrive {
   from {
     opacity: 0;
     filter: blur(14px);
-    translate: 0 calc(var(--spacing) * 3);
-  }
-
-  40% {
-    opacity: 1;
-  }
-}
-
-@keyframes cp-arrive-thing {
-  from {
-    opacity: 0;
-    filter: blur(14px) drop-shadow(0 2px 3px transparent);
     translate: 0 calc(var(--spacing) * 3);
   }
 

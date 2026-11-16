@@ -13,7 +13,7 @@ const ARRIVING = [
   '.cp-block-head',
   '.cp-list > li',
   '.cp-keycaps > li',
-  '.cp-thing',
+  '.cp-strip',
   '.cp-foot > *',
   '.cp-crumbs',
   '.cp-piece-head > *',

@@ -169,6 +169,13 @@ export const legal = {
           ],
         },
         {
+          id: 'images',
+          heading: 'Images',
+          body: [
+            'The instant photos under “Stuff that brings me alive” are mine to use: the stage photo is of me, and the other five were made for this site with Figma’s AI image tool from prompts I wrote, describing new scenes rather than any existing work.',
+          ],
+        },
+        {
           id: 'inspiration',
           heading: 'Inspiration',
           body: [
