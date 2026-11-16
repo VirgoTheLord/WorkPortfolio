@@ -106,8 +106,14 @@ export function SiteSearch({ commands, label, placeholder, empty }: CompactConte
       if (!target) return
       const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       history.pushState(null, '', url.hash)
-      target.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' })
-      target.focus({ preventScroll: true })
+      // After the palette has closed: its own re-render keeps its active row in
+      // view, and that scroll call would cut a smooth page scroll short.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          target.focus({ preventScroll: true })
+          target.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' })
+        }),
+      )
       return
     }
     window.location.assign(url)
