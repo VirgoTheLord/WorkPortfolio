@@ -226,7 +226,16 @@ export type CompactIcon =
 export type ChipLink = NavItem & { icon: CompactIcon }
 
 /** The compact site's sections, in page order. */
-export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | 'desk'
+/** One instant photo: its caption, the note on its back and the two words stamped there. */
+export type AlivePhoto = {
+  title: string
+  note: string
+  stamp: readonly [string, string]
+  image: StaticImageData
+  alt: string
+}
+
+export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | 'alive'
 
 /** What a search result does when chosen. */
 export type PaletteAction =
@@ -306,19 +315,15 @@ export type CompactContent = {
   workbench: { all: NavItem }
   experience: readonly { org: string; role: string; when: string }[]
   stack: { items: readonly string[]; hint: string }
-  /** The desk: things left lying about. Each one's words, and its name for assistive tech. */
-  desk: {
+  /** What brings me alive: a strip of instant photos, each turned over for a note. */
+  alive: {
     hint: string
     label: string
-    film: { caption: string; label: string }
-    note: { text: string; label: string }
-    todo: { title: string; items: readonly { text: string; done: boolean }[]; label: string }
-    stamp: { value: string; country: string; label: string }
-    ticket: { order: string; title: string; state: string; label: string }
-    key: { text: string; label: string }
-    card: { mark: string; label: string }
-    sticker: { text: string; label: string }
-    pencil: { label: string }
+    /** The strip's buttons, and what turning a photo over is called. */
+    prev: string
+    next: string
+    turn: string
+    items: readonly AlivePhoto[]
   }
   footer: {
     /** The foot's links, named for assistive tech. */

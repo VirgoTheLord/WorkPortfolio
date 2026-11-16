@@ -1,4 +1,10 @@
 import type { ChipLink, CompactContent, PaletteCommand } from '@/types/content'
+import anime from './alive/anime.jpg'
+import dance from './alive/dance.jpg'
+import drift from './alive/drift.jpg'
+import game from './alive/game.jpg'
+import sing from './alive/sing.jpg'
+import sketch from './alive/sketch.jpg'
 import hood from './profile/hood.svg'
 import { projects } from './projects'
 import { contact, education, experience, place, site } from './site'
@@ -22,7 +28,7 @@ const sections: CompactContent['sections'] = [
   { id: 'workbench', title: 'Components' },
   { id: 'experience', title: 'Experience' },
   { id: 'stack', title: 'Stack' },
-  { id: 'desk', title: 'Stuff that brings me alive' },
+  { id: 'alive', title: 'Stuff that brings me alive' },
 ]
 
 /*
@@ -134,8 +140,8 @@ const commands: readonly PaletteCommand[] = [
  * The compact site (/compact): the portfolio in short, as a few plain
  * sentences and rows (owner's direction, November 2026). Every fact comes from
  * `site.ts`, `projects` and the workbench; nothing here is invented: the
- * unreleased work is named only as what is next, and the desk holds the site's
- * own things.
+ * unreleased work is named only as what is next, and the last section holds
+ * what the owner loves doing.
  */
 export const compact = {
   meta: {
@@ -252,38 +258,59 @@ export const compact = {
     ],
     hint: 'Type a letter',
   },
-  desk: {
-    hint: 'Move things around',
-    label: 'Things on my desk; each can be picked up and moved, or moved with the arrow keys',
-    film: { caption: 'cairn, my library', label: 'An instant photo of Cairn, taped down' },
-    note: {
-      text: "now: cairn's next pieces",
-      label: "A yellow sticky note: now, Cairn's next pieces",
-    },
-    todo: {
-      title: 'to do',
-      items: [
-        { text: 'a hood for the profile', done: true },
-        { text: 'the next cairn pieces', done: false },
-        { text: 'sleep', done: false },
-      ],
-      label: 'A to-do card: a hood for the profile (done), the next Cairn pieces, sleep',
-    },
-    stamp: {
-      value: '5',
-      country: 'INDIA',
-      label: 'A postage stamp from India: a palm, the sea and a red sun',
-    },
-    ticket: {
-      order: 'Order 02',
-      title: 'In the oven',
-      state: '● cooking',
-      label: 'A kitchen ticket: order 02, in the oven',
-    },
-    key: { text: 'K', label: 'A loose key cap, the search shortcut: press it to search' },
-    card: { mark: 'AW', label: 'My business card' },
-    sticker: { text: 'open to work', label: 'A round red sticker: open to work' },
-    pencil: { label: 'A pencil' },
+  /* The owner's own stage photo; the other five were made for the site with
+     Figma AI from original prompts (credited on /legal). The notes are the
+     owner's interests in his words, drafted November 2026. */
+  alive: {
+    hint: 'Tap one to turn it over',
+    label: 'Stuff that brings me alive, as instant photos',
+    prev: 'Previous photo',
+    next: 'Next photo',
+    turn: 'turn it over',
+    items: [
+      {
+        title: 'one more run',
+        note: 'Gaming. Right now that means Phantom Blade Zero.',
+        stamp: ['PLAYING', 'NIGHTS'],
+        image: game,
+        alt: 'An ink painting of a swordsman in a straw hat on a cliff under a huge red moon, in the rain.',
+      },
+      {
+        title: 'singing',
+        note: 'I sing. That’s me, mid-song.',
+        stamp: ['SINGING', 'LIVE'],
+        image: sing,
+        alt: 'Alwin singing into a microphone on a dark stage.',
+      },
+      {
+        title: 'dancing',
+        note: 'I dance when the song is right.',
+        stamp: ['DANCING', 'OFTEN'],
+        image: dance,
+        alt: 'A breakdancer frozen upside down on one hand in a cobbled street at sunset.',
+      },
+      {
+        title: 'sketching',
+        note: 'I draw, mostly sketches.',
+        stamp: ['DRAWING', 'PENCIL'],
+        image: sketch,
+        alt: 'A pencil sketch of a teddy bear on a pad, a pencil beside it.',
+      },
+      {
+        title: 'one day: drift',
+        note: 'One day: a mountain pass and a proper drift, Initial D style.',
+        stamp: ['SOMEDAY', 'TOUGE'],
+        image: drift,
+        alt: 'A black-and-white ink drawing of a car drifting through a mountain hairpin at night, smoke behind it.',
+      },
+      {
+        title: 'anime, always',
+        note: 'Anime, always. Ask me for one to watch.',
+        stamp: ['WATCHING', 'ALWAYS'],
+        image: anime,
+        alt: 'An anime swordsman in a black kimono, red energy around him, under a full moon.',
+      },
+    ],
   },
   footer: {
     label: 'Footer',
@@ -296,7 +323,7 @@ export const compact = {
     hint: 'to search',
     touch: 'Search',
     placeholder: 'Search…',
-    empty: 'Nothing here. Try “stack”, “email” or “key”.',
+    empty: 'Nothing here. Try “stack”, “email” or “work”.',
     commands,
   },
   theme: { label: 'Dark mode' },
