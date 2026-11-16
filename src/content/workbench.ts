@@ -14,6 +14,7 @@ const cairn: readonly WorkbenchItem[] = [
   {
     slug: 'foil-cards',
     name: 'Foil cards',
+    line: 'Radio cards struck in holographic foil.',
     note: 'Radio cards whose chosen card is struck in holographic foil.',
     kind: 'cairn',
     hint: 'Pick one, then rest the pointer on it.',
@@ -30,6 +31,7 @@ const cairn: readonly WorkbenchItem[] = [
   {
     slug: 'chrome-upload',
     name: 'Chrome upload',
+    line: 'An upload button rimmed in liquid chrome.',
     note: 'An upload button bordered in flowing liquid chrome; the pill grows along its track as the file goes up.',
     kind: 'cairn',
     hint: 'Hover to move the light, then click. Nothing is really sent.',
@@ -46,6 +48,7 @@ const cairn: readonly WorkbenchItem[] = [
   {
     slug: 'flap-segments',
     name: 'Flap segments',
+    line: 'Tabs that flip like a departures board.',
     note: 'A segmented control as a row of departures-board tiles; the chosen one flips over to its face.',
     kind: 'cairn',
     hint: 'Pick a range.',
@@ -61,6 +64,7 @@ const cairn: readonly WorkbenchItem[] = [
   {
     slug: 'waveform-slider',
     name: 'Waveform slider',
+    line: 'A slider drawn as an audio waveform.',
     note: 'A slider drawn as an audio waveform: the bars light up to the value and bounce when you drag fast.',
     kind: 'cairn',
     hint: 'Drag it, fast and slow, or use the arrow keys.',
@@ -76,6 +80,7 @@ const cairn: readonly WorkbenchItem[] = [
   {
     slug: 'record-stack',
     name: 'Record stack',
+    line: 'Record covers you flick through.',
     note: 'A deck of record covers you flick through: the top one is playing, and a flick tucks it back into the deck.',
     kind: 'cairn',
     hint: 'Press play, then flick the top cover right or left.',

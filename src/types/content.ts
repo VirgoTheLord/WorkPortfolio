@@ -149,6 +149,8 @@ export type WorkbenchItem = {
   name: string
   /** One line on what it does. */
   note: string
+  /** The same, short enough to sit whole on one line of the compact home's list. */
+  line: string
   /** From Cairn (the owner's component library), on the full site, or kept for the library. */
   kind: 'cairn' | 'site' | 'library'
   /** What to do with it on the stage ("Hover it, or tab to it."). */
