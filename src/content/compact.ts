@@ -22,7 +22,7 @@ const sections: CompactContent['sections'] = [
   { id: 'workbench', title: 'Components' },
   { id: 'experience', title: 'Experience' },
   { id: 'stack', title: 'Stack' },
-  { id: 'desk', title: 'On my desk' },
+  { id: 'desk', title: 'Stuff that brings me alive' },
 ]
 
 /*
