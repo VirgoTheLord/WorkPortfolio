@@ -33,7 +33,8 @@ export async function generateMetadata({
 /*
  * One workbench piece (DESIGN.md §5b): where it sits, its name and one line,
  * then the stage, a dotted mat with the real component running on it and a
- * hint for what to do with it; how it behaves, what moves it, its source in
+ * hint for what to do with it (its label a folder tab on the stage's edge, as
+ * every heading and the breadcrumb are tabs; owner's pick, November 2026); how it behaves, what moves it, its source in
  * the repository and where it is on the full site; then the pieces either side.
  */
 export default async function WorkbenchPiece({ params }: PageProps<'/compact/components/[slug]'>) {
@@ -64,7 +65,11 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
 
       <header className="cp-piece-head">
         <p className="cp-piece-kind font-label">
-          <span aria-hidden="true" className="cp-square" />
+          {item.kind === 'cairn' ? (
+            <span aria-hidden="true" className="cp-chip-mark">
+              {labels.cairn[0]}
+            </span>
+          ) : null}
           {labels[item.kind]}
           <span className="text-fg-muted">
             {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
@@ -81,7 +86,6 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
         className="cp-stage"
       >
         <p aria-hidden="true" className="cp-stage-badge font-label">
-          <span className="cp-stage-dot" />
           {labels.stage}
         </p>
         <div className="cp-stage-floor">
@@ -91,11 +95,10 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
       </section>
 
       <section aria-labelledby="behaviour-heading" className="cp-section">
-        <div className="cp-head">
-          <h2 id="behaviour-heading" className="cp-head-title">
+        <div className="cp-block-head">
+          <h2 id="behaviour-heading" className="cp-block-title">
             {labels.behaviour}
           </h2>
-          <span aria-hidden="true" className="cp-head-rule" />
         </div>
         <ol className="cp-steps">
           {item.details.map((line) => (

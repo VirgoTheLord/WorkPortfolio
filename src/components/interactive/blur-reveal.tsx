@@ -18,7 +18,7 @@ const ARRIVING = [
   '.cp-crumbs',
   '.cp-piece-head > *',
   '.cp-stage',
-  '.cp-head',
+  '.cp-section > .cp-block-head',
   '.cp-steps > li',
   '.cp-rows > div',
   '.cp-pager',
