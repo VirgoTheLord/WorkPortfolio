@@ -1920,8 +1920,14 @@ a.cp-line:hover > .cp-meta {
   color: var(--color-fg);
 }
 
+/* A piece's page starts just under the top bar: the home's tall opening gap
+   is for its sentence, and here it left an empty band over the breadcrumb. */
+.cp-main:has(> .cp-piece) {
+  margin-top: calc(var(--spacing) * 9);
+}
+
 .cp-piece {
-  padding-block: calc(var(--spacing) * 10) calc(var(--spacing) * 2);
+  padding-block: 0 calc(var(--spacing) * 2);
 }
 
 .cp-crumbs ol {
