@@ -2057,35 +2057,42 @@ a.cp-line:hover > .cp-meta {
 }
 
 .cp-piece-facts {
-  margin-top: calc(var(--spacing) * 2);
+  /* The page's own colour under the rows, reaching as far as the ink does, so
+     the ink always has the page to invert (whatever above it is isolated). */
+  margin: calc(var(--spacing) * 2) calc(var(--spacing) * -2.25) 0;
+  padding-inline: calc(var(--spacing) * 2.25);
   border-top: 0;
+  background-color: var(--color-bg);
+  isolation: isolate;
 }
 
 /* The facts, as ink bands (owner's pick of six): a row with a link is the
-   link, all of it (the link reaches over the row); pointed at, ink sweeps
-   across the row from the left, the words step right into it in the page's
-   colour, and the arrow flies off its corner and comes back. */
+   link, all of it (the link reaches over the row). Pointed at, ink sweeps
+   across the row from the left; the ink inverts
+   what it covers (difference), so the words turn exactly where it has
+   reached and nowhere else, in either mode. The arrow flies off its corner
+   and comes back. */
 .cp-piece-facts .cp-row {
+  /* Not isolated: the ink has to see the page under the row to invert it. */
   position: relative;
-  isolation: isolate;
   grid-template-columns: calc(var(--spacing) * 28) minmax(0, 1fr);
   align-items: center;
-  transition: color 0.3s var(--ease-expo);
 }
 
 .cp-piece-facts .cp-row-label {
   white-space: nowrap;
-  transition: color 0.3s var(--ease-expo);
 }
 
 .cp-piece-facts .cp-row:has(.cp-piece-link)::before {
   content: '';
   position: absolute;
   inset: 0 calc(var(--spacing) * -2.25);
-  z-index: -1;
-  background-color: var(--color-fg);
+  z-index: 1;
+  background-color: var(--color-white);
+  mix-blend-mode: difference;
+  pointer-events: none;
   scale: 0 1;
-  transform-origin: right;
+  transform-origin: left;
   transition: scale 0.5s var(--ease-expo);
 }
 
@@ -2095,9 +2102,10 @@ a.cp-line:hover > .cp-meta {
   align-items: center;
   gap: calc(var(--spacing) * 1.5);
   overflow-wrap: anywhere;
-  transition: translate 0.45s var(--ease-expo);
 }
 
+/* No transform on the link itself: it would become the box its reach is
+   measured from, shrink under the pointer and drop the hover. */
 .cp-piece-link::after {
   content: '';
   position: absolute;
@@ -2108,27 +2116,14 @@ a.cp-line:hover > .cp-meta {
   outline: none;
 }
 
-.cp-piece-facts .cp-row:has(.cp-piece-link:is(:hover, :focus-visible)) {
-  color: var(--color-bg);
+.cp-piece-facts .cp-row:has(.cp-piece-link:is(:hover, :focus-visible))::before {
+  scale: 1 1;
+}
 
-  &::before {
-    scale: 1 1;
-    transform-origin: left;
-  }
-
-  & .cp-row-label {
-    color: color-mix(in oklab, var(--color-bg) 65%, transparent);
-  }
-
-  & .cp-piece-link {
-    translate: calc(var(--spacing) * 1.5) 0;
-  }
-
-  & .cp-nudge {
-    transform: none;
-    color: var(--color-red);
-    animation: cp-fly 0.55s var(--ease-expo);
-  }
+.cp-piece-facts .cp-row:has(.cp-piece-link:is(:hover, :focus-visible)) .cp-nudge {
+  transform: none;
+  color: inherit;
+  animation: cp-fly 0.55s var(--ease-expo);
 }
 
 @keyframes cp-fly {
