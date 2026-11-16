@@ -2121,7 +2121,7 @@ a.cp-line:hover > .cp-meta {
 }
 
 /* Between the folders, All pieces is a key (owner's pick), cut as the
-   stack's keys are, and it goes down when pressed. */
+   stack's keys are; pointed at (or focused, or pressed) it goes down. */
 .cp-pager-all {
   grid-column: 1 / -1;
   grid-row: 2;
@@ -2139,7 +2139,7 @@ a.cp-line:hover > .cp-meta {
     border-color var(--duration-fast);
 }
 
-.cp-pager-all:active {
+.cp-pager-all:is(:hover, :focus-visible, :active) {
   translate: 0 2px;
   margin-bottom: 2px;
   border-bottom-width: 1px;
@@ -2178,6 +2178,10 @@ a.cp-line:hover > .cp-meta {
 
   .cp-pager-all:hover {
     border-color: color-mix(in oklab, var(--color-fg) 35%, transparent);
+  }
+
+  .cp-pager-all:active {
+    background-color: var(--cp-raise);
   }
 }
 
