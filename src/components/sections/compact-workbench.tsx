@@ -29,7 +29,7 @@ export function CompactWorkbench() {
           <li key={item.slug}>
             <Link href={`/compact/components/${item.slug}`} className="cp-line cp-line-wide">
               <span>{item.name}</span>
-              <span className="cp-line-note">{item.note}</span>
+              <span className="cp-line-note">{item.line}</span>
             </Link>
           </li>
         ))}
