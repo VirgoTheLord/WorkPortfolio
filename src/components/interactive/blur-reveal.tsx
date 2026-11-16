@@ -46,7 +46,8 @@ const LONGEST_TAKES = 2600
  *
  * It starts over on every arrival: a page load, a link, and the browser's
  * back and forward too, whether the router keeps the page or the browser
- * restores it from its back-forward cache (`pageshow`). Without starting
+ * restores it from its back-forward cache (`pageshow`), and the arrows
+ * between places on one page (`popstate`). Without starting
  * over, a page brought back half-revealed played half an entrance. With
  * reduced motion CSS never hides anything, and this does nothing.
  */
@@ -65,6 +66,10 @@ export function BlurReveal() {
       seen?.disconnect()
       const all = [...root.querySelectorAll<HTMLElement>(ARRIVING)]
       all.forEach((el) => el.removeAttribute('data-in'))
+      // Settle the hidden state now, so the entrance always starts from it
+      // (without this a quick return could mark things in before the browser
+      // had seen them out, and they would simply appear).
+      void root.getBoundingClientRect()
       let opening = true
       seen = new IntersectionObserver(
         (entries) => {
@@ -100,11 +105,16 @@ export function BlurReveal() {
       if (event.persisted) start()
     }
     window.addEventListener('pageshow', restored)
+    // The back and forward arrows within one page (the search adds #section
+    // to the address) arrive here without a new path.
+    const stepped = () => start()
+    window.addEventListener('popstate', stepped)
 
     return () => {
       alive = false
       seen?.disconnect()
       window.removeEventListener('pageshow', restored)
+      window.removeEventListener('popstate', stepped)
     }
   }, [path])
 

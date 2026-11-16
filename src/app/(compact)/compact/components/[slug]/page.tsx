@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { CairnMark } from '@/components/ui/cairn-mark'
 import { Icon } from '@/components/ui/icon'
 import { WorkbenchDemo } from '@/components/sections/workbench-demo'
 import { compact } from '@/content/compact'
@@ -65,11 +66,7 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
 
       <header className="cp-piece-head">
         <p className="cp-piece-kind font-label">
-          {item.kind === 'cairn' ? (
-            <span aria-hidden="true" className="cp-chip-mark">
-              {labels.cairn[0]}
-            </span>
-          ) : null}
+          {item.kind === 'cairn' ? <CairnMark /> : null}
           {labels[item.kind]}
           <span className="text-fg-muted">
             {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
