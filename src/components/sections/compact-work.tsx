@@ -36,7 +36,7 @@ export function CompactWork() {
             <span>{name}</span>
             <span className="cp-line-note">{soon.note}</span>
             <span className="cp-meta">
-              <span aria-hidden="true" className="cp-pulse" />
+              <span aria-hidden="true" className="cp-hatch" />
               {soon.state}
             </span>
             <span aria-hidden="true" className="cp-thumb cp-thumb-empty" />
