@@ -12,7 +12,7 @@ type Mark = Restyle['marks'][number]['id']
 type Style = Restyle['styles'][number]['id']
 
 /* The size steps, as a multiple of the face's own size; the second is as set. */
-const SIZES = [0.85, 1, 1.2, 1.45] as const
+const SIZES = [0.85, 1, 1.15, 1.3] as const
 const AS_SET = 1
 
 type Look = {
@@ -23,7 +23,7 @@ type Look = {
   size: number
 }
 
-const PLAIN: Look = { face: 'display', ink: 'ink', mark: null, styles: [], size: AS_SET }
+const PLAIN: Look = { face: 'sans', ink: 'ink', mark: null, styles: [], size: AS_SET }
 
 /* Puts each sliding marker over its group's pressed button (or hides it).
    The first placement is not animated: `data-ready` turns the slide on. */
@@ -45,8 +45,8 @@ function glide(tools: HTMLElement) {
 /*
  * "one thing well" in the opening sentence (owner's pick; shwn.design's idea,
  * made the site's own): the words shown selected as in an editor, in red, with
- * a toolbar under them, a small text editor for three words: the site's six
- * faces (each named in itself), bold, italic, underline and strike, four
+ * a toolbar under them, a small text editor for three words: six faces with
+ * real weights and italics (each named in itself), bold, italic, underline and strike, four
  * sizes, ink or red, the desk's three highlighters, and a reset. The chosen
  * face, ink and highlighter are each shown by one marker that slides between
  * the buttons rather than jumping (owner's note). Real buttons,

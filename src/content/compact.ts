@@ -177,16 +177,16 @@ export const compact = {
       { select: 'one thing well' },
       '.',
     ],
-    /* Each face's button is set in that face, so its name has to be in the
-       face's cut: Caveat's is lowercase only, the hero's Archivo capitals only. */
+    /* Each face's button is set in that face, from a cut holding only these
+       names' letters and the phrase's (src/fonts/restyle). */
     restyle: {
       label: 'Restyle these words',
       faces: [
-        { id: 'display', label: 'Bricolage' },
-        { id: 'hand', label: 'caveat' },
-        { id: 'sign', label: 'Kristi' },
+        { id: 'sans', label: 'Sans' },
+        { id: 'serif', label: 'Serif' },
         { id: 'mono', label: 'Mono' },
-        { id: 'gothic', label: 'Gothic' },
+        { id: 'hand', label: 'hand' },
+        { id: 'slab', label: 'Slab' },
         { id: 'wide', label: 'WIDE' },
       ],
       styles: [

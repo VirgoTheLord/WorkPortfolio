@@ -289,7 +289,7 @@ export type CompactContent = {
       label: string
       /** Each face's name, set in that face (so only in glyphs its cut has). */
       faces: readonly {
-        id: 'display' | 'hand' | 'sign' | 'mono' | 'gothic' | 'wide'
+        id: 'sans' | 'serif' | 'mono' | 'hand' | 'slab' | 'wide'
         label: string
       }[]
       /** What each style toggle is called, and the letter it shows. */
