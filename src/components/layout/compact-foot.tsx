@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { DominoRow } from '@/components/interactive/domino-row'
 import { FlapText } from '@/components/ui/flap-text'
 import { compact } from '@/content/compact'
 import { legal } from '@/content/legal'
@@ -9,7 +10,8 @@ const { footer } = compact
 /*
  * The foot, read as two sides under a rule: on the left who made it, the name
  * in a quick pen hand (Kristi) and where it was made; on the right where to go
- * next, one link to a line: the full site, the terms, back to the top.
+ * next, one link to a line: the full site, the terms, back to the top. Under
+ * them, standing on the page's bottom edge, a row of dominoes to push over.
  */
 export function CompactFoot() {
   return (
@@ -29,6 +31,7 @@ export function CompactFoot() {
           <FlapText>{footer.top}</FlapText>
         </a>
       </nav>
+      <DominoRow />
     </footer>
   )
 }
