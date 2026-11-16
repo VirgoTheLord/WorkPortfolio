@@ -8,6 +8,8 @@ type Props = CompactContent['alive']
 
 /* The print's size on the GPU; each photo's canvas is this, shown smaller. */
 const S = 292
+/* Where the strip starts on a phone: the third photo, with photos either side. */
+const PHONE_START = 2
 /* How long a print takes to develop once it is in the middle, in seconds. */
 const DEVELOP = 2.4
 
@@ -225,7 +227,14 @@ export function PolaroidStrip({ label, prev, next, turn, items }: Props) {
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(middle)
     }
-    // Develop the first only once the strip is on screen.
+    // On a phone the strip starts on the third photo (owner's call), so there
+    // are photos either side to swipe to; on a wide screen it starts on the first.
+    const start = row.children[PHONE_START] as HTMLElement | undefined
+    if (start && window.matchMedia('(max-width: 40rem)').matches) {
+      row.scrollLeft = start.offsetLeft + start.offsetWidth / 2 - row.clientWidth / 2
+      setCurrent(PHONE_START)
+    }
+    // Develop the one in the middle only once the strip is on screen.
     const seen = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) middle()
