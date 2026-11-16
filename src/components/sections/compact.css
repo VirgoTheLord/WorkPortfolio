@@ -2120,19 +2120,29 @@ a.cp-line:hover > .cp-meta {
   clip-path: var(--cp-tab-left);
 }
 
-/* Between the folders, the drawer they came from: a tab standing on a line. */
+/* Between the folders, All pieces is a key (owner's pick), cut as the
+   stack's keys are, and it goes down when pressed. */
 .cp-pager-all {
   grid-column: 1 / -1;
   grid-row: 2;
   justify-self: center;
-  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 4) calc(var(--spacing) * 0.75)
-    calc(var(--spacing) * 2.25);
-  background-color: color-mix(in oklab, var(--color-fg) 5%, var(--color-bg));
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2.25) calc(var(--spacing) * 1.25);
+  border: 1px solid var(--cp-tint);
+  border-bottom-width: 3px;
+  border-radius: calc(var(--radius-sm) * 2);
+  background-color: var(--color-bg);
   font-size: var(--text-xs);
-  clip-path: var(--cp-tab);
   transition:
-    translate var(--duration-base) var(--cp-spring),
-    background-color var(--duration-base);
+    translate 70ms,
+    border-bottom-width 70ms,
+    margin 70ms,
+    border-color var(--duration-fast);
+}
+
+.cp-pager-all:active {
+  translate: 0 2px;
+  margin-bottom: 2px;
+  border-bottom-width: 1px;
 }
 
 @media (min-width: 36rem) {
@@ -2167,8 +2177,7 @@ a.cp-line:hover > .cp-meta {
   }
 
   .cp-pager-all:hover {
-    translate: 0 calc(var(--spacing) * -0.75);
-    background-color: var(--cp-tab-fill);
+    border-color: color-mix(in oklab, var(--color-fg) 35%, transparent);
   }
 }
 
