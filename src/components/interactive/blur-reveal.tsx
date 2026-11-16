@@ -14,7 +14,7 @@ const ARRIVING = [
   '.cp-list > li',
   '.cp-keycaps > li',
   '.cp-strip',
-  '.cp-foot > *',
+  '.cp-foot > :not(.cp-dominoes)',
   '.cp-crumbs',
   '.cp-piece-head > *',
   '.cp-stage',

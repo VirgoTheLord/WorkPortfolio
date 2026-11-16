@@ -1486,6 +1486,18 @@ a.cp-line:hover > .cp-meta {
   border-top: var(--cp-dash);
 }
 
+/* The dominoes (interactive/domino-row.tsx): the width of the screen, standing
+   on the page's bottom edge (the page's own bottom padding taken back). */
+.cp-dominoes {
+  grid-column: 1 / -1;
+  display: block;
+  width: 100vw;
+  height: calc(var(--spacing) * 12);
+  margin: calc(var(--spacing) * 10) calc(50% - 50vw) calc(var(--spacing) * -12);
+  justify-self: center;
+  touch-action: pan-y;
+}
+
 .cp-foot-sign {
   display: grid;
   gap: calc(var(--spacing) * 1.5);
@@ -2262,7 +2274,7 @@ a.cp-line:hover > .cp-meta {
       .cp-list > li,
       .cp-keycaps > li,
       .cp-strip,
-      .cp-foot > *,
+      .cp-foot > :not(.cp-dominoes),
       .cp-crumbs,
       .cp-piece-head > *,
       .cp-stage,
