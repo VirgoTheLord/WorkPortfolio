@@ -25,12 +25,31 @@ type Look = {
 
 const PLAIN: Look = { face: 'display', ink: 'ink', mark: null, styles: [], size: AS_SET }
 
+/* Puts each sliding marker over its group's pressed button (or hides it).
+   The first placement is not animated: `data-ready` turns the slide on. */
+function glide(tools: HTMLElement) {
+  tools.querySelectorAll<HTMLElement>('[data-glide]').forEach((marker) => {
+    const on = tools.querySelector<HTMLElement>(
+      `[data-group="${marker.dataset.glide}"][aria-pressed="true"]`,
+    )
+    marker.toggleAttribute('data-off', !on)
+    if (!on) return
+    marker.style.setProperty('--x', `${on.offsetLeft}px`)
+    marker.style.setProperty('--y', `${on.offsetTop}px`)
+    marker.style.setProperty('--w', `${on.offsetWidth}px`)
+    marker.style.setProperty('--h', `${on.offsetHeight}px`)
+  })
+  requestAnimationFrame(() => tools.setAttribute('data-ready', ''))
+}
+
 /*
  * "one thing well" in the opening sentence (owner's pick; shwn.design's idea,
  * made the site's own): the words shown selected as in an editor, in red, with
  * a toolbar under them, a small text editor for three words: the site's six
  * faces (each named in itself), bold, italic, underline and strike, four
- * sizes, ink or red, the desk's three highlighters, and a reset. Real buttons,
+ * sizes, ink or red, the desk's three highlighters, and a reset. The chosen
+ * face, ink and highlighter are each shown by one marker that slides between
+ * the buttons rather than jumping (owner's note). Real buttons,
  * each saying whether it is on. The words read as words.
  *
  * The toolbar hangs under the words but never past the sentence's edges: it is
@@ -48,6 +67,7 @@ export function LedeSelect({ children, restyle }: Props) {
     const sentence = words?.closest('.cp-lede')
     if (!words || !tools || !sentence) return
     const place = () => {
+      glide(tools)
       const w = words.getBoundingClientRect()
       const t = tools.getBoundingClientRect()
       const s = sentence.getBoundingClientRect()
@@ -64,6 +84,11 @@ export function LedeSelect({ children, restyle }: Props) {
     void document.fonts.ready.then(place)
     return () => watch.disconnect()
   }, [])
+
+  // The chosen face, ink and highlighter: one marker each, sliding to it.
+  useLayoutEffect(() => {
+    if (bar.current) glide(bar.current)
+  }, [look.face, look.ink, look.mark])
 
   const toggle = (id: Style) =>
     setLook((now) => ({
@@ -100,6 +125,9 @@ export function LedeSelect({ children, restyle }: Props) {
     >
       {children}
       <span ref={bar} role="toolbar" aria-label={restyle.label} className="cp-select-bar">
+        <span aria-hidden="true" className="cp-select-glide" data-glide="face" />
+        <span aria-hidden="true" className="cp-select-ring" data-glide="ink" />
+        <span aria-hidden="true" className="cp-select-ring" data-glide="mark" />
         <span className="cp-select-row">
           {restyle.faces.map((option) => (
             <button
@@ -108,6 +136,7 @@ export function LedeSelect({ children, restyle }: Props) {
               aria-pressed={look.face === option.id}
               onClick={() => setLook((now) => ({ ...now, face: option.id }))}
               className="cp-select-face"
+              data-group="face"
               data-face={option.id}
             >
               {option.label}
@@ -160,6 +189,7 @@ export function LedeSelect({ children, restyle }: Props) {
               aria-pressed={look.ink === option.id}
               onClick={() => setLook((now) => ({ ...now, ink: option.id }))}
               className="cp-select-ink"
+              data-group="ink"
               data-ink={option.id}
             />
           ))}
@@ -173,6 +203,7 @@ export function LedeSelect({ children, restyle }: Props) {
                 setLook((now) => ({ ...now, mark: now.mark === option.id ? null : option.id }))
               }
               className="cp-select-mark"
+              data-group="mark"
               data-mark={option.id}
             />
           ))}

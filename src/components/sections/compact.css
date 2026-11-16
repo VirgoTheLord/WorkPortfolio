@@ -64,7 +64,8 @@
 }
 
 .cp:focus,
-.cp-main:focus {
+.cp-main:focus,
+.cp-block:focus {
   outline: none;
 }
 
@@ -670,17 +671,17 @@ html:not(.js) .cp-hint {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   width: max-content;
   max-width: calc(100vw - var(--cp-pad) * 2);
-  padding: 3px;
+  padding: 2px;
   translate: var(--cp-bar-shift, -50%) 0;
   border: 1px solid var(--cp-tint);
-  border-radius: calc(var(--spacing) * 2);
+  border-radius: calc(var(--spacing) * 1.75);
   background-color: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-label);
-  font-size: 0.6rem;
+  font-size: 0.56rem;
   font-style: normal;
   font-weight: 400;
   line-height: 1.4;
@@ -697,37 +698,91 @@ html:not(.js) .cp-hint {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
 }
 
 .cp-select-row + .cp-select-row {
-  padding-top: 2px;
+  padding-top: 1px;
   border-top: var(--cp-dash);
 }
 
 .cp-select-face,
 .cp-select-tool {
-  min-height: calc(var(--spacing) * 6);
-  padding: 2px 7px;
-  border-radius: calc(var(--spacing) * 1.25);
+  min-height: calc(var(--spacing) * 5);
+  padding: 1px 6px;
+  border-radius: calc(var(--spacing) * 1);
   color: var(--color-fg);
   cursor: pointer;
+  transition:
+    background-color var(--duration-fast),
+    box-shadow var(--duration-fast);
 }
 
 .cp-select-tool {
-  min-width: calc(var(--spacing) * 6);
-  padding-inline: 4px;
+  min-width: calc(var(--spacing) * 5);
+  padding-inline: 3px;
   font-family: var(--font-text);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
 }
 
-:is(.cp-select-face, .cp-select-tool):hover:not(:disabled),
-:is(.cp-select-face, .cp-select-tool)[aria-pressed='true'] {
+:is(.cp-select-face, .cp-select-tool):hover:not(:disabled, [aria-pressed='true']) {
+  background-color: color-mix(in oklab, var(--cp-raise) 60%, transparent);
+}
+
+.cp-select-tool[aria-pressed='true'] {
   background-color: var(--cp-raise);
+  box-shadow: inset 0 0 0 1px var(--cp-tint);
 }
 
-:is(.cp-select-face, .cp-select-tool)[aria-pressed='true'] {
+/* The sliding markers (interactive/lede-select.tsx): one pill behind the chosen
+   face, one ring round the chosen ink and one round the chosen highlighter,
+   each set over its button and gliding to the next one chosen. */
+.cp-select-glide,
+.cp-select-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--w, 0);
+  height: var(--h, 0);
+  translate: var(--x, 0) var(--y, 0);
+  pointer-events: none;
+}
+
+.cp-select-glide {
+  /* Under the buttons, over the bar (which makes the stacking context). */
+  z-index: -1;
+  border-radius: calc(var(--spacing) * 1);
+  background-color: var(--cp-raise);
   box-shadow: inset 0 0 0 1px var(--cp-tint);
+}
+
+.cp-select-ring {
+  z-index: 2;
+  margin: -3.5px;
+  padding: 3.5px;
+  box-sizing: content-box;
+  border: 1.5px solid var(--color-fg);
+  border-radius: 50%;
+  translate: calc(var(--x, 0) - 1.5px) calc(var(--y, 0) - 1.5px);
+}
+
+.cp-select-ring[data-glide='mark'] {
+  border-radius: 4px;
+  rotate: -12deg;
+}
+
+.cp-select-ring[data-off] {
+  opacity: 0;
+  scale: 0.6;
+}
+
+.cp-select-bar[data-ready] :is(.cp-select-glide, .cp-select-ring) {
+  transition:
+    translate 0.32s var(--cp-spring),
+    width 0.32s var(--cp-spring),
+    height 0.32s var(--cp-spring),
+    opacity var(--duration-fast),
+    scale 0.25s var(--cp-spring);
 }
 
 .cp-select-tool:disabled {
@@ -789,16 +844,16 @@ html:not(.js) .cp-hint {
 
 .cp-select-gap {
   width: 1px;
-  height: calc(var(--spacing) * 3.5);
-  margin-inline: 3px;
+  height: calc(var(--spacing) * 3);
+  margin-inline: 2px;
   background-color: var(--cp-tint);
 }
 
 .cp-select-ink,
 .cp-select-mark {
-  width: 12px;
-  height: 12px;
-  margin: 5px;
+  width: 10px;
+  height: 10px;
+  margin: 4px;
   border-radius: 50%;
   background-color: var(--color-fg);
   cursor: pointer;
@@ -813,11 +868,6 @@ html:not(.js) .cp-hint {
   border-radius: 2px;
   background-color: var(--cp-mark);
   rotate: -12deg;
-}
-
-:is(.cp-select-ink, .cp-select-mark)[aria-pressed='true'] {
-  outline: 1.5px solid var(--color-fg);
-  outline-offset: 2px;
 }
 
 :is(.cp-select-face, .cp-select-tool, .cp-select-ink, .cp-select-mark):focus-visible {
@@ -934,7 +984,11 @@ html:not(.js) .cp-hint {
 
 .cp-block-head {
   display: flex;
-  align-items: flex-end;
+  /* The aside reads on the tab's line, not floating above it. */
+  align-items: last baseline;
+  /* The tab hangs out to the left by its own padding, so its word lines up
+     with the rows' names under it (the hover bands bleed as far). */
+  margin-left: calc(var(--spacing) * -2.25);
   border-bottom: 1px solid color-mix(in oklab, var(--color-fg) 22%, transparent);
 }
 
@@ -960,7 +1014,7 @@ html:not(.js) .cp-hint {
 
 .cp-block-head > .cp-meta {
   margin-left: auto;
-  padding: 0 0 calc(var(--spacing) * 1.25) calc(var(--spacing) * 3);
+  padding: 0 0 calc(var(--spacing) * 0.75) calc(var(--spacing) * 3);
 }
 
 .cp-list {

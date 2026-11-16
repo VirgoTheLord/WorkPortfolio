@@ -7,8 +7,8 @@ const VERTEX = 'attribute vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }'
 /* A red glow coming down from the top edge, in grain (owner's pick of four
    textures, November 2026): a broad, soft bloom from the top centre, a few
    slower wisps in it, and the whole broken up by an uneven film grain, like a
-   photograph of red light. On white it is a little stronger than on black
-   (DARK), where the same red reads brighter. Premultiplied alpha, so it lays over the page colour. */
+   photograph of red light. On white it is kept faint (owner's note: it
+   read as a pink wash); on black (DARK) the same red needs more to show. Premultiplied alpha, so it lays over the page colour. */
 const FRAGMENT = `precision mediump float;
 uniform vec2 R; uniform vec3 RED; uniform float DARK, D;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -27,7 +27,7 @@ void main(){
   float glow = clamp((bloom * (.7 + .3 * wisp) + wide) * smoothstep(.75, .1, y), 0., 1.);
   float grain = hash(floor(gl_FragCoord.xy / (1.5 * D)));
   float clump = fbm(gl_FragCoord.xy / (6. * D));
-  float a = glow * mix(.24, .2, DARK) * (.55 + .9 * grain * clump);
+  float a = glow * mix(.11, .2, DARK) * (.55 + .9 * grain * clump);
   gl_FragColor = vec4(RED * a, a);
 }`
 
