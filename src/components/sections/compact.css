@@ -2083,10 +2083,12 @@ a.cp-line:hover > .cp-meta {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: calc(var(--spacing) * 16);
-  padding: calc(var(--spacing) * 4);
+  min-height: calc(var(--spacing) * 10);
+  /* The name lines up with its tab's label above it. */
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2.25);
   background-color: color-mix(in oklab, var(--color-fg) 5%, var(--color-bg));
   font-family: var(--font-display);
+  font-size: var(--text-sm);
   font-weight: 500;
   transition:
     color var(--duration-base) var(--ease-expo),
