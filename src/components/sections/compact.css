@@ -2061,26 +2061,91 @@ a.cp-line:hover > .cp-meta {
   border-top: 0;
 }
 
-/* Its line draws in from the left under the pointer and leaves to the right. */
+/* The facts, as ink bands (owner's pick of six): a row with a link is the
+   link, all of it (the link reaches over the row); pointed at, ink sweeps
+   across the row from the left, the words step right into it in the page's
+   colour, and the arrow flies off its corner and comes back. */
+.cp-piece-facts .cp-row {
+  position: relative;
+  isolation: isolate;
+  grid-template-columns: calc(var(--spacing) * 28) minmax(0, 1fr);
+  align-items: center;
+  transition: color 0.3s var(--ease-expo);
+}
+
+.cp-piece-facts .cp-row-label {
+  white-space: nowrap;
+  transition: color 0.3s var(--ease-expo);
+}
+
+.cp-piece-facts .cp-row:has(.cp-piece-link)::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--spacing) * -2.25);
+  z-index: -1;
+  background-color: var(--color-fg);
+  scale: 0 1;
+  transform-origin: right;
+  transition: scale 0.5s var(--ease-expo);
+}
+
 .cp-piece-link {
   display: inline-flex;
   max-width: 100%;
   align-items: center;
   gap: calc(var(--spacing) * 1.5);
-  padding-bottom: 2px;
   overflow-wrap: anywhere;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-position: 100% 100%;
-  background-repeat: no-repeat;
-  background-size: 0 1px;
-  transition:
-    color var(--duration-base) var(--ease-expo),
-    background-size 0.45s var(--ease-expo);
+  transition: translate 0.45s var(--ease-expo);
 }
 
-.cp-piece-link:is(:hover, :focus-visible) {
-  background-position: 0 100%;
-  background-size: 100% 1px;
+.cp-piece-link::after {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--spacing) * -2.25);
+}
+
+.cp-piece-link:focus-visible {
+  outline: none;
+}
+
+.cp-piece-facts .cp-row:has(.cp-piece-link:is(:hover, :focus-visible)) {
+  color: var(--color-bg);
+
+  &::before {
+    scale: 1 1;
+    transform-origin: left;
+  }
+
+  & .cp-row-label {
+    color: color-mix(in oklab, var(--color-bg) 65%, transparent);
+  }
+
+  & .cp-piece-link {
+    translate: calc(var(--spacing) * 1.5) 0;
+  }
+
+  & .cp-nudge {
+    transform: none;
+    color: var(--color-red);
+    animation: cp-fly 0.55s var(--ease-expo);
+  }
+}
+
+@keyframes cp-fly {
+  45% {
+    opacity: 0;
+    translate: 150% -150%;
+  }
+
+  46% {
+    opacity: 0;
+    translate: -150% 150%;
+  }
+
+  100% {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 /* The pieces either side. */
@@ -2189,10 +2254,6 @@ a.cp-line:hover > .cp-meta {
 
   .cp-pager-link:hover .cp-pager-label {
     translate: 0 calc(var(--spacing) * -0.75);
-  }
-
-  .cp-piece-link:hover {
-    color: var(--cp-second);
   }
 
   .cp-pager-all:hover {
