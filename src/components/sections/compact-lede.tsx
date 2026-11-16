@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { BallpointLink } from '@/components/interactive/ballpoint-link'
+import { CairnMark } from '@/components/ui/cairn-mark'
 import { LedeLight } from '@/components/interactive/lede-light'
 import { LedeSelect } from '@/components/interactive/lede-select'
 import { LedeTiles } from '@/components/interactive/lede-tiles'
@@ -52,9 +53,13 @@ export function CompactLede() {
           if (!project) return null
           return (
             <a key={i} href={project.href ?? '#work'} className="cp-chip cp-chip-work">
-              <span aria-hidden="true" className="cp-chip-mark">
-                {project.title[0]}
-              </span>
+              {project.slug === 'cairn' ? (
+                <CairnMark />
+              ) : (
+                <span aria-hidden="true" className="cp-chip-mark">
+                  {project.title[0]}
+                </span>
+              )}
               {project.title}
               <span aria-hidden="true" className="cp-peek">
                 <Image src={project.cover.image} alt="" sizes="13rem" />

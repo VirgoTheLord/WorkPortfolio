@@ -173,6 +173,19 @@
   text-decoration-color: var(--color-accent);
 }
 
+/* Cairn's mark (ui/cairn-mark.tsx): stacked stones in the text colour, the
+   top one red, standing where Cairn is named. */
+.cp-cairn {
+  display: inline-block;
+  flex-shrink: 0;
+  width: auto;
+  height: 1.25em;
+}
+
+.cp-cairn-top {
+  fill: var(--color-red);
+}
+
 /* Shared small parts.
 
    The folder tab (owner's pick, November 2026): a pale tab cut at 45° on its
@@ -1155,7 +1168,11 @@ a.cp-line:hover > .cp-meta {
   width: calc(var(--spacing) * 4);
   height: calc(var(--spacing) * 2);
   margin-right: calc(var(--spacing) * 1.5);
-  background-image: repeating-linear-gradient(-45deg, var(--color-fg-muted) 0 1px, transparent 1px 3px);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-fg-muted) 0 1px,
+    transparent 1px 3px
+  );
   vertical-align: -0.05em;
 }
 
@@ -1944,8 +1961,8 @@ a.cp-line:hover > .cp-meta {
   font-size: var(--text-xs);
 }
 
-.cp-piece-kind .cp-chip-mark {
-  font-size: 1.1em;
+.cp-piece-kind .cp-cairn {
+  height: 1.5em;
 }
 
 .cp-piece-kind .text-fg-muted {
@@ -2321,7 +2338,6 @@ a.cp-line:hover > .cp-meta {
       .cp-crumbs,
       .cp-piece-head > *,
       .cp-stage,
-      .cp-head,
       .cp-steps > li,
       .cp-rows > div,
       .cp-pager,
