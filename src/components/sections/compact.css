@@ -1565,8 +1565,9 @@ html:not(.js) .cp-hint {
 
 /* The foot (layout/compact-foot.tsx): two sides under a rule, who made it on
    the left (the name in Kristi, where it was made), and where to go next on
-   the right, one link to a line, aligned to the column's edge. On a phone the
-   links follow the name, in a row. */
+   the right, one link to a line, aligned to the column's edge. A phone keeps
+   the two sides (owner's note: the links spread in a row read loose); only a
+   very narrow screen stacks them, the links one to a line under the name. */
 .cp-foot {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1632,13 +1633,22 @@ html:not(.js) .cp-hint {
 
 @media (width < 34rem) {
   .cp-foot {
+    gap: calc(var(--spacing) * 4);
+    padding-top: calc(var(--spacing) * 7);
+  }
+
+  .cp-dominoes {
+    margin-top: calc(var(--spacing) * 8);
+  }
+}
+
+@media (width < 22rem) {
+  .cp-foot {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .cp-foot-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: calc(var(--spacing) * 2) calc(var(--spacing) * 5);
+    justify-items: start;
   }
 }
 
