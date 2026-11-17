@@ -250,6 +250,24 @@
   --cp-tab-fill: color-mix(in oklab, var(--color-fg) 8%, var(--color-bg));
 }
 
+/* The small chips: Cairn's ballpoint button, drawn still and scaled down
+   whole with zoom, so the drawing, its block and its label shrink together
+   (the engine measures in the button's own pixels, so it draws true). The
+   label is set larger to come out at the label size, and the button is sized
+   to its words. The drawing overhangs the button, so neighbours keep room. */
+.wui-ballpoint.cp-ink {
+  --cp-ink-zoom: 0.42;
+  zoom: var(--cp-ink-zoom);
+  min-width: 0;
+  min-height: calc(var(--spacing) * 11);
+  margin: 0 calc(var(--spacing) * 4) calc(var(--spacing) * 3) calc(var(--spacing) * 1);
+  padding-inline: calc(var(--spacing) * 6);
+  font-size: calc(var(--text-sm) / var(--cp-ink-zoom));
+  font-weight: 500;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 /* The arrows that nudge toward where a link goes. */
 .cp-nudge {
   flex-shrink: 0;
@@ -984,6 +1002,11 @@ html:not(.js) .cp-hint {
 
 .cp-line-plain {
   grid-template-columns: calc(var(--spacing) * 28) minmax(0, 1fr) auto;
+}
+
+/* The experience reads whole, wrapping rather than cut short. */
+.cp-line-plain .cp-line-note {
+  white-space: normal;
 }
 
 .cp-line-note {

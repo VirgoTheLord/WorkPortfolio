@@ -207,8 +207,16 @@ export const compact = {
     visit: 'Visit',
     pieces: 'live pieces',
   },
+  /* The job, then the short stints before it as one row (owner's call after
+     the review: four roles in a year read as restless when listed flat), then
+     the degree. */
   experience: [
-    ...experience.map((item) => ({ org: item.org, role: item.role, when: item.when })),
+    ...(job ? [{ org: job.org, role: job.role, when: job.when }] : []),
+    {
+      org: 'Earlier',
+      role: 'NeSt Digital, Galen AI (freelance) and a stealth startup',
+      when: 'Aug 2025 – Jul 2026',
+    },
     { org: degree.school, role: `${degree.degree}, ${degree.field}`, when: degree.when },
   ],
   stack: {
