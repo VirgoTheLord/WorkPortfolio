@@ -21,9 +21,9 @@ type Props = { hint: string }
  * standing along the bottom edge of the page. Push through them, with a mouse
  * or a finger, and they fall in a chain the way you moved, each knocking the
  * next until it leans on it; a moment after they settle they stand back up, one
- * after another, from the far end. Kept quiet (owner's note): small, and in
- * the muted grey, with a little note above inviting the push, which goes once
- * they have been pushed. Decoration: hidden from assistive tech, and with
+ * after another, from the far end. Kept quiet (owner's note): small, and a
+ * light red (the accent at under half strength), with a little note above
+ * inviting the push, which goes once they have been pushed. Decoration: hidden from assistive tech, and with
  * reduced motion they simply stand. It draws only while one is moving.
  */
 export function DominoRow({ hint }: Props) {
@@ -63,10 +63,10 @@ export function DominoRow({ hint }: Props) {
 
     const draw = () => {
       const style = getComputedStyle(cv)
-      const ink = style.getPropertyValue('--color-fg-muted').trim()
+      const ink = style.getPropertyValue('--color-red').trim()
       const paper = style.getPropertyValue('--color-bg').trim()
       ctx.clearRect(0, 0, W, H)
-      ctx.globalAlpha = 0.55
+      ctx.globalAlpha = 0.42
       for (const d of row) {
         const pivot = d.a >= 0 ? d.x + WIDE / 2 : d.x - WIDE / 2
         ctx.save()
