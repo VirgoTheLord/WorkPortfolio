@@ -314,7 +314,7 @@ export type CompactContent = {
   /** The pieces are the workbench's (content/workbench.ts); the rest are a link away in Cairn. */
   workbench: { all: NavItem }
   experience: readonly { org: string; role: string; when: string }[]
-  stack: { items: readonly string[]; hint: string }
+  stack: { items: readonly string[] }
   /** What brings me alive: a strip of instant photos, each turned over for a note. */
   alive: {
     hint: string

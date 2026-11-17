@@ -1128,6 +1128,12 @@ html:not(.js) .cp-hint {
   white-space: nowrap;
 }
 
+/* The aside on a heading's line is a step smaller than the facts. */
+.cp-block-head > .cp-meta,
+.cp-block-head > .cp-meta .cp-flap-link {
+  font-size: 0.68rem;
+}
+
 .cp-block-head > .cp-meta {
   margin-left: auto;
   padding: 0 0 calc(var(--spacing) * 0.75) calc(var(--spacing) * 3);
@@ -1301,8 +1307,7 @@ a.cp-line:hover > .cp-meta {
   }
 }
 
-/* The stack's keys (interactive/stack-keys.tsx): type a tool's first letter
-   and its key goes down. */
+/* The stack's keys (sections/compact-stack.tsx): small key caps, a plain list. */
 .cp-keycaps {
   display: flex;
   flex-wrap: wrap;
@@ -1320,20 +1325,6 @@ a.cp-line:hover > .cp-meta {
   color: var(--color-fg);
   font-family: var(--font-label);
   font-size: var(--text-xs);
-  transition:
-    translate 70ms,
-    border-bottom-width 70ms,
-    margin 70ms,
-    color var(--duration-fast),
-    border-color var(--duration-fast);
-}
-
-.cp-keycap[data-down] {
-  translate: 0 2px;
-  margin-bottom: 2px;
-  border-bottom-width: 1px;
-  border-color: var(--color-accent);
-  color: var(--color-accent);
 }
 
 /* Stuff that brings me alive (interactive/polaroid-strip.tsx, owner's pick):
