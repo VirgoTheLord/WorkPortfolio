@@ -127,7 +127,6 @@ export function PolaroidStrip({ label, prev, next, turn, items }: Props) {
               type="button"
               className="cp-pol"
               aria-pressed={turned.includes(i)}
-              aria-label={`${item.title}: ${turn}`}
               data-turned={turned.includes(i) || undefined}
               onClick={(event) => {
                 // The click that ends a drag is not a tap.
@@ -147,6 +146,8 @@ export function PolaroidStrip({ label, prev, next, turn, items }: Props) {
                     />
                   </span>
                   <span className="cp-pol-title">{item.title}</span>
+                  {/* Its name is what it shows (voice control says what it sees); this tells what a press does. */}
+                  <span className="sr-only">, {turn}</span>
                 </span>
                 <span className="cp-pol-face cp-pol-back">
                   <span className="cp-pol-note">{item.note}</span>
