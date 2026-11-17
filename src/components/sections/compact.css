@@ -170,6 +170,14 @@
   outline-offset: 3px;
 }
 
+/* Cairn's diagonal link at the foot's size: no underline, the red copy rolling
+   in is the answer to the pointer. */
+.cp-foot .cp-foot-diagonal {
+  font-size: var(--text-xs);
+  font-weight: inherit;
+  text-decoration: none;
+}
+
 /* The glow from the top edge (interactive/top-glow.tsx): behind everything,
    the page's width, fading in on its first frame. */
 .cp {
@@ -247,7 +255,18 @@
 .cp {
   --cp-tab: polygon(0 0, calc(100% - var(--spacing) * 2.75) 0, 100% 100%, 0 100%);
   --cp-tab-left: polygon(calc(var(--spacing) * 2.75) 0, 100% 0, 100% 100%, 0 100%);
+  /* Lighter on the white page (owner's call, November 2026); dark keeps 8%. */
+  --cp-tab-fill: color-mix(in oklab, var(--color-fg) 5%, var(--color-bg));
+}
+
+:root[data-theme='dark'] .cp {
   --cp-tab-fill: color-mix(in oklab, var(--color-fg) 8%, var(--color-bg));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .cp {
+    --cp-tab-fill: color-mix(in oklab, var(--color-fg) 8%, var(--color-bg));
+  }
 }
 
 /* The small chips: Cairn's ballpoint button, drawn still and scaled down

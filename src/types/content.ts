@@ -11,10 +11,15 @@ export type HeroContent = {
   drawHint: string
 }
 
+/** A drawing set in the About statement after its word (sections/statement-mark.tsx). */
+export type StatementMark = 'pointer' | 'clock' | 'pixels'
+
 export type AboutContent = {
   label: string
   /** The first card's line. */
   statement: string
+  /** Words of the statement (without punctuation) followed by a drawing of themselves. */
+  marks: Readonly<Record<string, StatementMark>>
   /** One card each: the term is the card's label, the detail its line. */
   details: readonly { term: string; detail: string }[]
 }
@@ -88,14 +93,15 @@ export type ContactContent = {
 
 export type FooterContent = {
   navLabel: string
-  /** The headings of the four columns; the second is the hero's own "Built with". */
+  /** The headings of the four columns. */
   navigationLabel: string
-  typefacesLabel: string
-  contactLabel: string
-  /** The two typefaces the site is actually set in. */
-  typefaces: readonly string[]
-  /** The contact column's mail link. */
+  workLabel: string
+  connectLabel: string
+  nowLabel: string
+  /** The connect column's mail link. */
   email: string
+  /** The last column's lines: the present role, then where. */
+  now: readonly string[]
   toTop: string
 }
 

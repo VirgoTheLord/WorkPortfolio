@@ -1,8 +1,9 @@
 import { FooterInk } from '@/components/motion/footer-ink'
 import { FooterScene } from '@/components/motion/footer-scene'
-import { TextLink } from '@/components/ui/text-link'
+import { DiagonalLink } from '@/components/library/cairn/diagonal-link'
 import { legal } from '@/content/legal'
-import { compactNotice, contact, footer, hero, menu, site } from '@/content/site'
+import { projects } from '@/content/projects'
+import { compactNotice, contact, footer, menu, site } from '@/content/site'
 import './site-footer.css'
 
 /* The destinations, then the compact site, so it is always one click away. */
@@ -13,9 +14,12 @@ const items = [menu.home, ...site.nav, compactNotice.link]
  * field, black on red, a single surface) in the ordinary flow, with a mark at
  * the left, four columns each headed by a line of text over a hairline with its
  * links beside a vertical hairline, a hairline across, the name set as wide as
- * the frame along the bottom edge, a hairline, and the credits. Four columns of
- * what the project really holds: the destinations, the stack, the two typefaces,
- * and the way to write (the address is only in the link, never printed). The
+ * the frame along the bottom edge, a hairline, and the credits. Four columns, as
+ * working portfolios set them (owner's call, November 2026): the destinations,
+ * the work (live sites), the ways to get in touch (the address is only in the
+ * link, never printed), and what the owner does now and where. Every link is
+ * Cairn's diagonal link; the arrows roll with the words (↗ leaves the site, ↑
+ * goes back up) and stay out of the names (aria-label). The
  * reference's mark is a ring of its own letters; this one is the logo ("AW"). Without
  * script, or with reduced motion, it is all simply there; FooterScene
  * (motion/footer-scene.tsx) adds the scroll-linked motion over the data-footer-*
@@ -41,46 +45,71 @@ export function SiteFooter() {
                 <ul className="footer-links">
                   {items.map((item) => (
                     <li key={item.href}>
-                      <TextLink href={item.href}>{item.label}</TextLink>
+                      <DiagonalLink href={item.href} label={item.label} className="footer-diagonal" />
                     </li>
                   ))}
                 </ul>
               </nav>
 
               <div data-footer-column className="footer-column">
-                <h2 className="footer-heading">{hero.stack.label}</h2>
+                <h2 className="footer-heading">{footer.workLabel}</h2>
                 <ul className="footer-links">
-                  {hero.stack.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
+                  {projects.map(({ slug, href, title }) =>
+                    href ? (
+                      <li key={slug}>
+                        {/* External: marked with an arrow, its own tab is the visitor's choice. */}
+                        <DiagonalLink
+                          href={href}
+                          rel="noreferrer"
+                          label={`${title} ↗`}
+                          aria-label={title}
+                          className="footer-diagonal footer-diagonal-out"
+                        />
+                      </li>
+                    ) : null,
+                  )}
                 </ul>
               </div>
 
               <div data-footer-column className="footer-column">
-                <h2 className="footer-heading">{footer.typefacesLabel}</h2>
-                <ul className="footer-links">
-                  {footer.typefaces.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div data-footer-column className="footer-column">
-                <h2 className="footer-heading">{footer.contactLabel}</h2>
+                <h2 className="footer-heading">{footer.connectLabel}</h2>
                 <ul className="footer-links">
                   <li>
-                    <TextLink href={`mailto:${contact.email}`}>{footer.email}</TextLink>
+                    <DiagonalLink
+                      href={`mailto:${contact.email}`}
+                      label={footer.email}
+                      className="footer-diagonal"
+                    />
                   </li>
                   {site.profiles.map((profile) => (
                     <li key={profile.href}>
-                      {/* External: marked with an arrow, its own tab is the visitor's choice. */}
-                      <TextLink href={profile.href} rel="noreferrer">
-                        {profile.label} <span aria-hidden="true">↗</span>
-                      </TextLink>
+                      <DiagonalLink
+                        href={profile.href}
+                        rel="noreferrer"
+                        label={`${profile.label} ↗`}
+                        aria-label={profile.label}
+                        className="footer-diagonal footer-diagonal-out"
+                      />
                     </li>
                   ))}
-                  <li>
-                    <TextLink href="#main">{footer.toTop}</TextLink>
+                </ul>
+              </div>
+
+              <div data-footer-column className="footer-column">
+                <h2 className="footer-heading">{footer.nowLabel}</h2>
+                <ul className="footer-links">
+                  {footer.now.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                  {/* At the foot of the column, apart from the facts above it. */}
+                  <li className="footer-to-top">
+                    {/* The way up points up, apart from the arrows that leave the site. */}
+                    <DiagonalLink
+                      href="#main"
+                      label={`${footer.toTop} ↑`}
+                      aria-label={footer.toTop}
+                      className="footer-diagonal footer-diagonal-up"
+                    />
                   </li>
                 </ul>
               </div>
@@ -118,7 +147,11 @@ export function SiteFooter() {
               </p>
               <p className="footer-credit-mask">
                 <span data-footer-credit className="footer-credit">
-                  <TextLink href={legal.footerLink.href}>{legal.footerLink.label}</TextLink>
+                  <DiagonalLink
+                    href={legal.footerLink.href}
+                    label={legal.footerLink.label}
+                    className="footer-diagonal"
+                  />
                 </span>
               </p>
               <p className="footer-credit-mask">

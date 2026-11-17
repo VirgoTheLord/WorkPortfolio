@@ -64,7 +64,9 @@ const [degree] = education
  */
 export const about = {
   label: 'About me',
-  statement: 'I translate complex problems into elegant and pure digital solutions.',
+  statement: 'I sweat the last ten percent: the hover, the timing, the pixel nobody asked about.',
+  /* The words that carry a small drawing of themselves (sections/statement-mark.tsx). */
+  marks: { hover: 'pointer', timing: 'clock', pixel: 'pixels' },
   details: [
     { term: 'Currently', detail: `${job.role} at ${job.org}` },
     { term: 'Studied', detail: `${degree.degree} in ${degree.field}, ${degree.school}` },
@@ -122,10 +124,12 @@ export const loader = {
 export const footer = {
   navLabel: 'Footer',
   navigationLabel: 'Navigation',
-  typefacesLabel: 'Typefaces',
-  contactLabel: 'Contact',
-  typefaces: ['Bricolage Grotesque', 'Azeret Mono'],
+  workLabel: 'Work',
+  connectLabel: 'Connect',
+  nowLabel: 'Currently',
   email: 'Email',
+  /* The present role, short, and the city: from the one record of them above. */
+  now: [`SDET at ${job.org}`, place],
   toTop: 'Back to top',
 } satisfies FooterContent
 

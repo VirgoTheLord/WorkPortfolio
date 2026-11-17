@@ -62,6 +62,76 @@
   line-height: 1.35;
 }
 
+/* ---- The marks (statement-mark.tsx) -------------------------------------------
+ * A drawing after "hover", "timing" and "pixel", raised like a footnote mark:
+ * small, its top level with the capitals, set close against its word, and a
+ * comma after it follows on as after a letter. In the text's colour. Pointed
+ * at, the statement answers with each: the pointer taps, the clock's hand
+ * ticks round, one pixel of the cluster blinks. With reduced motion they are
+ * simply there. */
+.about-mark {
+  display: inline-block;
+  width: 0.36em;
+  height: 0.36em;
+  margin-inline: 0.05em 0.02em;
+  vertical-align: 0.34em;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-pointer,
+.about-pixels {
+  fill: currentColor;
+  stroke: none;
+}
+
+.about-hand {
+  transform-origin: 12px 12px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-statement:hover .about-pointer {
+    transform-origin: 20% 10%;
+    animation: about-tap 1.2s var(--ease-in-out) infinite;
+  }
+
+  .about-statement:hover .about-hand {
+    animation: about-tick 2.4s steps(12) infinite;
+  }
+
+  .about-statement:hover .about-lit {
+    animation: about-blink 0.9s steps(1) infinite;
+  }
+}
+
+@keyframes about-tap {
+  0%,
+  60%,
+  100% {
+    scale: 1;
+  }
+
+  70% {
+    scale: 0.82;
+  }
+}
+
+@keyframes about-tick {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes about-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 @media (min-width: 48rem) {
   .about-statement {
     font-size: var(--text-3xl);

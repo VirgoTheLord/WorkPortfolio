@@ -266,9 +266,9 @@ export const compact = {
       {
         title: 'sketching',
         note: 'I draw, mostly sketches.',
-        stamp: ['DRAWING', 'PENCIL'],
+        stamp: ['DRAWING', 'INK'],
         image: sketch,
-        alt: 'A pencil sketch of a teddy bear on a pad, a pencil beside it.',
+        alt: 'Alwin’s ballpoint drawing of Luffy from One Piece, grinning under his straw hat, on a spiral sketchpad on a wooden desk.',
       },
       {
         title: 'one day: drift',
@@ -282,7 +282,7 @@ export const compact = {
         note: 'Anime, always. Ask me for one to watch.',
         stamp: ['WATCHING', 'ALWAYS'],
         image: anime,
-        alt: 'An anime swordsman in a black kimono, red energy around him, under a full moon.',
+        alt: 'Key art from Bleach: Thousand-Year Blood War, Ichigo leaping forward with his sword, his friends around him and Yhwach looming behind, all lit red.',
       },
     ],
   },
