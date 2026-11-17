@@ -70,6 +70,14 @@ html:has(.menu[data-open='true']) {
   transition-timing-function: var(--ease-standard);
 }
 
+/* Over a red (brand) section the bar keeps one red: the brand theme's accent is
+   a lighter mix, which made the call to action's square a different red from
+   the light/dark key beside it, whose face is the field's own red (owner's
+   note, November 2026). In the bar, the accent is that red. */
+.menu[data-theme='brand'] {
+  --color-accent: var(--color-red);
+}
+
 /* The bar: the header's height less the 1rem gap above it. */
 .menu-bar {
   height: calc(var(--spacing-header) - var(--spacing) * 4);
@@ -683,9 +691,12 @@ html:not(.js) .mode-key {
   pointer-events: none;
 }
 
+/* Hidden until its own stroke starts: with round caps a fully retracted dash
+   still paints a cap where the path begins, so a dot of the head showed early. */
 .menu-note-arrow path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
+  opacity: 0;
 }
 
 .menu[data-open='true'] .menu-note-text {
@@ -707,7 +718,12 @@ html:not(.js) .mode-key {
 }
 
 @keyframes menu-note-draw {
+  from {
+    opacity: 1;
+  }
+
   to {
+    opacity: 1;
     stroke-dashoffset: 0;
   }
 }
@@ -719,6 +735,7 @@ html:not(.js) .mode-key {
 
   .menu-note-arrow path {
     stroke-dashoffset: 0;
+    opacity: 1;
   }
 
   .menu[data-open='true'] .menu-note-text,

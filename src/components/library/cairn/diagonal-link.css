@@ -1,0 +1,66 @@
+/*
+ * The diagonal link (diagonal-link.tsx). Each letter is a one-line window over
+ * two stacked copies: the ink copy at rest, the accent copy waiting below. On
+ * hover or focus both move up one line, each letter 20ms after the last
+ * (--i), on 400ms easing out, so the swap travels across the word. White space
+ * keeps its width (white-space: pre), so spaces roll too.
+ */
+.wui-diagonal-link {
+  display: inline-flex;
+  color: var(--wui-fg);
+  font-size: var(--wui-text-lg);
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.wui-diagonal-link-letters {
+  display: inline-flex;
+}
+
+.wui-diagonal-link-char {
+  display: inline-flex;
+  height: 1.1em;
+  flex-direction: column;
+  overflow: hidden;
+  white-space: pre;
+}
+
+.wui-diagonal-link-char > span {
+  display: block;
+  line-height: 1.1;
+  transition: translate 400ms var(--wui-ease-out);
+  transition-delay: calc(var(--i) * var(--wui-stagger) * 0.4);
+}
+
+.wui-diagonal-link-char > span + span {
+  color: var(--wui-accent);
+}
+
+.wui-diagonal-link:is(:hover, :focus-visible, [data-play]) .wui-diagonal-link-char > span {
+  translate: 0 -100%;
+}
+
+.wui-diagonal-link:focus-visible {
+  outline: 2px solid var(--wui-focus);
+  outline-offset: 4px;
+}
+
+/* A touch screen gets a 44px target without a bigger link. */
+@media (pointer: coarse) {
+  .wui-diagonal-link {
+    position: relative;
+  }
+
+  .wui-diagonal-link::after {
+    content: '';
+    position: absolute;
+    inset: calc(var(--wui-unit) * -3) calc(var(--wui-unit) * -1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wui-diagonal-link-char > span {
+    transition: none;
+  }
+}

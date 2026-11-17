@@ -8,6 +8,22 @@
   }
 }
 
+/* White in light mode, as the compact site's page is (owner's call, November
+   2026); dark keeps the deep black. */
+:root:has(.legal) {
+  --color-bg: var(--color-card);
+}
+
+:root[data-theme='dark']:has(.legal) {
+  --color-bg: var(--color-black-deep);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):has(.legal) {
+    --color-bg: var(--color-black-deep);
+  }
+}
+
 .legal {
   flex: 1;
 }
@@ -129,6 +145,17 @@
   color: var(--color-fg-muted);
   line-height: 1.6;
   text-wrap: pretty;
+}
+
+/* The address in running text: the link's padding and the paragraph's tall
+   line put its underline far under the letters; here it sits just beneath them. */
+.legal-main p .text-link {
+  padding-block: 0;
+  line-height: 1.2;
+}
+
+.legal-main p .text-link-rule {
+  bottom: 0;
 }
 
 /* The end: the credit, and the way back up. */

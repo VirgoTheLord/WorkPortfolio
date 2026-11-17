@@ -3,6 +3,8 @@ import { ScrambleText } from '@/components/layout/scramble-text'
 import { HoverDeck } from '@/components/library/cairn/hover-deck'
 import { PlayingCard, SUITS } from '@/components/ui/playing-card'
 import { about, hero } from '@/content/site'
+import type { AboutContent } from '@/types/content'
+import { StatementMark } from './statement-mark'
 import './about.css'
 
 /*
@@ -16,8 +18,26 @@ import './about.css'
  * the tab (globals.css, Panels), its edges stitched. From lg it slides
  * up over the pinned hero (about.css). The statement's words each sit in a mask,
  * so its lines can rise out of them in turn (motion/about-reveal.tsx); the
- * sentence is read once, from the hidden copy, not word by word.
+ * sentence is read once, from the hidden copy, not word by word. Three of its
+ * words carry a small drawing of themselves (statement-mark.tsx).
  */
+const marks: AboutContent['marks'] = about.marks
+
+/* A word of the statement, with its drawing (if it has one) raised against it
+   before any punctuation, inside the word's mask so the two rise together. */
+function Word({ word }: { word: string }) {
+  const [, bare = word, mark = ''] = /^(.*?)([,.:;]*)$/.exec(word) ?? []
+  const name = marks[bare]
+  if (!name) return word
+  return (
+    <>
+      {bare}
+      <StatementMark name={name} />
+      {mark}
+    </>
+  )
+}
+
 export function About() {
   const words = about.statement.split(' ')
   // The name's letters, one to a card, for the deck in the left column.
@@ -61,7 +81,7 @@ export function About() {
                 <span key={i}>
                   <span data-about-word className="about-mask">
                     <span data-about-rise className="about-rise">
-                      {word}
+                      <Word word={word} />
                     </span>
                   </span>
                   {i < words.length - 1 ? ' ' : null}

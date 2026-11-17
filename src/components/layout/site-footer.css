@@ -53,8 +53,8 @@
   letter-spacing: var(--tracking-widest);
 }
 
-/* Below md, two by two, sharing the width; the right-hand column (Built with,
-   Contact) is never narrower than its widest item, so on the narrowest phones
+/* Below md, two by two, sharing the width; the right-hand column (Work,
+   Currently) is never narrower than its widest item, so on the narrowest phones
    nothing in it wraps. */
 .footer-columns {
   display: grid;
@@ -88,16 +88,54 @@
   line-height: 1.4;
 }
 
-/* Links and plain lines share one row height, so the four columns run on one
-   rhythm: the site link's vertical padding (which is there to hold its underline
-   clear in running text) is dropped here, and its underline sits just under the
-   letters instead of half a line below them. */
-.footer-links .text-link {
-  padding-block: 0;
+/* Every link is Cairn's diagonal link, at the footer's own size and weight, so
+   links and plain lines share one row and the four columns run on one rhythm.
+   Its rolling copy is the ink, not the accent: on the red field the brand
+   accent all but vanishes, and white is 3.3:1, under AA; the roll itself is the
+   change. */
+.footer .footer-diagonal {
+  --wui-accent: var(--color-fg);
+  font-size: inherit;
+  font-weight: inherit;
 }
 
-.footer-links .text-link-rule {
-  bottom: 0.05em;
+/* Each row is one line tall with its contents centred in it, so a link's
+   letters (in their 1.1em windows) and a plain line's sit on the same level. */
+.footer-links li {
+  display: flex;
+  align-items: center;
+  min-height: 1lh;
+}
+
+/* The way back up sits at the foot of its column, so it does not read as one
+   of the facts above it (the role, the city). */
+.footer-to-top {
+  margin-top: auto;
+}
+
+/* Its room above, where the column is no taller than its lines, goes on the
+   line before it: padding on its own row would push its letters off the
+   rows beside it. */
+.footer-links li:has(+ .footer-to-top) {
+  margin-bottom: calc(var(--spacing) * 4);
+}
+
+/* The arrow is the label's last letter, so it rolls with the word, but the
+   typeface's arrow is long and thin: its letter is hidden and a drawn arrow, the
+   text's weight, is painted in its place in the letter's own colour (the ink
+   copy, then the rolling one). ↗ leaves the site, ↑ goes back up. */
+.footer :is(.footer-diagonal-out, .footer-diagonal-up) .wui-diagonal-link-char:last-child {
+  width: 0.8em;
+}
+
+.footer :is(.footer-diagonal-out, .footer-diagonal-up) .wui-diagonal-link-char:last-child > span {
+  -webkit-text-fill-color: transparent;
+  background-color: currentColor;
+  mask: url('./footer-arrow-out.svg') 50% 40% / 0.75em no-repeat;
+}
+
+.footer .footer-diagonal-up .wui-diagonal-link-char:last-child > span {
+  mask-image: url('./footer-arrow-up.svg');
 }
 
 @media (min-width: 48rem) {
@@ -201,12 +239,6 @@
     justify-content: space-between;
     padding-top: calc(var(--spacing) * 1);
   }
-}
-
-/* The links are plain at rest, as the reference's are, and take the site's
-   underline (the line runs out and a new one runs in) on hover and keyboard focus. */
-.footer-links .text-link-rule > span:first-child {
-  transform: scaleX(0);
 }
 
 /* Touch: roomier link rows, so every link reaches a comfortable target. */
