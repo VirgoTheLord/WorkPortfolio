@@ -34,6 +34,21 @@ const FIRST_TAKES = 1400
 const EACH_LONGER = 90
 const LONGEST_TAKES = 2600
 
+/* Set by the browser's back and forward arrows, read by the next arrival.
+   The router answers the same event first-hand, so this listens from the
+   start rather than per page. */
+let traversed = false
+if (typeof window !== 'undefined') {
+  window.addEventListener('popstate', () => {
+    traversed = true
+  })
+}
+
+/* Was this page itself opened by back or forward (a full load)? */
+const loadedByTraversal = () =>
+  (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)
+    ?.type === 'back_forward'
+
 /*
  * The compact site's arrival (owner's pick: blur, then sharp): everything
  * comes in out of a blur, one thing after another; what is below the screen
@@ -42,12 +57,12 @@ const LONGEST_TAKES = 2600
  * shows and then vanishes; this only says when each thing is in, and how
  * long it takes.
  *
- * It starts over on every arrival: a page load, a link, and the browser's
- * back and forward too, whether the router keeps the page or the browser
- * restores it from its back-forward cache (`pageshow`), and the arrows
- * between places on one page (`popstate`). Without starting
- * over, a page brought back half-revealed played half an entrance. With
- * reduced motion CSS never hides anything, and this does nothing.
+ * It plays on a page load and on a link. Going back or forward with the
+ * browser's arrows (owner's note: no entrance there) shows the page at once,
+ * whether the router brings it back, the browser restores it from its
+ * back-forward cache (`pageshow`) or loads it afresh; the arrows between
+ * places on one page leave it as it is. With reduced motion CSS never hides
+ * anything, and this does nothing.
  */
 export function BlurReveal() {
   const path = usePathname()
@@ -59,6 +74,26 @@ export function BlurReveal() {
 
     let seen: IntersectionObserver | null = null
     let alive = true
+
+    // Everything in at once, with no entrance.
+    const show = () => {
+      seen?.disconnect()
+      root.querySelectorAll<HTMLElement>(ARRIVING).forEach((el) => {
+        el.style.setProperty('--cp-in-delay', '0ms')
+        el.style.setProperty('--cp-in-time', '0ms')
+        el.setAttribute('data-in', '')
+      })
+    }
+    const back = traversed || loadedByTraversal()
+    traversed = false
+    if (back) {
+      show()
+      const restored = (event: PageTransitionEvent) => {
+        if (event.persisted) show()
+      }
+      window.addEventListener('pageshow', restored)
+      return () => window.removeEventListener('pageshow', restored)
+    }
 
     const start = () => {
       seen?.disconnect()
@@ -99,20 +134,16 @@ export function BlurReveal() {
     void document.fonts.ready.then(() => {
       if (alive) start()
     })
+    // Brought back from the back-forward cache: shown as it was left.
     const restored = (event: PageTransitionEvent) => {
-      if (event.persisted) start()
+      if (event.persisted) show()
     }
     window.addEventListener('pageshow', restored)
-    // The back and forward arrows within one page (the search adds #section
-    // to the address) arrive here without a new path.
-    const stepped = () => start()
-    window.addEventListener('popstate', stepped)
 
     return () => {
       alive = false
       seen?.disconnect()
       window.removeEventListener('pageshow', restored)
-      window.removeEventListener('popstate', stepped)
     }
   }, [path])
 
