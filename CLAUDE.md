@@ -29,7 +29,7 @@ pnpm lint           # eslint .
 pnpm format         # prettier --write . (Markdown is excluded on purpose)
 ```
 
-`pnpm test:e2e` arrives in Phase 5.
+`pnpm format:check` checks formatting without writing. CI (`.github/workflows/ci.yml`, ARCHITECTURE.md §12) runs format, lint and typecheck, then the build, on every branch and every PR into `main`, so run them locally before pushing. `pnpm test:e2e` arrives in Phase 5.
 
 ## Non-negotiable rules
 

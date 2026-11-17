@@ -1,0 +1,101 @@
+# The frontend pipeline (ARCHITECTURE.md §12). It runs on every push to
+# every branch and on every pull request into main, in two stages: the checks
+# (format, lint, types), then the static build, which only starts once the
+# checks pass. On main, last of all, the built site (out/) is kept as an
+# artifact, the bundle a deploy step would ship.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push to the same branch (or PR) cancels the run still going for it.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  checks:
+    name: Checks (format, lint, types)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm's version comes from package.json's packageManager field.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Format
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Types
+        run: pnpm typecheck
+
+  build:
+    name: Build (static export)
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Next's build cache, so unchanged pages are not compiled again.
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'next.config.ts') }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      # output: 'export' fails the build on any dynamic route, so a green build
+      # is the "every route is static" rule (CLAUDE.md, rule 4) holding.
+      - name: Build
+        run: pnpm build
+
+      - name: Check the export
+        run: |
+          test -f out/index.html || { echo "::error::out/index.html is missing: the static export did not run"; exit 1; }
+          echo "### Static export" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Pages: $(find out -name '*.html' | wc -l | tr -d ' ')" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Size: $(du -sh out | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      # Only on main: the built site, kept for a deploy step to pick up.
+      - name: Keep the site
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ github.sha }}
+          path: out/
+          retention-days: 30
+          if-no-files-found: error

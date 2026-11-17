@@ -45,7 +45,11 @@ export function SiteFooter() {
                 <ul className="footer-links">
                   {items.map((item) => (
                     <li key={item.href}>
-                      <DiagonalLink href={item.href} label={item.label} className="footer-diagonal" />
+                      <DiagonalLink
+                        href={item.href}
+                        label={item.label}
+                        className="footer-diagonal"
+                      />
                     </li>
                   ))}
                 </ul>
