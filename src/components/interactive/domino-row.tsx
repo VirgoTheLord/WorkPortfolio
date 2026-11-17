@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /* A domino, in CSS pixels: its size, the gap between neighbours, its pips. */
-const TALL = 34
-const WIDE = 8
-const PITCH = 15
-const PIPS = [6, 11, TALL - 8]
+const TALL = 24
+const WIDE = 6
+const PITCH = 12
+const PIPS = [5, 9, TALL - 6]
 /* How long they lie fallen before standing back up, and how far apart they rise (s). */
 const LIE = 1.6
 const RISE_STEP = 0.03
@@ -14,17 +14,21 @@ const RISE_STEP = 0.03
 const PUSH = 0.25
 
 type Domino = { x: number; a: number; v: number; dir: number }
+type Props = { hint: string }
 
 /*
  * The foot's last line (owner's pick of seven): a row of small dominoes
  * standing along the bottom edge of the page. Push through them, with a mouse
  * or a finger, and they fall in a chain the way you moved, each knocking the
  * next until it leans on it; a moment after they settle they stand back up, one
- * after another, from the far end. Decoration: hidden from assistive tech, and
- * with reduced motion they simply stand. It draws only while one is moving.
+ * after another, from the far end. Kept quiet (owner's note): small, and in
+ * the muted grey, with a little note above inviting the push, which goes once
+ * they have been pushed. Decoration: hidden from assistive tech, and with
+ * reduced motion they simply stand. It draws only while one is moving.
  */
-export function DominoRow() {
+export function DominoRow({ hint }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null)
+  const [pushed, setPushed] = useState(false)
 
   useEffect(() => {
     const cv = canvas.current
@@ -59,9 +63,10 @@ export function DominoRow() {
 
     const draw = () => {
       const style = getComputedStyle(cv)
-      const ink = style.getPropertyValue('--color-fg').trim()
+      const ink = style.getPropertyValue('--color-fg-muted').trim()
       const paper = style.getPropertyValue('--color-bg').trim()
       ctx.clearRect(0, 0, W, H)
+      ctx.globalAlpha = 0.55
       for (const d of row) {
         const pivot = d.a >= 0 ? d.x + WIDE / 2 : d.x - WIDE / 2
         ctx.save()
@@ -155,6 +160,7 @@ export function DominoRow() {
         if (d.dir === 0 && Math.abs(d.x - x) < WIDE) {
           d.dir = Math.sign(speed)
           d.v = 3 * d.dir
+          setPushed(true)
           wake()
         }
       }
@@ -194,5 +200,12 @@ export function DominoRow() {
     }
   }, [])
 
-  return <canvas ref={canvas} aria-hidden="true" className="cp-dominoes" />
+  return (
+    <div aria-hidden="true" className="cp-dominoes">
+      <p className="cp-dominoes-hint" data-gone={pushed || undefined}>
+        {hint}
+      </p>
+      <canvas ref={canvas} />
+    </div>
+  )
 }
