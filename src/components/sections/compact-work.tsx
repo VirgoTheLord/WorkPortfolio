@@ -1,47 +1,62 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { compact } from '@/content/compact'
 import { projects } from '@/content/projects'
+import { workbench } from '@/content/workbench'
 import { CompactBlock } from './compact-block'
 
-const { soon } = compact.work
+const { work } = compact
+/* Read by any project's slug (the content lists them by name). */
+const roles: Readonly<Record<string, string>> = work.roles
 
 /*
- * The work as plain rows (chloemaillot.fr's): the name, what it is, the year
- * and a small thumbnail that grows and tilts on hover while the year makes
- * room. What is not out yet follows as rows of its own, saying so, with no
- * names made up for it.
+ * The work, the page's centre (owner's call after the review): each project
+ * with a large screenshot, what it is, what he did and when, the line about it
+ * and its links. Cairn also opens its pieces running live on the workbench,
+ * which used to be a section of its own. No placeholder rows.
  */
 export function CompactWork() {
   return (
     <CompactBlock id="work">
-      <ul className="cp-list cp-list-focus">
-        {projects.map((project) => (
-          <li key={project.slug}>
-            <a
-              href={project.href ?? `/#work-${project.slug}`}
-              className="cp-line"
-              {...(project.href ? { target: '_blank', rel: 'noreferrer' } : {})}
-            >
-              <span>{project.title}</span>
-              <span className="cp-line-note">{project.category}</span>
-              <span className="cp-meta">{project.year}</span>
-              <span className="cp-thumb">
-                <Image src={project.cover.image} alt={project.cover.alt} sizes="6rem" />
-              </span>
-            </a>
-          </li>
-        ))}
-        {soon.items.map((name) => (
-          <li key={name} className="cp-line cp-line-soon">
-            <span>{name}</span>
-            <span className="cp-line-note">{soon.note}</span>
-            <span className="cp-meta">
-              <span aria-hidden="true" className="cp-hatch" />
-              {soon.state}
-            </span>
-            <span aria-hidden="true" className="cp-thumb cp-thumb-empty" />
-          </li>
-        ))}
+      <ul className="cp-work">
+        {projects.map((project) => {
+          const href = project.href ?? `/#work-${project.slug}`
+          const away = project.href ? { target: '_blank', rel: 'noreferrer' } : {}
+          return (
+            <li key={project.slug} className="cp-work-item">
+              <a href={href} tabIndex={-1} aria-hidden="true" className="cp-work-shot" {...away}>
+                <Image
+                  src={project.cover.image}
+                  alt={project.cover.alt}
+                  sizes="(min-width: 40rem) 20rem, 92vw"
+                />
+              </a>
+              <div className="cp-work-text">
+                <h3 className="cp-work-title">
+                  <a href={href} {...away}>
+                    {project.title}
+                  </a>
+                </h3>
+                <p className="cp-work-meta">
+                  <span>{project.category}</span>
+                  <span>{roles[project.slug]}</span>
+                  <span>{project.year}</span>
+                </p>
+                <p className="cp-work-note">{project.summary}</p>
+                <p className="cp-work-links">
+                  <a href={href} className="cp-link" {...away}>
+                    {project.href ? new URL(project.href).host : work.visit}
+                  </a>
+                  {project.slug === 'cairn' ? (
+                    <Link href="/compact/components" className="cp-link">
+                      {workbench.items.length} {work.pieces}
+                    </Link>
+                  ) : null}
+                </p>
+              </div>
+            </li>
+          )
+        })}
       </ul>
     </CompactBlock>
   )

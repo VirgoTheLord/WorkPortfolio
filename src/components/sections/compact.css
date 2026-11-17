@@ -992,11 +992,9 @@ html:not(.js) .cp-hint {
   margin-top: calc(var(--spacing) * 4);
 }
 
-/* A row: name, a line about it, and at the end a short fact and (for the work)
-   a thumbnail. The whole row is the link. */
+/* A row (the experience): name, a line about it, and a short fact. */
 .cp-line {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: calc(var(--spacing) * 3.5);
   padding-block: calc(var(--spacing) * 3);
@@ -1005,10 +1003,6 @@ html:not(.js) .cp-hint {
 
 .cp-line > :first-child {
   font-weight: 500;
-}
-
-.cp-line-wide {
-  grid-template-columns: calc(var(--spacing) * 44) minmax(0, 1fr);
 }
 
 .cp-line-plain {
@@ -1022,137 +1016,102 @@ html:not(.js) .cp-hint {
   color: var(--color-fg-muted);
 }
 
-/* The work: pointing at a project brings it into focus, the other rows
-   softening out of focus and stepping back (owner's pick, November 2026), so
-   the one under the pointer or the keyboard stands sharp; nothing moves
-   sideways. */
-.cp-list-focus > li {
-  transition:
-    filter 0.45s var(--ease-expo),
-    opacity 0.45s var(--ease-expo);
+/* The work (sections/compact-work.tsx), the page's centre: a large screenshot
+   beside what it is, what he did, the line about it and its links; on a phone
+   the screenshot sits above. The screenshot leans in a touch on hover. */
+.cp-work {
+  display: grid;
+  gap: calc(var(--spacing) * 12);
+  margin-top: calc(var(--spacing) * 6);
 }
 
-.cp-list-focus:has(a.cp-line:is(:hover, :focus-visible))
-  > li:not(:has(a.cp-line:is(:hover, :focus-visible))) {
-  opacity: 0.4;
-  filter: blur(2px);
+.cp-work-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: calc(var(--spacing) * 7);
 }
 
-/* The pieces (owner's pick): a faint band fades in behind the row, a little
-   wider than it; nothing moves. */
-.cp-list-band {
-  isolation: isolate;
-}
-
-.cp-list-band a.cp-line {
-  position: relative;
-}
-
-.cp-list-band a.cp-line::before {
-  content: '';
-  position: absolute;
-  inset: 0 calc(var(--spacing) * -2.5);
-  z-index: -1;
-  border-radius: calc(var(--spacing) * 1.5);
-  background-color: var(--cp-raise);
-  opacity: 0;
-  transition: opacity 0.35s var(--ease-expo);
-}
-
-.cp-list-band a.cp-line:is(:hover, :focus-visible)::before {
-  opacity: 1;
-}
-
-.cp-list-band a.cp-line:is(:hover, :focus-visible) > :first-child {
-  color: inherit;
-}
-
-a.cp-line:is(:hover, :focus-visible) > :first-child {
-  color: var(--color-accent);
-}
-
-a.cp-line:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
-.cp-line-soon {
-  color: var(--color-fg-muted);
-}
-
-/* The thumbnail grows and tilts on hover; the fact beside it makes room on
-   the same spring (it grows 0.9 of its width, half of that to the left). */
-.cp-thumb {
-  position: relative;
+.cp-work-shot {
   display: block;
-  width: calc(var(--spacing) * 13);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   border: 1px solid var(--cp-tint);
-  border-radius: calc(var(--spacing) * 1.25);
-  transition:
-    scale var(--duration-base) var(--cp-spring),
-    rotate var(--duration-base);
+  border-radius: calc(var(--radius-sm) * 2);
+  background-color: var(--cp-raise);
 }
 
-.cp-thumb img {
+.cp-work-shot img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: scale 0.6s var(--ease-expo);
 }
 
-.cp-thumb-empty {
-  background-image: repeating-linear-gradient(-45deg, transparent 0 5px, var(--cp-tint) 5px 6px);
+.cp-work-title {
+  color: var(--color-fg);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
 }
 
-a.cp-line > .cp-meta {
-  transition: translate var(--duration-base) var(--cp-spring);
+.cp-work-title a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
-a.cp-line:hover .cp-thumb {
-  z-index: 2;
-  scale: 1.9;
-  rotate: -4deg;
+.cp-work-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
+  margin-top: calc(var(--spacing) * 2);
+  color: var(--color-fg-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
 }
 
-a.cp-line:hover > .cp-meta {
-  translate: calc(var(--spacing) * -7) 0;
+.cp-work-note {
+  max-width: 46ch;
+  margin-top: calc(var(--spacing) * 3);
+  color: var(--color-fg-muted);
+  text-wrap: pretty;
 }
 
-/* Not made yet: hatched, as the empty thumbnail beside it is. */
-.cp-hatch {
-  display: inline-block;
-  width: calc(var(--spacing) * 4);
-  height: calc(var(--spacing) * 2);
-  margin-right: calc(var(--spacing) * 1.5);
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--color-fg-muted) 0 1px,
-    transparent 1px 3px
-  );
-  vertical-align: -0.05em;
+.cp-work-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 5);
+  margin-top: calc(var(--spacing) * 4);
+  font-size: var(--text-sm);
+}
+
+@media (hover: hover) {
+  .cp-work-item:has(a:hover) .cp-work-shot img {
+    scale: 1.03;
+  }
+
+  .cp-work-title a:hover {
+    color: var(--color-accent);
+  }
 }
 
 @media (width < 34rem) {
-  .cp-line,
   .cp-line-plain {
     grid-template-columns: minmax(0, 1fr) auto;
     row-gap: calc(var(--spacing) * 0.5);
   }
 
-  .cp-line .cp-line-note,
   .cp-line-plain .cp-line-note {
     grid-column: 1 / -1;
     grid-row: 2;
     white-space: normal;
   }
 
-  .cp-line .cp-thumb {
-    display: none;
-  }
-
-  .cp-line-wide {
+  .cp-work-item {
     grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--spacing) * 4);
   }
 }
 
@@ -1482,7 +1441,6 @@ a.cp-line:hover > .cp-meta {
 @media (prefers-reduced-motion: reduce) {
   .cp-chip,
   .cp-peek,
-  .cp-thumb,
   .cp-pol,
   .cp-avatar {
     transition: none;
@@ -2218,6 +2176,7 @@ a.cp-line:hover > .cp-meta {
       .cp-reach,
       .cp-block-head,
       .cp-list > li,
+      .cp-work-item,
       .cp-keycaps > li,
       .cp-strip,
       .cp-foot > :not(.cp-dominoes),
