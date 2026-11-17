@@ -7,8 +7,6 @@ import { workbench } from '@/content/workbench'
 import { CompactBlock } from './compact-block'
 
 const { work } = compact
-/* Read by any project's slug (the content lists them by name). */
-const roles: Readonly<Record<string, string>> = work.roles
 
 /* The diagonal arrow, twice: on hover the first flies off to the top right
    and the second comes in from the bottom left. */
@@ -57,7 +55,6 @@ export function CompactWork() {
                     <span>{project.category}</span>
                     <span>{project.year}</span>
                   </p>
-                  <p className="cp-work-role">{roles[project.slug]}</p>
                   <p className="cp-work-note">{project.summary}</p>
                   <p className="cp-work-links">
                     <a href={href} className="cp-work-link" {...away}>

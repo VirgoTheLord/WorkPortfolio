@@ -293,8 +293,6 @@ export type CompactContent = {
     reach: readonly (string | NavItem)[]
   }
   work: {
-    /** What he did on each project, by its slug. */
-    roles: Readonly<Record<string, string>>
     /** The link to the live project. */
     visit: string
     /** The link to the workbench, after the count of its pieces ("5 live pieces"). */
