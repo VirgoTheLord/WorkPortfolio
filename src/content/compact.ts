@@ -256,7 +256,6 @@ export const compact = {
       'Prettier',
       'Figma',
     ],
-    hint: 'Type a letter',
   },
   /* The owner's own stage photo; the other five were made for the site with
      Figma AI from original prompts (credited on /legal). The notes are the
