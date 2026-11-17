@@ -8,103 +8,83 @@
  */
 @reference '../../app/globals.css';
 
-/* The restyle toolbar's faces (interactive/lede-select.tsx; owner's ask: every
-   button has to work): six families with real weights and, but for the hand,
-   real italics, so bold and italic are the face's own. Each is cut down to the
-   letters of "one thing well" and the faces' names (src/fonts/restyle), so a
-   face is a few KB; an italic loads only once italic is chosen. SIL OFL 1.1:
-   Instrument Sans, Fraunces, Azeret Mono, Caveat, Bitter, Archivo
-   (src/fonts/licenses). */
+/* The restyle toolbar's faces (interactive/lede-select.tsx; owner's picks):
+   Syne, Raleway, Funnel Sans, Azeret Mono, Bricolage Grotesque and Space
+   Grotesk (Galen AI's headings), each with its full weight range; Raleway,
+   Funnel and Azeret have real italics, the other three are slanted by the
+   browser. Each is cut down to the letters of "one thing well" and the faces'
+   names (src/fonts/restyle), a few KB; an italic loads only once chosen.
+   SIL OFL 1.1 (src/fonts/licenses). */
 @font-face {
-  font-family: 'Restyle Sans';
-  src: url('../../fonts/restyle/sans-normal.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Sans';
-  src: url('../../fonts/restyle/sans-italic.woff2') format('woff2');
-  font-style: italic;
-  font-weight: 400 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Serif';
-  src: url('../../fonts/restyle/serif-normal.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400 900;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Serif';
-  src: url('../../fonts/restyle/serif-italic.woff2') format('woff2');
-  font-style: italic;
-  font-weight: 400 900;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Mono';
-  src: url('../../fonts/restyle/mono-normal.woff2') format('woff2');
+  font-family: 'Restyle Syne';
+  src: url('../../fonts/restyle/syne-normal.woff2') format('woff2');
   font-style: normal;
   font-weight: 400 800;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Restyle Mono';
-  src: url('../../fonts/restyle/mono-italic.woff2') format('woff2');
+  font-family: 'Restyle Raleway';
+  src: url('../../fonts/restyle/raleway-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Raleway';
+  src: url('../../fonts/restyle/raleway-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Funnel';
+  src: url('../../fonts/restyle/funnel-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Funnel';
+  src: url('../../fonts/restyle/funnel-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 300 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Azeret';
+  src: url('../../fonts/restyle/azeret-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Restyle Azeret';
+  src: url('../../fonts/restyle/azeret-italic.woff2') format('woff2');
   font-style: italic;
   font-weight: 400 800;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Restyle Slab';
-  src: url('../../fonts/restyle/slab-normal.woff2') format('woff2');
+  font-family: 'Restyle Bricolage';
+  src: url('../../fonts/restyle/bricolage-normal.woff2') format('woff2');
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 200 800;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Restyle Slab';
-  src: url('../../fonts/restyle/slab-italic.woff2') format('woff2');
-  font-style: italic;
-  font-weight: 400 900;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Wide';
-  src: url('../../fonts/restyle/wide-normal.woff2') format('woff2');
+  font-family: 'Restyle Space';
+  src: url('../../fonts/restyle/space-normal.woff2') format('woff2');
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 300 700;
   font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Wide';
-  src: url('../../fonts/restyle/wide-italic.woff2') format('woff2');
-  font-style: italic;
-  font-weight: 400 900;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Restyle Hand';
-  src: url('../../fonts/restyle/hand-normal.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-}
-
-:root:has(.cp) {
-  --cp-second: var(--color-accent);
 }
 
 /* The compact site's light page is white, not the full site's off-white
@@ -688,38 +668,43 @@ html:not(.js) .cp-hint {
 
 /* The toolbar's settings on the words. Each face carries its own size, so the
    words keep about the same width whatever the face (and stay on one line);
-   the size steps multiply it. */
+   the size steps multiply it. As set, they are the sentence's own Bricolage. */
 .cp-select {
   --cp-face-size: 1em;
-  font-family: 'Restyle Sans', var(--font-text);
+  font-family: 'Restyle Bricolage', var(--font-text);
   font-size: calc(var(--cp-face-size) * var(--cp-select-size, 1));
   white-space: nowrap;
 }
 
-.cp-select[data-face='serif'] {
-  --cp-face-size: 0.98em;
-  font-family: 'Restyle Serif', serif;
+.cp-select[data-face='syne'] {
+  --cp-face-size: 1.07em;
+  font-family: 'Restyle Syne', var(--font-text);
 }
 
-.cp-select[data-face='mono'] {
+/* Syne's weight axis widens it as it gets bolder, so bold Syne is set a size
+   smaller to keep the words' width. */
+.cp-select[data-face='syne'][data-bold] {
+  --cp-face-size: 0.76em;
+}
+
+.cp-select[data-face='raleway'] {
+  --cp-face-size: 1em;
+  font-family: 'Restyle Raleway', var(--font-text);
+}
+
+.cp-select[data-face='funnel'] {
+  --cp-face-size: 1.04em;
+  font-family: 'Restyle Funnel', var(--font-text);
+}
+
+.cp-select[data-face='azeret'] {
   --cp-face-size: 0.71em;
-  font-family: 'Restyle Mono', var(--font-label);
+  font-family: 'Restyle Azeret', var(--font-label);
 }
 
-.cp-select[data-face='hand'] {
-  --cp-face-size: 1.38em;
-  font-family: 'Restyle Hand', var(--font-hand);
-}
-
-.cp-select[data-face='slab'] {
-  --cp-face-size: 0.98em;
-  font-family: 'Restyle Slab', serif;
-}
-
-.cp-select[data-face='wide'] {
-  --cp-face-size: 0.62em;
-  font-family: 'Restyle Wide', var(--font-hero);
-  text-transform: uppercase;
+.cp-select[data-face='space'] {
+  --cp-face-size: 0.96em;
+  font-family: 'Restyle Space', var(--font-text);
 }
 
 .cp-select[data-bold] {
@@ -902,32 +887,28 @@ html:not(.js) .cp-hint {
 }
 
 /* Each face's name in that face. */
-.cp-select-face[data-face='sans'] {
-  font-family: 'Restyle Sans', var(--font-text);
+.cp-select-face[data-face='syne'] {
+  font-family: 'Restyle Syne', var(--font-text);
 }
 
-.cp-select-face[data-face='serif'] {
-  font-family: 'Restyle Serif', serif;
-  font-size: 1.05em;
+.cp-select-face[data-face='raleway'] {
+  font-family: 'Restyle Raleway', var(--font-text);
 }
 
-.cp-select-face[data-face='mono'] {
-  font-family: 'Restyle Mono', var(--font-label);
+.cp-select-face[data-face='funnel'] {
+  font-family: 'Restyle Funnel', var(--font-text);
 }
 
-.cp-select-face[data-face='hand'] {
-  font-family: 'Restyle Hand', var(--font-hand);
-  font-size: 1.3em;
-  line-height: 1;
+.cp-select-face[data-face='azeret'] {
+  font-family: 'Restyle Azeret', var(--font-text);
 }
 
-.cp-select-face[data-face='slab'] {
-  font-family: 'Restyle Slab', serif;
+.cp-select-face[data-face='bricolage'] {
+  font-family: 'Restyle Bricolage', var(--font-text);
 }
 
-.cp-select-face[data-face='wide'] {
-  font-family: 'Restyle Wide', var(--font-hero);
-  font-size: 0.85em;
+.cp-select-face[data-face='space'] {
+  font-family: 'Restyle Space', var(--font-text);
 }
 
 .cp-select-tool[data-style='bold'] {
