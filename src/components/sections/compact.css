@@ -1016,57 +1016,101 @@ html:not(.js) .cp-hint {
   color: var(--color-fg-muted);
 }
 
-/* The work (sections/compact-work.tsx), the page's centre: a large screenshot
-   beside what it is, what he did, the line about it and its links; on a phone
-   the screenshot sits above. The screenshot leans in a touch on hover. */
+/* The work (sections/compact-work.tsx), the page's centre: each project a
+   folder the width of the column, its name on a tab cut like the headings',
+   the folder's own colour. Inside, the screenshot is a sheet tucked behind the
+   folder's lip; pointed at or tabbed into, it slides up out of the folder. On
+   a touch screen, which cannot point, it rests half out. */
 .cp-work {
   display: grid;
-  gap: calc(var(--spacing) * 12);
+  gap: calc(var(--spacing) * 9);
   margin-top: calc(var(--spacing) * 6);
 }
 
-.cp-work-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: calc(var(--spacing) * 7);
-}
-
-.cp-work-shot {
-  display: block;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  border: 1px solid var(--cp-tint);
-  border-radius: calc(var(--radius-sm) * 2);
-  background-color: var(--cp-raise);
-}
-
-.cp-work-shot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: scale 0.6s var(--ease-expo);
-}
-
-.cp-work-title {
+.cp-work-tab {
+  display: inline-block;
+  padding: calc(var(--spacing) * 1.25) calc(var(--spacing) * 6) calc(var(--spacing) * 1)
+    calc(var(--spacing) * 3);
+  background-color: var(--cp-tab-fill);
   color: var(--color-fg);
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  clip-path: var(--cp-tab);
 }
 
-.cp-work-title a:focus-visible {
+.cp-work-tab a:focus-visible {
   outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
+  outline-offset: 2px;
+}
+
+.cp-work-folder {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: calc(var(--spacing) * 6);
+  padding: calc(var(--spacing) * 5) calc(var(--spacing) * 5) calc(var(--spacing) * 4);
+  overflow: hidden;
+  border-radius: 0 calc(var(--radius-sm) * 3) calc(var(--radius-sm) * 3) calc(var(--radius-sm) * 3);
+  background-color: var(--cp-tab-fill);
+}
+
+.cp-work-sheet {
+  position: relative;
+  display: block;
+  align-self: end;
+  margin-bottom: calc(var(--spacing) * -9);
+  overflow: hidden;
+  border-radius: calc(var(--radius-sm) * 1.5) calc(var(--radius-sm) * 1.5) 0 0;
+  box-shadow:
+    0 -1px 0 var(--cp-tint),
+    0 -6px 18px color-mix(in oklab, var(--color-black) 12%, transparent);
+  transition: translate 0.6s var(--cp-spring);
+}
+
+.cp-work-sheet img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* The folder's front lip, over the sheet's foot. */
+.cp-work-lip {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: calc(var(--spacing) * 9);
+  background-color: var(--cp-tab-fill);
+  box-shadow: 0 -1px 0 var(--cp-tint);
+  pointer-events: none;
+}
+
+.cp-work-text {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  padding-bottom: calc(var(--spacing) * 7);
+}
+
+.cp-work-item:is(:hover, :focus-within) .cp-work-sheet {
+  translate: 0 calc(var(--spacing) * -12);
+}
+
+@media (hover: none) {
+  .cp-work-sheet {
+    translate: 0 calc(var(--spacing) * -6);
+  }
 }
 
 .cp-work-meta {
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
-  margin-top: calc(var(--spacing) * 2);
   color: var(--color-fg-muted);
   font-size: var(--text-xs);
   white-space: nowrap;
@@ -1082,18 +1126,19 @@ html:not(.js) .cp-hint {
 .cp-work-links {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 5);
+  align-items: center;
   margin-top: calc(var(--spacing) * 4);
-  font-size: var(--text-sm);
 }
 
 @media (hover: hover) {
-  .cp-work-item:has(a:hover) .cp-work-shot img {
-    scale: 1.03;
-  }
-
-  .cp-work-title a:hover {
+  .cp-work-tab a:hover {
     color: var(--color-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-work-sheet {
+    transition: none;
   }
 }
 
@@ -1109,9 +1154,27 @@ html:not(.js) .cp-hint {
     white-space: normal;
   }
 
-  .cp-work-item {
+  /* On a phone the sheet sits whole above the folder's face; no lip. */
+  .cp-work-folder {
     grid-template-columns: minmax(0, 1fr);
     gap: calc(var(--spacing) * 4);
+    min-height: 0;
+    padding: calc(var(--spacing) * 3.5);
+  }
+
+  .cp-work-sheet,
+  .cp-work-item:is(:hover, :focus-within) .cp-work-sheet {
+    margin-bottom: 0;
+    translate: none;
+    border-radius: calc(var(--radius-sm) * 1.5);
+  }
+
+  .cp-work-lip {
+    display: none;
+  }
+
+  .cp-work-text {
+    padding-bottom: 0;
   }
 }
 
