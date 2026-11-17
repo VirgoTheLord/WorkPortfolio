@@ -152,19 +152,15 @@ export const compact = {
     time: { zone: 'Asia/Kolkata', fallback: 'IST, UTC+05:30' },
     role: site.role,
     hello: `Hey, I'm ${site.name.split(' ')[0]}.`,
+    /* What he builds first, then the day job (owner's call after the review:
+       lead with the building). */
     lede: [
-      ' I test software at ',
-      { chip: 'job' },
-      ' ',
-      { light: 'day', text: 'by day' },
-      ', and ',
-      { light: 'night', text: 'by night' },
-      ' I build ',
+      ' I build interfaces, and ',
       { chip: 'work' },
-      ', a library of ',
-      { tiles: ['interface', 'pieces'] },
-      ' that each do ',
+      ', a React library of pieces that each do ',
       { select: 'one thing well' },
+      '. By day I test software at ',
+      { chip: 'job' },
       '.',
     ],
     /* Each face's button is set in that face, from a cut holding only these

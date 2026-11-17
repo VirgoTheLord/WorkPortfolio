@@ -1,6 +1,6 @@
 'use client'
 
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import type { CompactContent } from '@/types/content'
 
 type Restyle = CompactContent['intro']['restyle']
@@ -52,14 +52,40 @@ function glide(tools: HTMLElement) {
  * the buttons rather than jumping (owner's note). Real buttons,
  * each saying whether it is on. The words read as words.
  *
+ * The toolbar opens only when the words are clicked or tapped (owner's call,
+ * so the opening reads as a sentence first), and closes on a second click,
+ * Escape or a click elsewhere.
+ *
  * The toolbar hangs under the words but never past the sentence's edges: it is
  * measured and slid back inside (the words sit near the right edge on a
  * phone), again whenever the words, the bar or the page change size.
  */
 export function LedeSelect({ children, restyle }: Props) {
   const [look, setLook] = useState<Look>(PLAIN)
+  const [open, setOpen] = useState(false)
   const root = useRef<HTMLSpanElement>(null)
   const bar = useRef<HTMLSpanElement>(null)
+  const words = useRef<HTMLButtonElement>(null)
+  const barId = useId()
+
+  // Escape, or a press anywhere else, closes it.
+  useEffect(() => {
+    if (!open) return
+    const away = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false)
+    }
+    const key = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      words.current?.focus()
+    }
+    document.addEventListener('pointerdown', away)
+    document.addEventListener('keydown', key)
+    return () => {
+      document.removeEventListener('pointerdown', away)
+      document.removeEventListener('keydown', key)
+    }
+  }, [open])
 
   useLayoutEffect(() => {
     const words = root.current
@@ -121,10 +147,27 @@ export function LedeSelect({ children, restyle }: Props) {
       data-italic={look.styles.includes('italic') || undefined}
       data-underline={look.styles.includes('underline') || undefined}
       data-strike={look.styles.includes('strike') || undefined}
+      data-open={open || undefined}
       style={{ '--cp-select-size': look.size } as CSSProperties}
     >
-      {children}
-      <span ref={bar} role="toolbar" aria-label={restyle.label} className="cp-select-bar">
+      <button
+        ref={words}
+        type="button"
+        aria-expanded={open}
+        aria-controls={barId}
+        onClick={() => setOpen((now) => !now)}
+        className="cp-select-words"
+      >
+        {children}
+      </button>
+      <span
+        ref={bar}
+        id={barId}
+        role="toolbar"
+        aria-label={restyle.label}
+        hidden={!open}
+        className="cp-select-bar"
+      >
         <span aria-hidden="true" className="cp-select-glide" data-glide="face" />
         <span aria-hidden="true" className="cp-select-ring" data-glide="ink" />
         <span aria-hidden="true" className="cp-select-ring" data-glide="mark" />
