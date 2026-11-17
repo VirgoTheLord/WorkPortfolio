@@ -295,3 +295,13 @@ Adding anything else requires a one-line justification in this section first.
 **Scoped iteration (after the Phase 2 checkpoint): the compact site.** `/compact`, in the `(compact)` route group so it has none of the full site's frame (navbar, footer, preloader, smooth scroll, pointer effects). First built as a "workbench" (intro, shelf of live library pieces, work index); then rebuilt on chanhdai.com's layout; then, replacing both, as a handmade sheet drawn from karthikponna.me, ratneshc.com and 10xshivam.dev (DESIGN.md §5b): a search field, a margin index and a margin preview, each a leaf island in `components/interactive/`; then (24 October 2026) a light/dark switch for the compact site (`lib/theme.ts`; since November 2026 one choice shared with the full site's switch, put back before paint by the root layout's inline script on every route) and the workbench pages, where each piece runs live. Static, no new dependencies, same tokens and content. Its footer prints a build stamp (commit and date), read once in `next.config.ts` (`env.BUILD_COMMIT`, `env.BUILD_DATE`: Vercel's commit, else `git rev-parse`), so the page stays static.
 
 Motion comes after the static site is complete and fast on purpose: animation decorates a finished page and must never prop up an unfinished one.
+
+## 12. CI
+
+One GitHub Actions workflow, `.github/workflows/ci.yml` (owner's request, November 2026). It runs on every push to every branch, on every pull request into `main`, and by hand (`workflow_dispatch`). A newer push to the same branch or PR cancels the older run.
+
+1. **Checks:** `pnpm format:check`, `pnpm lint`, `pnpm typecheck`.
+2. **Build**, only once the checks pass: `pnpm build`. `output: 'export'` fails the build on any dynamic route, so a green build is rule 4 (every route static) holding; the job then confirms `out/index.html` exists and writes the page count and size to the run's summary. Next's build cache (`.next/cache`) is kept between runs.
+3. **On `main` only:** the built site (`out/`) is kept as an artifact (`site-<sha>`, 30 days), the bundle a deploy step would ship. There is no deploy step yet: Vercel's GitHub app currently builds a preview for every pull request on its own, while §1 names S3 + CloudFront as the host; the deploy job is added once the host is settled.
+
+Node 22 and the pnpm version in `package.json` (`packageManager`); installs are `--frozen-lockfile`. Playwright, axe and Lighthouse budgets join the build stage in Phase 5 (§11). Keep it one workflow with these stages; a new check is a step in the stage it belongs to, not a new workflow.
