@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import { BallpointLink } from '@/components/interactive/ballpoint-link'
+import Link from 'next/link'
+import { Icon } from '@/components/ui/icon'
 import { compact } from '@/content/compact'
 import { projects } from '@/content/projects'
 import { workbench } from '@/content/workbench'
@@ -48,15 +49,15 @@ export function CompactWork() {
                   </p>
                   <p className="cp-work-note">{project.summary}</p>
                   <p className="cp-work-links">
-                    <BallpointLink
-                      label={project.href ? new URL(project.href).host : work.visit}
-                      href={href}
-                    />
+                    <a href={href} className="cp-work-link" {...away}>
+                      {project.href ? new URL(project.href).host : work.visit}
+                      <Icon name="arrow" className="cp-nudge size-3" />
+                    </a>
                     {project.slug === 'cairn' ? (
-                      <BallpointLink
-                        label={`${workbench.items.length} ${work.pieces}`}
-                        href="/compact/components"
-                      />
+                      <Link href="/compact/components" className="cp-work-link">
+                        {workbench.items.length} {work.pieces}
+                        <Icon name="arrow" className="cp-nudge size-3" />
+                      </Link>
                     ) : null}
                   </p>
                 </div>

@@ -1024,7 +1024,8 @@ html:not(.js) .cp-hint {
 .cp-work {
   display: grid;
   gap: calc(var(--spacing) * 9);
-  margin-top: calc(var(--spacing) * 6);
+  /* The folders reach as far as the heading's line does. */
+  margin: calc(var(--spacing) * 6) 0 0 calc(var(--spacing) * -2.25);
 }
 
 .cp-work-tab {
@@ -1034,10 +1035,10 @@ html:not(.js) .cp-hint {
   background-color: var(--cp-tab-fill);
   color: var(--color-fg);
   font-family: var(--font-display);
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   clip-path: var(--cp-tab);
 }
 
@@ -1107,19 +1108,24 @@ html:not(.js) .cp-hint {
   }
 }
 
+/* Inside, largest to smallest: the name on the tab, the line about it in
+   the text colour, then the facts and the links in mono, small. */
 .cp-work-meta {
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
   color: var(--color-fg-muted);
+  font-family: var(--font-label);
   font-size: var(--text-xs);
   white-space: nowrap;
 }
 
 .cp-work-note {
-  max-width: 46ch;
+  max-width: 44ch;
   margin-top: calc(var(--spacing) * 3);
-  color: var(--color-fg-muted);
+  color: var(--color-fg);
+  font-size: var(--text-sm);
+  line-height: 1.6;
   text-wrap: pretty;
 }
 
@@ -1127,7 +1133,31 @@ html:not(.js) .cp-hint {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  margin-top: calc(var(--spacing) * 4);
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 6);
+  margin-top: calc(var(--spacing) * 5);
+}
+
+/* A link with its diagonal arrow, which nudges toward where it goes. */
+.cp-work-link {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1.5);
+  color: var(--color-fg);
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  text-decoration: underline;
+  text-decoration-color: var(--cp-tint);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--duration-base) var(--ease-expo);
+}
+
+.cp-work-link:is(:hover, :focus-visible) {
+  text-decoration-color: currentColor;
+}
+
+.cp-work-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
 @media (hover: hover) {
