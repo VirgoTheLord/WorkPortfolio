@@ -8,6 +8,8 @@ type Props = CompactContent['alive']
 
 /* Where the strip starts on a phone: the third photo, with photos either side. */
 const PHONE_START = 2
+/* And on a wide screen the second, so the row is not empty on its left. */
+const WIDE_START = 1
 
 /*
  * Stuff that brings me alive (owner's pick: the film strip): instant photos in
@@ -46,11 +48,12 @@ export function PolaroidStrip({ label, prev, next, turn, items }: Props) {
       if (!frame) frame = requestAnimationFrame(middle)
     }
     // On a phone the strip starts on the third photo (owner's call), so there
-    // are photos either side to swipe to; on a wide screen it starts on the first.
-    const start = row.children[PHONE_START] as HTMLElement | undefined
-    if (start && window.matchMedia('(max-width: 40rem)').matches) {
+    // are photos either side to swipe to; on a wide screen on the second.
+    const first = window.matchMedia('(max-width: 40rem)').matches ? PHONE_START : WIDE_START
+    const start = row.children[first] as HTMLElement | undefined
+    if (start) {
       row.scrollLeft = start.offsetLeft + start.offsetWidth / 2 - row.clientWidth / 2
-      setCurrent(PHONE_START)
+      setCurrent(first)
     }
     row.addEventListener('scroll', onScroll, { passive: true })
     return () => {

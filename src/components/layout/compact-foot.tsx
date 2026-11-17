@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { BackToTop } from '@/components/interactive/back-to-top'
 import { DominoRow } from '@/components/interactive/domino-row'
-import { FlapText } from '@/components/ui/flap-text'
 import { compact } from '@/content/compact'
 import { legal } from '@/content/legal'
 import { site } from '@/content/site'
@@ -22,15 +21,13 @@ export function CompactFoot() {
         <p className="cp-meta">{footer.made}</p>
       </div>
       <nav aria-label={footer.label} className="cp-foot-nav">
-        <Link href={footer.back.href} className="cp-flap-link">
-          <FlapText>{footer.back.label}</FlapText>
+        <Link href={footer.back.href} className="cp-foot-link">
+          {footer.back.label}
         </Link>
-        <Link href={legal.footerLink.href} className="cp-flap-link">
-          <FlapText>{legal.footerLink.label}</FlapText>
+        <Link href={legal.footerLink.href} className="cp-foot-link">
+          {legal.footerLink.label}
         </Link>
-        <BackToTop className="cp-flap-link">
-          <FlapText>{footer.top}</FlapText>
-        </BackToTop>
+        <BackToTop className="cp-foot-link">{footer.top}</BackToTop>
       </nav>
       <DominoRow hint={footer.push} />
     </footer>

@@ -212,28 +212,16 @@ export const compact = {
     { org: degree.school, role: `${degree.degree}, ${degree.field}`, when: degree.when },
   ],
   stack: {
+    /* What he would want to be hired for (owner's call after the review): eight,
+       not the toolbox. */
     items: [
       'TypeScript',
-      'JavaScript',
-      'Python',
-      'Go',
-      'HTML',
-      'CSS',
       'React',
       'Next.js',
       'Tailwind CSS',
       'GSAP',
       'Framer Motion',
-      'Lenis',
       'Node.js',
-      'Express',
-      'MongoDB',
-      'PostgreSQL',
-      'Prisma',
-      'Git',
-      'pnpm',
-      'ESLint',
-      'Prettier',
       'Figma',
     ],
   },
@@ -241,7 +229,7 @@ export const compact = {
      Figma AI from original prompts (credited on /legal). The notes are the
      owner's interests in his words, drafted November 2026. */
   alive: {
-    hint: 'Tap one to turn it over',
+    hint: 'Tap to flip',
     label: 'Stuff that brings me alive, as instant photos',
     prev: 'Previous photo',
     next: 'Next photo',
