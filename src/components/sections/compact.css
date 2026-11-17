@@ -2332,6 +2332,11 @@ html:not(.js) .cp-hint {
   html.js
     .cp
     :is(
+      .cp-who,
+      .cp-contour,
+      .cp-top-meta,
+      .cp-lede,
+      .cp-reach,
       .cp-block-head,
       .cp-list > li,
       .cp-work-item,
