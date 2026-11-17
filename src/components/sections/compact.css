@@ -1108,22 +1108,30 @@ html:not(.js) .cp-hint {
   }
 }
 
-/* Inside, largest to smallest: the name on the tab, the line about it in
-   the text colour, then the facts and the links in mono, small. */
+/* Inside, in order: what kind of thing and when (a quiet mono line), what he
+   did (the text colour, a little weight), the line about it, then its links. */
 .cp-work-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 4);
   color: var(--color-fg-muted);
   font-family: var(--font-label);
   font-size: var(--text-xs);
   white-space: nowrap;
 }
 
-.cp-work-note {
-  max-width: 44ch;
+.cp-work-role {
   margin-top: calc(var(--spacing) * 3);
   color: var(--color-fg);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.cp-work-note {
+  max-width: 44ch;
+  margin-top: calc(var(--spacing) * 1.5);
+  color: var(--color-fg-muted);
   font-size: var(--text-sm);
   line-height: 1.6;
   text-wrap: pretty;
@@ -1132,32 +1140,72 @@ html:not(.js) .cp-hint {
 .cp-work-links {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 6);
+  gap: calc(var(--spacing) * 2);
   margin-top: calc(var(--spacing) * 5);
 }
 
-/* A link with its diagonal arrow, which nudges toward where it goes. */
+/* A link as a small button: pointed at, ink sweeps across it on the diagonal
+   (bottom left to top right) and the words turn to the page's colour, while
+   its arrow flies off the corner and a second comes in behind it. */
 .cp-work-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--spacing) * 1.5);
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2.5);
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid color-mix(in oklab, var(--color-fg) 22%, transparent);
+  border-radius: calc(var(--radius-sm) * 1.5);
   color: var(--color-fg);
   font-family: var(--font-label);
   font-size: var(--text-xs);
-  text-decoration: underline;
-  text-decoration-color: var(--cp-tint);
-  text-underline-offset: 3px;
-  transition: text-decoration-color var(--duration-base) var(--ease-expo);
+  transition: color 0.35s var(--ease-expo);
+}
+
+.cp-work-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--color-fg);
+  clip-path: polygon(0 100%, 0 100%, 0 100%);
+  transition: clip-path 0.45s var(--ease-expo);
 }
 
 .cp-work-link:is(:hover, :focus-visible) {
-  text-decoration-color: currentColor;
+  color: var(--color-bg);
+}
+
+.cp-work-link:is(:hover, :focus-visible)::before {
+  clip-path: polygon(0 100%, 0 -120%, 220% 100%);
 }
 
 .cp-work-link:focus-visible {
   outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
+  outline-offset: 2px;
+}
+
+.cp-work-arrow {
+  display: inline-grid;
+  overflow: hidden;
+}
+
+.cp-work-arrow svg {
+  grid-area: 1 / 1;
+  transition: translate 0.4s var(--ease-expo);
+}
+
+.cp-work-arrow svg + svg {
+  translate: -130% 130%;
+}
+
+.cp-work-link:is(:hover, :focus-visible) .cp-work-arrow svg:first-child {
+  translate: 130% -130%;
+}
+
+.cp-work-link:is(:hover, :focus-visible) .cp-work-arrow svg + svg {
+  translate: 0 0;
 }
 
 @media (hover: hover) {
