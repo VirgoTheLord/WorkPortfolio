@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { BallpointLink } from '@/components/interactive/ballpoint-link'
 import { CairnMark } from '@/components/ui/cairn-mark'
 import { LedeSelect } from '@/components/interactive/lede-select'
 import { compact } from '@/content/compact'
@@ -17,7 +18,8 @@ const [job] = compact.experience
  * ride in it as chips; the work's cover peeks up out of its chip on hover or
  * focus, like a photo pulled from a pocket. One bit of it plays (owner's
  * call after the review: one, not five): "one thing well" sits selected, and
- * a click opens a toolbar to restyle it. Under it, the ways out as plain links.
+ * a click opens a toolbar to restyle it. Under it, the ways out as small
+ * ballpoint chips (owner's pick, kept).
  */
 export function CompactLede() {
   return (
@@ -62,14 +64,7 @@ export function CompactLede() {
           typeof part === 'string' ? (
             part
           ) : (
-            <a
-              key={part.href}
-              href={part.href}
-              {...(part.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-              className="cp-link"
-            >
-              {part.label}
-            </a>
+            <BallpointLink key={part.href} label={part.label} href={part.href} />
           ),
         )}
       </p>
