@@ -303,7 +303,7 @@ export const compact = {
   },
   footer: {
     label: 'Footer',
-    made: `Made in ${place.split(',')[0]}, ${site.year}`,
+    made: 'Fun, All the Way',
     top: 'Back to top',
     push: 'go on, knock them over',
     back: { label: 'The full site', href: '/' },
