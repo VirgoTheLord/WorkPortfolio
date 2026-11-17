@@ -303,7 +303,7 @@ export const compact = {
   },
   footer: {
     label: 'Footer',
-    made: 'Fun, All the Way',
+    made: 'Fun, all the way.',
     top: 'Back to top',
     push: 'go on, knock them over',
     back: { label: 'The full site', href: '/' },
