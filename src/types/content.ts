@@ -248,10 +248,6 @@ export type PaletteCommand = {
 export type LedePart =
   | string
   | { chip: 'job' | 'work' }
-  /** Words that, pointed at, put the sentence in that light. */
-  | { light: 'day' | 'night'; text: string }
-  /** Words as key-cap tiles to pick up and drop; they spring back. */
-  | { tiles: readonly string[] }
   /** Words shown selected, as in an editor, with a toolbar to restyle them. */
   | { select: string }
 

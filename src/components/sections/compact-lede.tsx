@@ -1,9 +1,6 @@
 import Image from 'next/image'
-import { BallpointLink } from '@/components/interactive/ballpoint-link'
 import { CairnMark } from '@/components/ui/cairn-mark'
-import { LedeLight } from '@/components/interactive/lede-light'
 import { LedeSelect } from '@/components/interactive/lede-select'
-import { LedeTiles } from '@/components/interactive/lede-tiles'
 import { compact } from '@/content/compact'
 import { projects } from '@/content/projects'
 import type { LedePart } from '@/types/content'
@@ -18,10 +15,9 @@ const [job] = compact.experience
  * The opening: one sentence, the page's heading (wlovedaypowell.com's), the
  * greeting in the text colour and the rest a step back. The job and the work
  * ride in it as chips; the work's cover peeks up out of its chip on hover or
- * focus, like a photo pulled from a pocket. Three bits of it play (owner's
- * picks): "by day" and "by night" put it in that light, "interface pieces" are
- * key caps to pick up, and "one thing well" sits selected with a toolbar to
- * restyle it. Under it, the ways out as small ballpoint chips.
+ * focus, like a photo pulled from a pocket. One bit of it plays (owner's
+ * call after the review: one, not five): "one thing well" sits selected, and
+ * a click opens a toolbar to restyle it. Under it, the ways out as plain links.
  */
 export function CompactLede() {
   return (
@@ -30,13 +26,6 @@ export function CompactLede() {
         <span className="cp-ink-text">{intro.hello}</span>
         {lede.map((part, i) => {
           if (typeof part === 'string') return part
-          if ('light' in part)
-            return (
-              <LedeLight key={i} light={part.light}>
-                {part.text}
-              </LedeLight>
-            )
-          if ('tiles' in part) return <LedeTiles key={i} words={part.tiles} />
           if ('select' in part)
             return (
               <LedeSelect key={i} restyle={intro.restyle}>
@@ -73,7 +62,14 @@ export function CompactLede() {
           typeof part === 'string' ? (
             part
           ) : (
-            <BallpointLink key={part.href} label={part.label} href={part.href} />
+            <a
+              key={part.href}
+              href={part.href}
+              {...(part.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+              className="cp-link"
+            >
+              {part.label}
+            </a>
           ),
         )}
       </p>
