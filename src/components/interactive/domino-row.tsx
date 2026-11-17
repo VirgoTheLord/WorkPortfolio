@@ -10,6 +10,8 @@ const PIPS = [5, 9, TALL - 6]
 /* How long they lie fallen before standing back up, and how far apart they rise (s). */
 const LIE = 1.6
 const RISE_STEP = 0.03
+/* How much of the accent is in the dominoes' colour, the rest the page's. */
+const MIX = 0.45
 /* A move of fewer than this many pixels between two events does not push. */
 const PUSH = 0.25
 
@@ -22,7 +24,7 @@ type Props = { hint: string }
  * or a finger, and they fall in a chain the way you moved, each knocking the
  * next until it leans on it; a moment after they settle they stand back up, one
  * after another, from the far end. Kept quiet (owner's note): small, and a
- * light red (the accent at under half strength), with a little note above
+ * solid light red (the accent mixed into the page), with a little note above
  * inviting the push, which goes once they have been pushed. Decoration: hidden from assistive tech, and with
  * reduced motion they simply stand. It draws only while one is moving.
  */
@@ -61,12 +63,21 @@ export function DominoRow({ hint }: Props) {
       settled = 0
     }
 
+    // Colour tokens arrive as CSS colours; the canvas reads them back as hex.
+    const rgb = (value: string) => {
+      ctx.fillStyle = '#000'
+      ctx.fillStyle = value
+      const n = parseInt(ctx.fillStyle.slice(1), 16)
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255] as const
+    }
     const draw = () => {
       const style = getComputedStyle(cv)
-      const ink = style.getPropertyValue('--color-red').trim()
       const paper = style.getPropertyValue('--color-bg').trim()
+      // A solid light red (owner's note): the accent mixed into the page, not see-through.
+      const red = rgb(style.getPropertyValue('--color-red').trim())
+      const bg = rgb(paper)
+      const ink = `rgb(${red.map((c, i) => Math.round(bg[i]! + (c - bg[i]!) * MIX)).join(' ')})`
       ctx.clearRect(0, 0, W, H)
-      ctx.globalAlpha = 0.42
       for (const d of row) {
         const pivot = d.a >= 0 ? d.x + WIDE / 2 : d.x - WIDE / 2
         ctx.save()
