@@ -1104,9 +1104,10 @@ html:not(.js) .cp-hint {
   /* As tall as the folder's face, its foot under the lip: no gap above it. */
   align-self: stretch;
   min-height: calc(var(--spacing) * 32);
-  /* Its foot reaches the folder's bottom edge, deep behind the lip, so even
-     raised it is still in the folder. */
-  margin-bottom: calc(var(--spacing) * -3);
+  /* Its foot stops just short of the folder's bottom edge, deep behind the
+     lip: never on that edge, where a dark sheet's anti-aliased hairline would
+     show below the folder as it moves. */
+  margin-bottom: calc(var(--spacing) * -1.5);
   overflow: hidden;
   border-radius: calc(var(--radius-sm) * 1.5) calc(var(--radius-sm) * 1.5) 0 0;
   box-shadow:
@@ -1143,7 +1144,7 @@ html:not(.js) .cp-hint {
   position: relative;
   z-index: 2;
   align-self: center;
-  padding-bottom: calc(var(--spacing) * 6);
+  padding-bottom: calc(var(--spacing) * 9);
 }
 
 .cp-work-item:is(:hover, :focus-within) .cp-work-folder {
