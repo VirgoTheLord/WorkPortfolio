@@ -12,6 +12,7 @@ const ARRIVING = [
   '.cp-reach',
   '.cp-block-head',
   '.cp-list > li',
+  '.cp-work-item',
   '.cp-keycaps > li',
   '.cp-strip',
   '.cp-foot > :not(.cp-dominoes)',

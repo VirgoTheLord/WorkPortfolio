@@ -1,6 +1,6 @@
 import type { ProjectMeta } from '@/types/content'
-import cairnCover from './cairn/cover.png'
-import galenCover from './galen/cover.png'
+import cairnCover from './cairn/cover.webp'
+import galenCover from './galen/cover.webp'
 
 /*
  * Selected work (owner's choice, November 2026): Cairn, the owner's library

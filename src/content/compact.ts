@@ -25,7 +25,6 @@ const profiles = [
 
 const sections: CompactContent['sections'] = [
   { id: 'work', title: 'Work' },
-  { id: 'workbench', title: 'Components' },
   { id: 'experience', title: 'Experience' },
   { id: 'stack', title: 'Stack' },
   { id: 'alive', title: 'Stuff that brings me alive' },
@@ -204,14 +203,9 @@ export const compact = {
     ],
   },
   work: {
-    soon: {
-      items: ['What comes next'],
-      note: 'Currently cooking',
-      state: 'Soon',
-    },
-  },
-  workbench: {
-    all: { label: 'Browse all in Cairn', href: 'https://w-ui.vercel.app/components' },
+    roles: { cairn: 'Designed and built', 'galen-ai': 'Built freelance' },
+    visit: 'Visit',
+    pieces: 'live pieces',
   },
   experience: [
     ...experience.map((item) => ({ org: item.org, role: item.role, when: item.when })),

@@ -225,7 +225,7 @@ export type AlivePhoto = {
   alt: string
 }
 
-export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | 'alive'
+export type CompactSectionId = 'work' | 'experience' | 'stack' | 'alive'
 
 /** What a search result does when chosen. */
 export type PaletteAction =
@@ -293,11 +293,13 @@ export type CompactContent = {
     reach: readonly (string | NavItem)[]
   }
   work: {
-    /** The rows for what is not out yet: a name, and what it says instead of a year. */
-    soon: { items: readonly string[]; note: string; state: string }
+    /** What he did on each project, by its slug. */
+    roles: Readonly<Record<string, string>>
+    /** The link to the live project. */
+    visit: string
+    /** The link to the workbench, after the count of its pieces ("5 live pieces"). */
+    pieces: string
   }
-  /** The pieces are the workbench's (content/workbench.ts); the rest are a link away in Cairn. */
-  workbench: { all: NavItem }
   experience: readonly { org: string; role: string; when: string }[]
   stack: { items: readonly string[] }
   /** What brings me alive: a strip of instant photos, each turned over for a note. */

@@ -4,7 +4,6 @@ import { CompactExperience } from '@/components/sections/compact-experience'
 import { CompactLede } from '@/components/sections/compact-lede'
 import { CompactStack } from '@/components/sections/compact-stack'
 import { CompactWork } from '@/components/sections/compact-work'
-import { CompactWorkbench } from '@/components/sections/compact-workbench'
 import { compact } from '@/content/compact'
 
 export const metadata: Metadata = {
@@ -24,7 +23,6 @@ export default function CompactPage() {
     <>
       <CompactLede />
       <CompactWork />
-      <CompactWorkbench />
       <CompactExperience />
       <CompactStack />
       <CompactAlive />
