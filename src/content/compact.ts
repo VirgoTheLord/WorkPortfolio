@@ -203,7 +203,6 @@ export const compact = {
     ],
   },
   work: {
-    roles: { cairn: 'Designed and built', 'galen-ai': 'Built freelance' },
     visit: 'Visit',
     pieces: 'live pieces',
   },
