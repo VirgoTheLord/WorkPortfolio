@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { BackToTop } from '@/components/interactive/back-to-top'
 import { DominoRow } from '@/components/interactive/domino-row'
 import { FlapText } from '@/components/ui/flap-text'
 import { compact } from '@/content/compact'
@@ -27,9 +28,9 @@ export function CompactFoot() {
         <Link href={legal.footerLink.href} className="cp-flap-link">
           <FlapText>{legal.footerLink.label}</FlapText>
         </Link>
-        <a href="#top" className="cp-flap-link">
+        <BackToTop className="cp-flap-link">
           <FlapText>{footer.top}</FlapText>
-        </a>
+        </BackToTop>
       </nav>
       <DominoRow hint={footer.push} />
     </footer>

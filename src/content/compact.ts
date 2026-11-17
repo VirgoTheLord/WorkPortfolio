@@ -35,9 +35,7 @@ const sections: CompactContent['sections'] = [
  * What the search finds (interactive/site-search.tsx): the page's sections, the
  * work (on the full site, and this site's source), every workbench piece, the
  * ways to get in touch, and the site itself. Section links carry the page's
- * path, so they work from a workbench page too. The layout grid is the one
- * small secret: it lays the column's grid over the page, and runs again to take
- * it off.
+ * path, so they work from a workbench page too.
  */
 const commands: readonly PaletteCommand[] = [
   ...sections.map((section) => ({
@@ -125,14 +123,6 @@ const commands: readonly PaletteCommand[] = [
     label: 'Back to top',
     icon: 'up',
     action: { kind: 'go', href: '#top' },
-  },
-  {
-    id: 'grid',
-    group: 'Site',
-    label: 'Toggle the layout grid',
-    icon: 'grid',
-    keywords: 'columns guides design secret',
-    action: { kind: 'grid' },
   },
 ]
 
