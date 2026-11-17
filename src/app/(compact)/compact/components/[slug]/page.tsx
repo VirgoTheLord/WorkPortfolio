@@ -7,7 +7,6 @@ import { WorkbenchDemo } from '@/components/sections/workbench-demo'
 import { compact } from '@/content/compact'
 import { site } from '@/content/site'
 import { repository, workbench } from '@/content/workbench'
-import { RollText } from '@/components/ui/roll-text'
 
 const { items, labels } = workbench
 
@@ -51,14 +50,10 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
       <nav aria-label={labels.crumb} className="cp-crumbs font-label">
         <ol>
           <li>
-            <Link href="/compact">
-              <RollText>{compact.ui.home}</RollText>
-            </Link>
+            <Link href="/compact">{compact.ui.home}</Link>
           </li>
           <li>
-            <Link href="/compact/components">
-              <RollText>{workbench.title}</RollText>
-            </Link>
+            <Link href="/compact/components">{workbench.title}</Link>
           </li>
           <li aria-current="page">{item.name}</li>
         </ol>
@@ -135,7 +130,7 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
             <dd className="cp-row-body">
               {item.live ? (
                 <Link href={item.live.href} className="cp-piece-link">
-                  <RollText>{item.live.label}</RollText>
+                  {item.live.label}
                   <Icon name="arrow" className="cp-nudge size-3" />
                 </Link>
               ) : (
@@ -149,14 +144,14 @@ export default async function WorkbenchPiece({ params }: PageProps<'/compact/com
       <nav aria-label={workbench.title} className="cp-pager">
         <Link href={`/compact/components/${prev.slug}`} className="cp-pager-link">
           <span className="cp-pager-label font-label">← {labels.prev}</span>
-          <RollText>{prev.name}</RollText>
+          {prev.name}
         </Link>
         <Link href="/compact/components" className="cp-pager-all font-label">
-          <RollText>{labels.all}</RollText>
+          {labels.all}
         </Link>
         <Link href={`/compact/components/${next.slug}`} className="cp-pager-link cp-pager-next">
           <span className="cp-pager-label font-label">{labels.next} →</span>
-          <RollText>{next.name}</RollText>
+          {next.name}
         </Link>
       </nav>
     </article>

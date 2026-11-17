@@ -3,13 +3,10 @@
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 
-/* What arrives with a blur (keep in step with compact.css, "Arrival"). */
+/* What arrives with a blur (keep in step with compact.css, "Arrival"). The
+   first screen (the top line and the opening sentence) is simply there, so the
+   first thing read is never held back (owner's call after the review). */
 const ARRIVING = [
-  '.cp-who',
-  '.cp-contour',
-  '.cp-top-meta',
-  '.cp-lede',
-  '.cp-reach',
   '.cp-block-head',
   '.cp-list > li',
   '.cp-work-item',

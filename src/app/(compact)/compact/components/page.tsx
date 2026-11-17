@@ -4,7 +4,6 @@ import { WorkbenchList } from '@/components/sections/workbench-list'
 import { compact } from '@/content/compact'
 import { site } from '@/content/site'
 import { workbench } from '@/content/workbench'
-import { RollText } from '@/components/ui/roll-text'
 
 export const metadata: Metadata = {
   title: workbench.meta.title,
@@ -22,9 +21,7 @@ export default function WorkbenchPage() {
       <nav aria-label={workbench.labels.crumb} className="cp-crumbs font-label">
         <ol>
           <li>
-            <Link href="/compact">
-              <RollText>{compact.ui.home}</RollText>
-            </Link>
+            <Link href="/compact">{compact.ui.home}</Link>
           </li>
           <li aria-current="page">{workbench.title}</li>
         </ol>
