@@ -316,6 +316,7 @@ export const compact = {
     label: 'Footer',
     made: `Made in ${place.split(',')[0]}, ${site.year}`,
     top: 'Back to top',
+    push: 'go on, knock them over',
     back: { label: 'The full site', href: '/' },
   },
   search: {

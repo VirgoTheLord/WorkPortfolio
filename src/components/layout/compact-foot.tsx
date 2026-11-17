@@ -31,7 +31,7 @@ export function CompactFoot() {
           <FlapText>{footer.top}</FlapText>
         </a>
       </nav>
-      <DominoRow />
+      <DominoRow hint={footer.push} />
     </footer>
   )
 }

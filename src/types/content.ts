@@ -331,6 +331,8 @@ export type CompactContent = {
     made: string
     back: NavItem
     top: string
+    /** The little note above the dominoes, asking for a push. */
+    push: string
   }
   search: {
     label: string
