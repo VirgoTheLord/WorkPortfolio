@@ -11,9 +11,11 @@ const roles: Readonly<Record<string, string>> = work.roles
 
 /*
  * The work, the page's centre (owner's call after the review): each project
- * with a large screenshot, what it is, what he did and when, the line about it
- * and its links. Cairn also opens its pieces running live on the workbench,
- * which used to be a section of its own. No placeholder rows.
+ * is a folder (owner's pick of four cards), its name on the tab, the width of
+ * the section. Inside lies its screenshot as a sheet, tucked in; pointed at or
+ * tabbed into, the sheet slides up out of the folder. On the folder's face:
+ * what it is, what he did and when, the line about it and its links (Cairn
+ * also opens its pieces running live on the workbench). No placeholder rows.
  */
 export function CompactWork() {
   return (
@@ -24,37 +26,40 @@ export function CompactWork() {
           const away = project.href ? { target: '_blank', rel: 'noreferrer' } : {}
           return (
             <li key={project.slug} className="cp-work-item">
-              <a href={href} tabIndex={-1} aria-hidden="true" className="cp-work-shot" {...away}>
-                <Image
-                  src={project.cover.image}
-                  alt={project.cover.alt}
-                  sizes="(min-width: 40rem) 20rem, 92vw"
-                />
-              </a>
-              <div className="cp-work-text">
-                <h3 className="cp-work-title">
-                  <a href={href} {...away}>
-                    {project.title}
-                  </a>
-                </h3>
-                <p className="cp-work-meta">
-                  <span>{project.category}</span>
-                  <span>{roles[project.slug]}</span>
-                  <span>{project.year}</span>
-                </p>
-                <p className="cp-work-note">{project.summary}</p>
-                <p className="cp-work-links">
-                  <BallpointLink
-                    label={project.href ? new URL(project.href).host : work.visit}
-                    href={href}
+              <h3 className="cp-work-tab">
+                <a href={href} {...away}>
+                  {project.title}
+                </a>
+              </h3>
+              <div className="cp-work-folder">
+                <a href={href} tabIndex={-1} aria-hidden="true" className="cp-work-sheet" {...away}>
+                  <Image
+                    src={project.cover.image}
+                    alt={project.cover.alt}
+                    sizes="(min-width: 40rem) 18rem, 92vw"
                   />
-                  {project.slug === 'cairn' ? (
+                </a>
+                <span aria-hidden="true" className="cp-work-lip" />
+                <div className="cp-work-text">
+                  <p className="cp-work-meta">
+                    <span>{project.category}</span>
+                    <span>{roles[project.slug]}</span>
+                    <span>{project.year}</span>
+                  </p>
+                  <p className="cp-work-note">{project.summary}</p>
+                  <p className="cp-work-links">
                     <BallpointLink
-                      label={`${workbench.items.length} ${work.pieces}`}
-                      href="/compact/components"
+                      label={project.href ? new URL(project.href).host : work.visit}
+                      href={href}
                     />
-                  ) : null}
-                </p>
+                    {project.slug === 'cairn' ? (
+                      <BallpointLink
+                        label={`${workbench.items.length} ${work.pieces}`}
+                        href="/compact/components"
+                      />
+                    ) : null}
+                  </p>
+                </div>
               </div>
             </li>
           )
