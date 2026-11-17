@@ -674,6 +674,10 @@ html:not(.js) .cp-hint {
   font-family: 'Restyle Bricolage', var(--font-text);
   font-size: calc(var(--cp-face-size) * var(--cp-select-size, 1));
   white-space: nowrap;
+  /* The site turns synthesis off (globals.css); here the faces that were never
+     drawn in italic (Bricolage, Syne, Space Grotesk) may be slanted, so the
+     italic button works in every face. */
+  font-synthesis: style;
 }
 
 .cp-select[data-face='syne'] {
