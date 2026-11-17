@@ -1067,9 +1067,6 @@ html:not(.js) .cp-hint {
 }
 
 .cp-work-tab {
-  position: relative;
-  /* The tab stays in front: a rising sheet passes behind the name. */
-  z-index: 4;
   display: inline-block;
   padding: calc(var(--spacing) * 1.25) calc(var(--spacing) * 6) calc(var(--spacing) * 1)
     calc(var(--spacing) * 3);
@@ -1091,10 +1088,12 @@ html:not(.js) .cp-hint {
 .cp-work-folder {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
-  gap: calc(var(--spacing) * 6);
-  padding: calc(var(--spacing) * 5) calc(var(--spacing) * 5) calc(var(--spacing) * 4);
-  /* Not clipped: the sheet rises out over the folder's top edge. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: calc(var(--spacing) * 5);
+  padding: calc(var(--spacing) * 4) calc(var(--spacing) * 4) calc(var(--spacing) * 3);
+  /* Clipped only along its bottom edge: the sheet rises out over the top, in
+     front of the tab, but never shows below the folder, even as it settles. */
+  clip-path: inset(-100vh -100vw 0);
   border-radius: 0 calc(var(--radius-sm) * 3) calc(var(--radius-sm) * 3) calc(var(--radius-sm) * 3);
   background-color: var(--cp-tab-fill);
 }
@@ -1104,16 +1103,21 @@ html:not(.js) .cp-hint {
   display: block;
   /* As tall as the folder's face, its foot under the lip: no gap above it. */
   align-self: stretch;
-  min-height: calc(var(--spacing) * 40);
+  min-height: calc(var(--spacing) * 32);
   /* Its foot reaches the folder's bottom edge, deep behind the lip, so even
      raised it is still in the folder. */
-  margin-bottom: calc(var(--spacing) * -4);
+  margin-bottom: calc(var(--spacing) * -3);
   overflow: hidden;
   border-radius: calc(var(--radius-sm) * 1.5) calc(var(--radius-sm) * 1.5) 0 0;
   box-shadow:
     0 -1px 0 var(--cp-tint),
     0 -6px 18px color-mix(in oklab, var(--color-black) 12%, transparent);
-  transition: translate 0.6s var(--cp-spring);
+  transform-origin: 50% 100%;
+  /* Settling back it eases in without a bounce; rising it springs. */
+  transition:
+    translate 0.45s var(--ease-expo),
+    scale 0.45s var(--ease-expo),
+    box-shadow 0.45s var(--ease-expo);
 }
 
 .cp-work-sheet img {
@@ -1129,7 +1133,7 @@ html:not(.js) .cp-hint {
   position: absolute;
   inset: auto 0 0;
   z-index: 3;
-  height: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 8);
   background-color: var(--cp-tab-fill);
   box-shadow: 0 -1px 0 var(--cp-tint);
   pointer-events: none;
@@ -1139,17 +1143,31 @@ html:not(.js) .cp-hint {
   position: relative;
   z-index: 2;
   align-self: center;
-  padding-bottom: calc(var(--spacing) * 8);
+  padding-bottom: calc(var(--spacing) * 6);
 }
 
+.cp-work-item:is(:hover, :focus-within) .cp-work-folder {
+  z-index: 1;
+}
+
+/* Pointed at, the sheet pops up out of the folder, in front of everything it
+   passes, a touch larger, its shadow deepening. */
 .cp-work-item:is(:hover, :focus-within) .cp-work-sheet {
   z-index: 2;
-  translate: 0 calc(var(--spacing) * -10);
+  translate: 0 calc(var(--spacing) * -13);
+  scale: 1.03;
+  box-shadow:
+    0 -1px 0 var(--cp-tint),
+    0 -14px 32px color-mix(in oklab, var(--color-black) 22%, transparent);
+  transition:
+    translate 0.6s var(--cp-spring),
+    scale 0.6s var(--cp-spring),
+    box-shadow 0.6s var(--ease-expo);
 }
 
 @media (hover: none) {
   .cp-work-sheet {
-    translate: 0 calc(var(--spacing) * -6);
+    translate: 0 calc(var(--spacing) * -5);
   }
 }
 
@@ -1287,6 +1305,7 @@ html:not(.js) .cp-hint {
     min-height: 0;
     margin-bottom: 0;
     translate: none;
+    scale: none;
     border-radius: calc(var(--radius-sm) * 1.5);
   }
 
