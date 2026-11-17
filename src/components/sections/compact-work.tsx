@@ -10,6 +10,17 @@ const { work } = compact
 /* Read by any project's slug (the content lists them by name). */
 const roles: Readonly<Record<string, string>> = work.roles
 
+/* The diagonal arrow, twice: on hover the first flies off to the top right
+   and the second comes in from the bottom left. */
+function Arrow() {
+  return (
+    <span aria-hidden="true" className="cp-work-arrow">
+      <Icon name="arrow" className="size-3" />
+      <Icon name="arrow" className="size-3" />
+    </span>
+  )
+}
+
 /*
  * The work, the page's centre (owner's call after the review): each project
  * is a folder (owner's pick of four cards), its name on the tab, the width of
@@ -44,19 +55,19 @@ export function CompactWork() {
                 <div className="cp-work-text">
                   <p className="cp-work-meta">
                     <span>{project.category}</span>
-                    <span>{roles[project.slug]}</span>
                     <span>{project.year}</span>
                   </p>
+                  <p className="cp-work-role">{roles[project.slug]}</p>
                   <p className="cp-work-note">{project.summary}</p>
                   <p className="cp-work-links">
                     <a href={href} className="cp-work-link" {...away}>
                       {project.href ? new URL(project.href).host : work.visit}
-                      <Icon name="arrow" className="cp-nudge size-3" />
+                      <Arrow />
                     </a>
                     {project.slug === 'cairn' ? (
                       <Link href="/compact/components" className="cp-work-link">
                         {workbench.items.length} {work.pieces}
-                        <Icon name="arrow" className="cp-nudge size-3" />
+                        <Arrow />
                       </Link>
                     ) : null}
                   </p>
