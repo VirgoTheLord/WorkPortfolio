@@ -11,7 +11,6 @@ const paths = {
   copy: 'M9 9h10.5v10.5H9zM15 9V4.5H4.5V15H9',
   check: 'M5 12.5l4.5 4.5L19 7.5',
   close: 'M6.5 6.5l11 11M17.5 6.5l-11 11',
-  grid: 'M4 4h16v16H4zM9.33 4v16M14.67 4v16M4 12h16',
   hash: 'M9.5 4l-2 16M16.5 4l-2 16M4.5 9h16M3.5 15h16',
   home: 'M4 10.5L12 4l8 6.5V20h-5.5v-5.5h-5V20H4z',
   mail: 'M3.5 6h17v12h-17zM3.5 7l8.5 6 8.5-6',

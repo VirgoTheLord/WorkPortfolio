@@ -7,7 +7,7 @@ import { switchTheme } from '@/lib/theme'
 import { copyText } from '@/lib/copy-text'
 import type { CompactContent, PaletteCommand } from '@/types/content'
 
-/* How long a result (a copy, the grid) stays in the tag at the foot of the screen (ms). */
+/* How long a result (a copy, the theme) stays in the tag at the foot of the screen (ms). */
 const HOLD = 2200
 
 function editable(target: EventTarget | null) {
@@ -41,7 +41,7 @@ const matches = (item: Item, query: string) => {
  * click opens the field in the middle of the screen over the page, its results
  * opening as a circle out of the magnifier, grouped, everything the site can
  * take you to or do. Every result does something real; a copy, the theme or
- * the grid reports in a small status tag. Hidden without script (compact.css).
+ * the theme reports in a small status tag. Hidden without script (compact.css).
  */
 export function SiteSearch({ commands, label, placeholder, empty }: CompactContent['search']) {
   const wrap = useRef<HTMLDivElement>(null)
@@ -86,13 +86,6 @@ export function SiteSearch({ commands, label, placeholder, empty }: CompactConte
     if (action.kind === 'theme') {
       const next = switchTheme()
       say(next === 'dark' ? 'Lights off' : 'Lights on')
-      return
-    }
-    if (action.kind === 'grid') {
-      const root = document.querySelector('.cp')
-      const on = !root?.hasAttribute('data-grid')
-      root?.toggleAttribute('data-grid', on)
-      say(on ? 'Layout grid on. Run it again to hide it.' : 'Layout grid off')
       return
     }
     if (action.external) {

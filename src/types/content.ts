@@ -210,17 +210,7 @@ export type WorkbenchContent = {
 
 /** The compact site's line icons (components/ui/icon.tsx). */
 export type CompactIcon =
-  | 'arrow'
-  | 'copy'
-  | 'github'
-  | 'grid'
-  | 'hash'
-  | 'home'
-  | 'linkedin'
-  | 'mail'
-  | 'up'
-  | 'box'
-  | 'moon'
+  'arrow' | 'copy' | 'github' | 'hash' | 'home' | 'linkedin' | 'mail' | 'up' | 'box' | 'moon'
 
 /** A profile link with its icon (the search's commands). */
 export type ChipLink = NavItem & { icon: CompactIcon }
@@ -241,7 +231,6 @@ export type CompactSectionId = 'work' | 'workbench' | 'experience' | 'stack' | '
 export type PaletteAction =
   | { kind: 'go'; href: string; external?: boolean }
   | { kind: 'copy'; text: string; done: string }
-  | { kind: 'grid' }
   | { kind: 'theme' }
 
 /** One search result. Every one does something real. */

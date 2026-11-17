@@ -1630,22 +1630,6 @@ a.cp-line:hover > .cp-meta {
   }
 }
 
-/* The layout grid (the search's one small secret): the column's eight
-   columns, laid over the page. */
-.cp[data-grid] .cp-col::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  background-image: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--color-accent) 10%, transparent) 0 calc(100% - var(--spacing) * 4),
-    transparent 0
-  );
-  background-size: calc((100% + var(--spacing) * 4) / 8) 100%;
-  pointer-events: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .cp-chip,
   .cp-peek,
@@ -1683,6 +1667,19 @@ a.cp-line:hover > .cp-meta {
 /* The palette's board is a raised surface of the page, not a field of colour.
    The palette lives on <body>, outside the compact frame, so it is mixed from
    the site's own tokens here. */
+/* The list keeps only a breath under its last result: Cairn's list leaves room
+   for a long fade even when nothing scrolls (owner's note), so here the fade
+   is short and the room with it. */
+.wui-lens-palette .wui-lens-results {
+  padding-bottom: calc(var(--spacing) * 2);
+  -webkit-mask: linear-gradient(#000 calc(100% - var(--spacing) * 3), transparent);
+  mask: linear-gradient(#000 calc(100% - var(--spacing) * 3), transparent);
+}
+
+.wui-lens-palette .wui-lens-sheet .wui-lens-board {
+  padding-bottom: calc(var(--spacing) * 1);
+}
+
 .wui-lens-palette .wui-lens-panel {
   background: color-mix(in oklab, var(--color-fg) 5%, var(--color-bg));
   box-shadow:
