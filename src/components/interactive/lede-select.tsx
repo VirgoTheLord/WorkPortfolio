@@ -165,7 +165,8 @@ export function LedeSelect({ children, restyle }: Props) {
         id={barId}
         role="toolbar"
         aria-label={restyle.label}
-        hidden={!open}
+        inert={!open}
+        aria-hidden={!open || undefined}
         className="cp-select-bar"
       >
         <span aria-hidden="true" className="cp-select-glide" data-glide="face" />
