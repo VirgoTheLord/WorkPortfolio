@@ -23,7 +23,7 @@ type Look = {
   size: number
 }
 
-const PLAIN: Look = { face: 'sans', ink: 'ink', mark: null, styles: [], size: AS_SET }
+const PLAIN: Look = { face: 'bricolage', ink: 'ink', mark: null, styles: [], size: AS_SET }
 
 /* Puts each sliding marker over its group's pressed button (or hides it).
    The first placement is not animated: `data-ready` turns the slide on. */

@@ -172,12 +172,12 @@ export const compact = {
     restyle: {
       label: 'Restyle these words',
       faces: [
-        { id: 'sans', label: 'Sans' },
-        { id: 'serif', label: 'Serif' },
-        { id: 'mono', label: 'Mono' },
-        { id: 'hand', label: 'hand' },
-        { id: 'slab', label: 'Slab' },
-        { id: 'wide', label: 'WIDE' },
+        { id: 'bricolage', label: 'Bricolage' },
+        { id: 'syne', label: 'Syne' },
+        { id: 'raleway', label: 'Raleway' },
+        { id: 'funnel', label: 'Funnel' },
+        { id: 'azeret', label: 'Azeret' },
+        { id: 'space', label: 'Space' },
       ],
       styles: [
         { id: 'bold', label: 'Bold', glyph: 'B' },
