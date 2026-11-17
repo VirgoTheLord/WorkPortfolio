@@ -474,6 +474,8 @@ html:not(.js) .cp-hint {
    colour, the rest a step back; the job and the work ride in it as chips. */
 .cp-lede {
   position: relative;
+  /* Above the line under it, so the open toolbar covers the chips there. */
+  z-index: 3;
   font-family: var(--font-display);
   font-size: var(--text-base);
   line-height: 1.6;
@@ -841,8 +843,44 @@ html:not(.js) .cp-hint {
   outline-offset: 4px;
 }
 
-.cp-select-bar[hidden] {
-  display: none;
+/* The toolbar's entrance (owner's note: no jump): closed, it is invisible and
+   out of reach; opening, it fades in, glides down a few pixels and grows a
+   touch from the words, its second row a beat behind. Closing is quicker. */
+.cp-select-bar {
+  opacity: 0;
+  visibility: hidden;
+  translate: var(--cp-bar-shift, -50%) calc(var(--spacing) * -1.5);
+  scale: 0.97;
+  transform-origin: 50% 0;
+  transition:
+    opacity 0.18s ease-out,
+    translate 0.22s var(--ease-expo),
+    scale 0.22s var(--ease-expo),
+    visibility 0s linear 0.22s;
+}
+
+.cp-select[data-open] .cp-select-bar {
+  opacity: 1;
+  visibility: visible;
+  translate: var(--cp-bar-shift, -50%) 0;
+  scale: 1;
+  transition:
+    opacity 0.28s ease-out,
+    translate 0.5s var(--ease-expo),
+    scale 0.5s var(--ease-expo),
+    visibility 0s;
+}
+
+.cp-select-bar .cp-select-row {
+  transition: opacity 0.18s ease-out;
+}
+
+.cp-select:not([data-open]) .cp-select-row {
+  opacity: 0;
+}
+
+.cp-select[data-open] .cp-select-row + .cp-select-row {
+  transition: opacity 0.35s ease-out 0.08s;
 }
 
 .cp-reach {
