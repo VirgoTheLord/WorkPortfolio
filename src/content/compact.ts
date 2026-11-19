@@ -136,7 +136,7 @@ export const compact = {
   meta: {
     /* The whole tab title (it replaces the root template). */
     title: `${site.name} — ${site.role}`,
-    description: `${site.name}, ${site.role.toLowerCase()} in ${place}, India. Software Development Engineer in Test at ${job.org}; frontend work in Next.js, React and TypeScript; and Cairn, a React component library.`,
+    description: `${site.name}, ${site.role.toLowerCase()} in ${place}, India. Currently at ${job.org}; frontend work in Next.js, React and TypeScript; and Cairn, a React component library.`,
   },
   sections,
   intro: {
@@ -158,7 +158,7 @@ export const compact = {
       { chip: 'work' },
       ', a React library of pieces that each do ',
       { select: 'one thing well' },
-      '. By day I test software at ',
+      '. Currently working at ',
       { chip: 'job' },
       '.',
     ],
@@ -210,7 +210,7 @@ export const compact = {
      the review: four roles in a year read as restless when listed flat), then
      the degree. */
   experience: [
-    ...(job ? [{ org: job.org, role: job.role, when: job.when }] : []),
+    ...(job ? [{ org: job.org, when: job.when }] : []),
     {
       org: 'Earlier',
       role: 'NeSt Digital, Galen AI (freelance) and a stealth startup',
@@ -221,16 +221,7 @@ export const compact = {
   stack: {
     /* What he would want to be hired for (owner's call after the review): eight,
        not the toolbox. */
-    items: [
-      'TypeScript',
-      'React',
-      'Next.js',
-      'Tailwind CSS',
-      'GSAP',
-      'Framer Motion',
-      'Node.js',
-      'Figma',
-    ],
+    items: ['TypeScript', 'React', 'Next.js', 'Go', 'GSAP', 'Framer Motion', 'Node.js', 'Figma'],
   },
   /* The owner's own stage photo; the other five were made for the site with
      Figma AI from original prompts (credited on /legal). The notes are the

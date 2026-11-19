@@ -38,6 +38,7 @@ const LONGEST_WAIT = 2400
 const FIRST_TAKES = 1400
 const EACH_LONGER = 90
 const LONGEST_TAKES = 2600
+const FONT_WAIT = 600
 
 /*
  * The compact site's arrival (owner's pick: blur, then sharp): everything
@@ -59,6 +60,11 @@ export function BlurReveal() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const html = document.documentElement
+    // Too late: the root layout already showed the page as it is (.cp-still),
+    // and hiding it again now would blank what the visitor is reading.
+    if (html.classList.contains('cp-still')) return
+    html.classList.add('cp-live')
     const root = document.querySelector('.cp')
     if (!root) return
 
@@ -100,8 +106,12 @@ export function BlurReveal() {
       all.forEach((el) => seen?.observe(el))
     }
 
-    // Start once the type is in, so nothing arrives and then reflows.
-    void document.fonts.ready.then(() => {
+    // Start once the type is in, so nothing arrives and then reflows, but
+    // not later than FONT_WAIT: a slow font must not keep the page blank.
+    void Promise.race([
+      document.fonts.ready,
+      new Promise((done) => setTimeout(done, FONT_WAIT)),
+    ]).then(() => {
       if (alive) start()
     })
     const restored = (event: PageTransitionEvent) => {

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { about, site } from '@/content/site'
+import { about, shareImage, site } from '@/content/site'
 import { themeScript } from '@/lib/theme'
 import { fontVariables } from '@/lib/fonts'
 import './globals.css'
@@ -9,6 +9,8 @@ import './globals.css'
 const description = `${site.role}. ${about.statement}`
 
 export const metadata: Metadata = {
+  /* Shared links need an absolute address for their preview image (shareImage). */
+  metadataBase: new URL('https://www.alwxn.com'),
   title: { default: site.name, template: `%s — ${site.name}` },
   description,
   applicationName: site.name,
@@ -20,8 +22,9 @@ export const metadata: Metadata = {
     title: site.name,
     description,
     locale: 'en_IN',
+    images: [shareImage],
   },
-  twitter: { card: 'summary', title: site.name, description },
+  twitter: { card: 'summary_large_image', title: site.name, description, images: [shareImage] },
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
@@ -45,11 +48,15 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             slow), the page is released in its final state. A light or dark mode the
             visitor chose is put back, the same one on both sites (localStorage,
             lib/theme.ts). The path the tab landed on is kept (data-landing)
-            so the hero can tell a load from a link followed inside the site. */}
+            so the hero can tell a load from a link followed inside the site.
+            The compact site's blur arrival gets the same kind of release: if
+            its island has not started within 1.8s (a cold load on a phone, as
+            from X's in-app browser), .cp-still shows the page as it is, with
+            no arrival, instead of leaving it blank. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var d=document.documentElement;d.classList.add('js');d.dataset.landing=location.pathname;try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen||location.hash){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}}catch(e){}" +
+              "try{var d=document.documentElement;d.classList.add('js');d.dataset.landing=location.pathname;try{localStorage.removeItem('theme')}catch(e){}var seen=false;try{seen=sessionStorage.getItem('intro-seen')==='1'}catch(e){}if(location.pathname==='/'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(seen||location.hash){d.classList.add('is-enter')}else{d.classList.add('is-intro');history.scrollRestoration='manual'}setTimeout(function(){if(!d.classList.contains('intro-live'))d.classList.remove('is-intro','is-enter')},4000)}setTimeout(function(){if(!d.classList.contains('cp-live'))d.classList.add('cp-still')},1800)}catch(e){}" +
               themeScript,
           }}
         />

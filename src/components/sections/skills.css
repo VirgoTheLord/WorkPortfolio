@@ -3,7 +3,7 @@
  *
  * From md, the drum. As served, and for reduced motion: the title on one line,
  * then a plain list, each skill between hairlines, marks and name on the left
- * and level on the right. Stood up by the island (data-drum="on" on
+ * and what it is for on the right. Stood up by the island (data-drum="on" on
  * .skills-drum, motion/skills-drum.tsx): the section is a screen tall and stays
  * put while the page scrolls through it (about two fifths of a screen of scroll
  * per skill); the faces sit round a cylinder seen side on, in perspective, and
@@ -307,21 +307,6 @@
   display: flex;
   align-items: center;
   gap: calc(var(--spacing) * 3);
-}
-
-.skills-card-lights {
-  display: flex;
-  gap: calc(var(--spacing) * 1);
-}
-
-.skills-card-lights i {
-  width: calc(var(--spacing) * 2.25);
-  height: calc(var(--spacing) * 2.25);
-  background-color: color-mix(in srgb, currentColor 25%, transparent);
-}
-
-.skills-card-lights i[data-on] {
-  background-color: currentColor;
 }
 
 /* Where the deck is: one square block per skill, a hairline square for the
