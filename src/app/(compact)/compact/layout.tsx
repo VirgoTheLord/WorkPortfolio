@@ -1,4 +1,3 @@
-import type { Viewport } from 'next'
 import { BlurReveal } from '@/components/interactive/blur-reveal'
 import { TopGlow } from '@/components/interactive/top-glow'
 import { CompactFoot } from '@/components/layout/compact-foot'
@@ -6,15 +5,9 @@ import { CompactTop } from '@/components/layout/compact-top'
 import '@/components/library/cairn/cairn-tokens.css'
 import '@/components/sections/compact.css'
 
-/* The browser's own chrome (the address bar on phones) in the page's colours:
-   white, and the compact site's deep black (globals.css tokens). */
-export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
-  ],
-}
-
+/* No theme colour, as on the full site: X's in-app browser answers one with a
+   solid bar above the page in that colour, which read as a blank band at the
+   top of the compact site (owner's report, November 2026). */
 /*
  * The compact site's frame (DESIGN.md §5b), shared by /compact and the
  * workbench pages: a red glow from the top edge, one narrow column, the top
