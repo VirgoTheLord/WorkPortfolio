@@ -2356,9 +2356,10 @@ html:not(.js) .cp-hint {
    sets `js` before first paint) and never with reduced motion. The motion is
    an animation filling backwards, so once played it leaves every element's
    own transforms and transitions as they were. Keep the list in step with the
-   component's. */
+   component's. If the island is late (.cp-still, the root layout's 1.8s
+   release), nothing is hidden. */
 @media (prefers-reduced-motion: no-preference) {
-  html.js
+  html.js:not(.cp-still)
     .cp
     :is(
       .cp-who,

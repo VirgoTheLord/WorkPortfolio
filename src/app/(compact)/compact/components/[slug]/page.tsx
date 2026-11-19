@@ -5,7 +5,7 @@ import { CairnMark } from '@/components/ui/cairn-mark'
 import { Icon } from '@/components/ui/icon'
 import { WorkbenchDemo } from '@/components/sections/workbench-demo'
 import { compact } from '@/content/compact'
-import { site } from '@/content/site'
+import { shareImage, site } from '@/content/site'
 import { repository, workbench } from '@/content/workbench'
 
 const { items, labels } = workbench
@@ -26,7 +26,7 @@ export async function generateMetadata({
   return {
     title,
     description: item.note,
-    openGraph: { title: `${title} — ${site.name}`, description: item.note },
+    openGraph: { title: `${title} — ${site.name}`, description: item.note, images: [shareImage] },
   }
 }
 

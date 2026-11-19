@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { WorkbenchList } from '@/components/sections/workbench-list'
 import { compact } from '@/content/compact'
-import { site } from '@/content/site'
+import { shareImage, site } from '@/content/site'
 import { workbench } from '@/content/workbench'
 
 export const metadata: Metadata = {
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${workbench.meta.title} — ${site.name}`,
     description: workbench.meta.description,
+    images: [shareImage],
   },
 }
 
