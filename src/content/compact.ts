@@ -210,7 +210,8 @@ export const compact = {
      the review: four roles in a year read as restless when listed flat), then
      the degree. */
   experience: [
-    ...(job ? [{ org: job.org, when: job.when }] : []),
+    /* The job's place, never its title (owner's call, November 2026). */
+    ...(job ? [{ org: job.org, role: 'Where I work now', when: job.when }] : []),
     {
       org: 'Earlier',
       role: 'NeSt Digital, Galen AI (freelance) and a stealth startup',
