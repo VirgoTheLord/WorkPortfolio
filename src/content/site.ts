@@ -8,6 +8,7 @@ import type {
   HeroContent,
   LoaderContent,
   MenuContent,
+  ShareImage,
   SiteConfig,
   WorkContent,
 } from '@/types/content'
@@ -33,12 +34,9 @@ export const tagline =
  * site both read these.
  */
 export const experience = [
-  {
-    org: 'SOTI',
-    role: 'Software Development Engineer in Test',
-    current: true,
-    when: 'Aug 2026 – Now',
-  },
+  /* The present job, named without its title (owner's call, November 2026:
+     the test role is not what he wants to be hired for). */
+  { org: 'SOTI', current: true, when: 'Aug 2026 – Now' },
   { org: 'NeSt Digital', role: 'Software Engineer', when: 'Jun – Jul 2026' },
   { org: 'Galen AI', role: 'Freelance Frontend Developer', when: 'Mar – Apr 2026' },
   { org: 'Stealth startup', role: 'Founding Frontend Engineer', when: 'Aug – Oct 2025' },
@@ -68,7 +66,7 @@ export const about = {
   /* The words that carry a small drawing of themselves (sections/statement-mark.tsx). */
   marks: { hover: 'pointer', timing: 'clock', pixel: 'pixels' },
   details: [
-    { term: 'Currently', detail: `${job.role} at ${job.org}` },
+    { term: 'Currently', detail: `Working at ${job.org}` },
     { term: 'Studied', detail: `${degree.degree} in ${degree.field}, ${degree.school}` },
     { term: 'Based in', detail: place },
   ],
@@ -128,8 +126,8 @@ export const footer = {
   connectLabel: 'Connect',
   nowLabel: 'Currently',
   email: 'Email',
-  /* The present role, short, and the city: from the one record of them above. */
-  now: [`SDET at ${job.org}`, place],
+  /* Where he works now, and the city: from the one record of them above. */
+  now: [`Working at ${job.org}`, place],
   toTop: 'Back to top',
 } satisfies FooterContent
 
@@ -169,6 +167,20 @@ export const menu = {
   mode: 'Dark mode',
   compactNote: 'psst, the short version',
 } satisfies MenuContent
+
+/*
+ * The card a shared link shows on X, LinkedIn and in messengers
+ * (public/share.png, 2400 × 1260): the footer's red on the hero's grid, the
+ * name and the site's button, so it reads as something to open. Every page
+ * names it, because a page that sets its own Open Graph fields replaces the
+ * layout's, image and all.
+ */
+export const shareImage = {
+  url: '/share.png',
+  width: 2400,
+  height: 1260,
+  alt: 'Alwin Aby Mathew, Software Engineer, Kerala: his name set large in black on a red grid, above a "See what I build" button and alwxn.com.',
+} satisfies ShareImage
 
 /*
  * The notice at the top of the home page that offers the compact site (/compact)

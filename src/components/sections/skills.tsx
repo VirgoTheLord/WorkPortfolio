@@ -7,8 +7,6 @@ import { SkillLogo } from '@/components/sections/skill-logo'
 import './skills.css'
 
 const pad = (n: number) => String(n).padStart(2, '0')
-/* A level as lights out of three, for the phone's cards. */
-const lights: Record<string, number> = { Expert: 3, Intermediate: 2 }
 
 /*
  * Skills, two ways (owner's picks from rounds of previews), one shown at a
@@ -106,11 +104,6 @@ export function Skills() {
                     <span className="skills-card-level font-label text-label uppercase">
                       <span className="sr-only">: </span>
                       {row.detail}
-                      <span aria-hidden="true" className="skills-card-lights">
-                        {[0, 1, 2].map((j) => (
-                          <i key={j} data-on={j < (lights[row.detail] ?? 0) || undefined} />
-                        ))}
-                      </span>
                     </span>
                   </span>
                 </li>

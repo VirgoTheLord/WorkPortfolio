@@ -70,7 +70,7 @@ export const legal = {
           id: 'trademarks',
           heading: 'Other people’s names and logos',
           body: [
-            'The names and logos of the tools I work with are trademarks of their owners. That includes React, Next.js, TypeScript, JavaScript, Node.js, Express, MongoDB, Tailwind CSS, GSAP and Figma. They appear here only to say which tools I use. They don’t mean that any of their owners sponsors or endorses me or this site, and I’m not affiliated with them.',
+            'The names and logos of the tools I work with are trademarks of their owners. That includes React, Next.js, TypeScript, Go, Node.js, Express, MongoDB, GSAP and Figma. They appear here only to say which tools I use. They don’t mean that any of their owners sponsors or endorses me or this site, and I’m not affiliated with them.',
           ],
         },
         {

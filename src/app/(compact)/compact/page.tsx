@@ -5,11 +5,16 @@ import { CompactLede } from '@/components/sections/compact-lede'
 import { CompactStack } from '@/components/sections/compact-stack'
 import { CompactWork } from '@/components/sections/compact-work'
 import { compact } from '@/content/compact'
+import { shareImage } from '@/content/site'
 
 export const metadata: Metadata = {
   title: { absolute: compact.meta.title },
   description: compact.meta.description,
-  openGraph: { title: compact.meta.title, description: compact.meta.description },
+  openGraph: {
+    title: compact.meta.title,
+    description: compact.meta.description,
+    images: [shareImage],
+  },
 }
 
 /*

@@ -26,16 +26,7 @@ export type AboutContent = {
 
 /** A tool's mark, drawn in sections/skill-logo.tsx. */
 export type SkillLogo =
-  | 'react'
-  | 'typescript'
-  | 'next'
-  | 'gsap'
-  | 'mongodb'
-  | 'express'
-  | 'node'
-  | 'javascript'
-  | 'tailwind'
-  | 'figma'
+  'react' | 'typescript' | 'next' | 'gsap' | 'mongodb' | 'express' | 'node' | 'go' | 'figma'
 
 export type SkillsContent = {
   /** The title, one entry per line (the drum's rail sets it on one line). */
@@ -43,7 +34,7 @@ export type SkillsContent = {
   /** The phone deck's hint under the title. */
   swipeHint: string
   /**
-   * One face of the drum each: the name, its level (detail) and the tool's mark
+   * One face of the drum each: the name, what he uses it for (detail) and the tool's mark
    * (several for a stack, such as MERN).
    */
   rows: readonly { name: string; detail: string; logos: readonly SkillLogo[] }[]
@@ -100,12 +91,15 @@ export type FooterContent = {
   nowLabel: string
   /** The connect column's mail link. */
   email: string
-  /** The last column's lines: the present role, then where. */
+  /** The last column's lines: where he works now, then where he lives. */
   now: readonly string[]
   toTop: string
 }
 
 export type NavItem = { label: string; href: string }
+
+/** The preview image a shared link shows (X, LinkedIn, messengers). */
+export type ShareImage = { url: string; width: number; height: number; alt: string }
 
 /** The expanded navbar: what it says besides the destinations. */
 export type MenuContent = {
@@ -140,8 +134,11 @@ export type SiteConfig = {
   nav: readonly NavItem[]
 }
 
-/** A role held at an organisation. Only verified facts; dates when known. */
-export type ExperienceItem = { org: string; role: string; current?: boolean; when?: string }
+/**
+ * A role held at an organisation. Only verified facts; dates when known. `role`
+ * may be left out where the owner names the place but not the title.
+ */
+export type ExperienceItem = { org: string; role?: string; current?: boolean; when?: string }
 
 /** A course of study. Only verified facts; dates when known. */
 export type EducationItem = { school: string; degree: string; field: string; when?: string }
@@ -304,7 +301,7 @@ export type CompactContent = {
     /** The link to the workbench, after the count of its pieces ("5 live pieces"). */
     pieces: string
   }
-  experience: readonly { org: string; role: string; when: string }[]
+  experience: readonly { org: string; role?: string; when: string }[]
   stack: { items: readonly string[] }
   /** What brings me alive: a strip of instant photos, each turned over for a note. */
   alive: {
